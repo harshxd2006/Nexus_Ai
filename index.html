@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusAI - Discover AI Tools</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <table id="compare-table"></table>
+  <canvas id="neural-canvas"></canvas>
+
+  <header>
+    <div class="logo">NEXUS<span style="color: #ff006e;">AI</span></div>
+    <nav class="nav-menu">
+      <a href="#tools">AI Tools</a>
+      <a href="#categories">Categories</a>
+      <a href="#about">About</a>
+      <a href="#favorites" id="favorites-link">Favorites</a>
+    </nav>
+    <button class="hamburger" id="hamburger">☰</button>
+  </header>
+
+  <section class="hero">
+    <h1>Discover the Perfect AI Tools</h1>
+    <p>Unlock the power of artificial intelligence for every use case. Find the right AI tool for your needs.</p>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search AI Tools, Categories, or Use Cases...">
+      <button onclick="searchTools()">🔍</button>
+    
+    <!-- Filter & Sort Controls -->
+    <div class="filters">
+      <label for="priceFilter">Price:</label>
+      <select id="priceFilter">
+        <option value="">All</option>
+        <option value="Free">Free</option>
+        <option value="Paid">Paid</option>
+      </select>
+
+      <label for="ratingFilter">Rating:</label>
+      <select id="ratingFilter">
+        <option value="">All</option>
+        <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+        <option value="⭐⭐⭐⭐☆">⭐⭐⭐⭐☆</option>
+        <option value="⭐⭐⭐☆">⭐⭐⭐☆</option>
+      </select>
+
+      <label for="sortOptions">Sort By:</label>
+      <select id="sortOptions">
+        <option value="">None</option>
+        <option value="name">A-Z</option>
+        <option value="rating">Rating</option>
+        <option value="newest">Newest</option>
+        <option value="popular">Popularity</option>
+      </select>
+    </div>
+    </div>
+    <div class="stats">
+      <div><strong>500+</strong><br>AI Tools</div>
+      <div><strong>25+</strong><br>Categories</div>
+      <div><strong>Daily</strong><br>Updates</div>
+    </div>
+  </section>
+
+  <section class="categories" id="categories">
+    <button class="active" data-category="all">All Categories</button>
+    <button data-category="content-creation">📝 Content Creation</button>
+    <button data-category="image-generation">🎨 Image Generation</button>
+    <button data-category="code-assistance">💻 Code Assistance</button>
+    <button data-category="marketing">📈 Marketing & SEO</button>
+    <button data-category="education">🎓 Education & Learning</button>
+    <button data-category="video-editing">🎬 Video Editing</button>
+    <button data-category="music-audio">🎵 Music & Audio</button>
+    <button data-category="business-automation">⚡ Business Automation</button>
+    <button data-category="data-analysis">📊 Data Analysis</button>
+    <button data-category="design-ui">🎨 Design & UI/UX</button>
+    <button data-category="chatbots">🤖 Chatbots & Virtual Assistants</button>
+    <button data-category="translation">🌐 Translation & Language</button>
+    <button data-category="healthcare">🏥 Healthcare & Medical</button>
+    <button data-category="finance">💰 Finance & Trading</button>
+    <button data-category="gaming">🎮 Gaming & Entertainment</button>
+    <button data-category="productivity">📋 Productivity & Organization</button>
+    <button data-category="research">🔬 Research & Academia</button>
+    <button data-category="social-media">📱 Social Media Management</button>
+    <button data-category="cybersecurity">🔒 Cybersecurity</button>
+    <button data-category="real-estate">🏘️ Real Estate</button>
+  </section>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Loading AI tools...</p>
+  </div>
+
+  <section class="featured-tools" id="tools">
+    <h2>AI Tools Directory</h2>
+    <div class="tools-grid" id="toolsGrid">
+      <!-- Tools will be populated by JavaScript -->
+    </div>
+  </section>
+
+  <section id="favorite-tools" style="display: none;">
+    <h2>Your Favorite Tools</h2>
+    <button id="back-to-main">← Back to All Tools</button>
+    <div class="tools-grid" id="favoritesGrid"></div>
+  </section>
+
+  <section class="about-section" id="about">
+    <h2>About NexusAI</h2>
+    <div class="about-content">
+      <p>
+        Welcome to <strong>NexusAI</strong> - your ultimate destination for discovering, exploring, and leveraging the most powerful AI tools available today. In an era where artificial intelligence is transforming every industry, we serve as your trusted guide through the rapidly expanding landscape of AI solutions.
+      </p>
+      
+      <p>
+        Our mission is simple yet ambitious: to democratize access to AI technology by creating the world's most comprehensive, user-friendly directory of artificial intelligence tools. Whether you're a seasoned developer, creative professional, business owner, researcher, or simply curious about AI's potential, NexusAI connects you with the perfect tools to amplify your capabilities.
+      </p>
+
+      <div class="about-features">
+        <div class="feature-card">
+          <div class="icon">🔍</div>
+          <h3>Comprehensive Discovery</h3>
+          <p>Explore 500+ carefully curated AI tools across 20+ categories, all in one place.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>Smart Categorization</h3>
+          <p>Find exactly what you need with our intelligent category system and powerful search functionality.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="icon">🎯</div>
+          <h3>Expert Curation</h3>
+          <p>Every tool is hand-picked and evaluated by our AI experts to ensure quality, reliability, and real-world value.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="icon">🚀</div>
+          <h3>Always Current</h3>
+          <p>Stay ahead with daily updates featuring the latest AI innovations and emerging technologies.</p>
+        </div>
+      </div>
+
+      <p>
+        <strong>What Makes NexusAI Special?</strong>
+      </p>
+      
+      <p>
+        Unlike generic software directories, NexusAI specializes exclusively in artificial intelligence solutions. Our team of AI researchers, developers, and industry experts continuously monitors the AI ecosystem to bring you the most innovative and effective tools.
+      </p>
+
+      <p>
+        <strong>Our Categories Cover Every Need:</strong>
+      </p>
+
+      <p>
+        • <strong>Creative Tools:</strong> Content creation, image generation, video editing, music composition<br>
+        • <strong>Development:</strong> Code assistance, automation, data analysis, cybersecurity<br>
+        • <strong>Business Solutions:</strong> Marketing, finance, real estate, productivity<br>
+        • <strong>Communication:</strong> Translation, chatbots, social media management<br>
+        • <strong>Specialized Fields:</strong> Healthcare, education, research, gaming
+      </p>
+    </div>
+  </section>
+
+  <!-- Tool Modal -->
+  <div id="toolModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeToolModal()">&times;</span>
+      <div id="modalDetails"></div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div id="comparisonModal" class="modal">
+    <div class="modal-content modal-large">
+      <span class="close-btn" onclick="closeComparisonModal()">&times;</span>
+      <h2>Tool Comparison</h2>
+      <div id="comparisonContent">No tools selected yet.</div>
+    </div>
+  </div>
+
+  <!-- Image Viewer Modal -->
+  <div id="imageViewer" class="image-viewer-modal">
+    <div class="image-viewer-content">
+      <button class="close-viewer" onclick="closeImageViewer()">&times;</button>
+      <img id="viewerImage" src="" alt=""/>
+      <p id="imageCaption"></p>
+    </div>
+  </div>
+
+  <!-- Demo Modal -->
+  <div id="demoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeDemoModal()">&times;</span>
+      <h2 id="demoTitle"></h2>
+      <div class="demo-buttons">
+        <button id="officialDemoBtn" class="visit-site-btn">Visit Official Site</button>
+        <button id="previewDemoBtn" class="video-demo-btn">Watch Video Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Modal -->
+  <div id="videoModal" class="modal">
+    <div class="modal-content modal-large">
+      <span class="close-btn" onclick="closeVideoModal()">&times;</span>
+      <h2 id="videoTitle"></h2>
+      <div class="video-container">
+        <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Button -->
+  <button id="compareBtn">Compare Selected Tools</button>
+
+  <script src="app.js"></script>
+  <script src="review-system.js"></script>
+  <script>
+    // Mobile hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if(hamburger) {
+      hamburger.addEventListener('click', function() {
+        navMenu.classList.toggle('active');
+        hamburger.classList.toggle('active');
+      });
+    }
+  </script>
+</body>
+</html>
