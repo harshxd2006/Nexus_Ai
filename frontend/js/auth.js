@@ -1,7 +1,4 @@
-// ============================================
-// AUTHENTICATION MANAGER CLASS
-// ============================================
-
+// AUTHENTICATION MANAGER
 class AuthManager {
     constructor() {
         this.user = this.getUser();
@@ -27,52 +24,68 @@ class AuthManager {
 
     async login(email, password) {
         try {
+            console.log('🔐 Attempting login...');
             const response = await authAPI.login(email, password);
 
-            if (response.success && response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+            if (response.success && response.data) {
+                const token = response.data.token;
+                const user = response.data.user;
 
-                this.user = response.data.user;
-                this.token = response.data.token;
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
 
-                updateNavbar();
+                this.user = user;
+                this.token = token;
 
+                console.log('✅ Login successful');
                 return { success: true, message: 'Login successful!' };
             } else {
-                return {
-                    success: false,
-                    message: response.message || 'Login failed'
-                };
+                console.error('❌ Login failed:', response.message);
+                return { success: false, message: response.message || 'Login failed' };
             }
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('❌ Login error:', error);
             return { success: false, message: 'An error occurred during login' };
         }
     }
 
     async register(name, email, password, confirmPassword) {
         try {
+            console.log('📝 Attempting registration...');
+            
+            // Validate locally first
+            if (!name || !email || !password || !confirmPassword) {
+                return { success: false, message: 'All fields are required' };
+            }
+
+            if (password !== confirmPassword) {
+                return { success: false, message: 'Passwords do not match' };
+            }
+
+            if (password.length < 6) {
+                return { success: false, message: 'Password must be at least 6 characters' };
+            }
+
             const response = await authAPI.register(name, email, password, confirmPassword);
 
-            if (response.success && response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+            if (response.success && response.data) {
+                const token = response.data.token;
+                const user = response.data.user;
 
-                this.user = response.data.user;
-                this.token = response.data.token;
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
 
-                updateNavbar();
+                this.user = user;
+                this.token = token;
 
+                console.log('✅ Registration successful');
                 return { success: true, message: 'Registration successful!' };
             } else {
-                return {
-                    success: false,
-                    message: response.message || 'Registration failed'
-                };
+                console.error('❌ Registration failed:', response.message);
+                return { success: false, message: response.message || 'Registration failed' };
             }
         } catch (error) {
-            console.error('Register error:', error);
+            console.error('❌ Registration error:', error);
             return { success: false, message: 'An error occurred during registration' };
         }
     }
@@ -80,62 +93,16 @@ class AuthManager {
     logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('rememberEmail');
 
         this.user = null;
         this.token = null;
 
-        updateNavbar();
-
-        showToast('Logged out successfully', 'success');
-        setTimeout(() => {
+        console.log('👋 Logged out');
+        
+        // Only redirect if not already on login/home page
+        if (window.location.pathname !== '/login.html' && window.location.pathname !== '/index.html') {
             window.location.href = '/index.html';
-        }, 1000);
-    }
-
-    async updateProfile(userData) {
-        try {
-            const response = await authAPI.updateProfile(userData);
-
-            if (response.success) {
-                const updatedUser = { ...this.user, ...response.data.user };
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-
-                this.user = updatedUser;
-
-                updateNavbar();
-
-                return { success: true, message: 'Profile updated successfully!' };
-            } else {
-                return {
-                    success: false,
-                    message: response.message || 'Failed to update profile'
-                };
-            }
-        } catch (error) {
-            console.error('Update profile error:', error);
-            return { success: false, message: 'An error occurred' };
-        }
-    }
-
-    async changePassword(currentPassword, newPassword, confirmPassword) {
-        try {
-            const response = await authAPI.changePassword(
-                currentPassword,
-                newPassword,
-                confirmPassword
-            );
-
-            if (response.success) {
-                return { success: true, message: 'Password changed successfully!' };
-            } else {
-                return {
-                    success: false,
-                    message: response.message || 'Failed to change password'
-                };
-            }
-        } catch (error) {
-            console.error('Change password error:', error);
-            return { success: false, message: 'An error occurred' };
         }
     }
 
@@ -152,89 +119,111 @@ class AuthManager {
     }
 }
 
-// ============================================
 // CREATE GLOBAL AUTH INSTANCE
-// ============================================
-
 const auth = new AuthManager();
 
-// ============================================
-// REDIRECT FUNCTIONS
-// ============================================
-
-function requireAuth() {
-    if (!auth.isAuthenticated()) {
-        showToast('Please login to access this page', 'warning');
-        setTimeout(() => {
-            window.location.href = '/login.html';
-        }, 1500);
-    }
-}
-
-function requireGuest() {
-    if (auth.isAuthenticated()) {
-        window.location.href = '/index.html';
-    }
-}
-
-function requireAdmin() {
-    if (!auth.isAuthenticated()) {
-        showToast('Please login first', 'warning');
-        setTimeout(() => {
-            window.location.href = '/login.html';
-        }, 1500);
-    } else if (!auth.isAdmin()) {
-        showToast('Admin access required', 'error');
-        setTimeout(() => {
-            window.location.href = '/index.html';
-        }, 1500);
-    }
-}
-
-// ============================================
-// NAVBAR UPDATE FUNCTION
-// ============================================
-
+// UPDATE NAVBAR FUNCTION
 function updateNavbar() {
     const navAuth = document.getElementById('nav-auth');
     if (!navAuth) return;
 
     if (auth.isAuthenticated()) {
         const userName = auth.getDisplayName();
+        const userInitial = userName.charAt(0).toUpperCase();
         const isAdmin = auth.isAdmin();
 
         navAuth.innerHTML = `
-            <div class="nav-user-menu">
-                <span class="user-name">${userName}</span>
-                <a href="/profile.html" class="nav-link">Profile</a>
-                ${isAdmin ? '<a href="/admin-dashboard.html" class="nav-link">Admin</a>' : ''}
-                <button onclick="auth.logout()" class="nav-link logout-btn">Logout</button>
+            <div class="nav-auth-links" style="display: flex; gap: 1.5rem; align-items: center;">
+                <span style="color: #64c8ff; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="width: 32px; height: 32px; background: linear-gradient(135deg, #64c8ff, #ff1493); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">${userInitial}</span>
+                    ${userName}
+                </span>
+                <a href="profile.html" class="nav-link" style="color: #b0b0b0; text-decoration: none;">Profile</a>
+                ${isAdmin ? '<a href="admin_dashboard.html" class="nav-link" style="color: #b0b0b0; text-decoration: none;">Admin</a>' : ''}
+                <button onclick="handleLogout()" class="nav-link" style="background: none; border: none; cursor: pointer; color: #b0b0b0; font-weight: 500; padding: 0.5rem 1rem;">Logout</button>
             </div>
         `;
     } else {
         navAuth.innerHTML = `
-            <div class="nav-auth-links">
-                <a href="/login.html" class="nav-link">Login</a>
-                <a href="/register.html" class="nav-link">Register</a>
+            <div class="nav-auth-links" style="display: flex; gap: 1rem; align-items: center;">
+                <a href="login.html" class="nav-link" style="color: #b0b0b0; text-decoration: none; font-weight: 500;">Login</a>
+                <a href="signup.html" class="nav-link" style="padding: 0.6rem 1.3rem; background: linear-gradient(135deg, #64c8ff, #4a9fd8); border-radius: 25px; color: white; font-weight: 600; text-decoration: none;">Sign Up</a>
             </div>
         `;
     }
 }
 
-// ============================================
-// INITIALIZE ON PAGE LOAD
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    updateNavbar();
-});
-
-// ============================================
 // LOGOUT HANDLER
-// ============================================
-
 function handleLogout() {
     if (confirm('Are you sure you want to logout?')) {
         auth.logout();
+        if (typeof showToast === 'function') {
+            showToast('✅ Logged out successfully', 'success');
+        }
+        setTimeout(() => {
+            window.location.href = '/index.html';
+        }, 1000);
     }
 }
+
+// REDIRECT FUNCTIONS
+function requireAuth() {
+    if (!auth.isAuthenticated()) {
+        if (typeof showToast === 'function') {
+            showToast('Please login to access this page', 'warning');
+        }
+        setTimeout(() => {
+            window.location.href = '/login.html';
+        }, 1500);
+        return false;
+    }
+    return true;
+}
+
+function requireGuest() {
+    if (auth.isAuthenticated()) {
+        window.location.href = '/index.html';
+        return false;
+    }
+    return true;
+}
+
+function requireAdmin() {
+    if (!auth.isAuthenticated()) {
+        if (typeof showToast === 'function') {
+            showToast('Please login first', 'warning');
+        }
+        setTimeout(() => {
+            window.location.href = '/login.html';
+        }, 1500);
+        return false;
+    } else if (!auth.isAdmin()) {
+        if (typeof showToast === 'function') {
+            showToast('Admin access required', 'error');
+        }
+        setTimeout(() => {
+            window.location.href = '/index.html';
+        }, 1500);
+        return false;
+    }
+    return true;
+}
+
+// INITIALIZE ON PAGE LOAD
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔐 Auth module initialized');
+    console.log('Authenticated:', auth.isAuthenticated());
+    if (auth.isAuthenticated()) {
+        console.log('User:', auth.getDisplayName());
+    }
+});
+
+// EXPORT FOR GLOBAL USE
+window.auth = auth;
+window.updateNavbar = updateNavbar;
+window.handleLogout = handleLogout;
+window.requireAuth = requireAuth;
+window.requireGuest = requireGuest;
+window.requireAdmin = requireAdmin;
+
+console.log('✅ Auth module loaded successfully');

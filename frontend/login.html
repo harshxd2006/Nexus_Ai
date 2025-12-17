@@ -23,54 +23,6 @@
             padding: 20px;
         }
 
-        .navbar {
-            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
-            padding: 1.2rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #64c8ff;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
-        }
-
-        .navbar-menu {
-            display: flex;
-            gap: 3rem;
-        }
-
-        .navbar-menu a {
-            color: #b0b0b0;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .navbar-menu a:hover {
-            color: #64c8ff;
-        }
-
-        #nav-auth {
-            display: flex;
-            gap: 1.5rem;
-        }
-
         .login-wrapper {
             width: 100%;
             max-width: 450px;
@@ -208,59 +160,35 @@
         .register-link a {
             color: #64c8ff;
             font-weight: 600;
+            text-decoration: none;
         }
 
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background-color: #64c8ff;
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .register-link a:hover {
+            color: #ff1493;
         }
 
-        .toast.success {
-            background-color: #4CAF50;
+        .back-home {
+            text-align: center;
+            margin-bottom: 1rem;
         }
 
-        .toast.error {
-            background-color: #f44336;
+        .back-home a {
+            color: #64c8ff;
+            text-decoration: none;
+            font-size: 0.9rem;
         }
 
-        @media (max-width: 768px) {
-            .navbar-menu {
-                display: none;
-            }
-
-            .login-container {
-                padding: 2rem;
-            }
-
-            .login-header h1 {
-                font-size: 1.8rem;
-            }
+        .back-home a:hover {
+            color: #ff1493;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="navbar-brand">🚀 NexusAI</div>
-            <div class="navbar-menu">
-                <a href="/index.html">Home</a>
-                <a href="/tools-listing.html">Tools</a>
-                <a href="/trending.html">Trending</a>
-            </div>
-            <div id="nav-auth"></div>
-        </div>
-    </nav>
-
     <div class="login-wrapper">
+        <div class="back-home">
+            <a href="index.html">← Back to Home</a>
+        </div>
+
         <div class="login-container">
             <div class="login-header">
                 <h1>Welcome Back</h1>
@@ -279,6 +207,7 @@
                         class="form-input" 
                         placeholder="Enter your email"
                         required
+                        autocomplete="email"
                     >
                 </div>
 
@@ -290,6 +219,7 @@
                         class="form-input" 
                         placeholder="Enter your password"
                         required
+                        autocomplete="current-password"
                     >
                 </div>
 
@@ -298,39 +228,25 @@
                         <input type="checkbox" id="rememberMe" style="cursor: pointer;">
                         Remember me
                     </label>
-                    <a href="/forgot-password.html">Forgot password?</a>
+                    <a href="forgot-password.html">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
             </form>
 
             <div class="register-link">
-                Don't have an account? <a href="/register.html">Create one now</a>
+                Don't have an account? <a href="signup.html">Create one now</a>
             </div>
         </div>
     </div>
 
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/app.js"></script>
+    <!-- SCRIPTS - FIXED ORDER -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
 
     <script>
-        // Show Toast
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '1';
-            }, 100);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+        console.log('🔑 Login Page Loaded');
 
         // Show Error
         function showError(message) {
@@ -362,6 +278,9 @@
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
 
+            console.log('📧 Login attempt:', email);
+
+            // Validation
             if (!email || !password) {
                 showError('❌ Please fill in all fields');
                 return;
@@ -378,26 +297,29 @@
 
             try {
                 const result = await auth.login(email, password);
+                console.log('🔐 Login result:', result);
 
                 if (result.success) {
                     showSuccess('✅ ' + result.message);
                     
+                    // Remember email if checkbox is checked
                     if (rememberMe) {
                         localStorage.setItem('rememberEmail', email);
                     } else {
                         localStorage.removeItem('rememberEmail');
                     }
 
+                    // Redirect after short delay
                     setTimeout(() => {
-                        window.location.href = '/index.html';
-                    }, 1500);
+                        window.location.href = 'index.html';
+                    }, 1000);
                 } else {
                     showError('❌ ' + (result.message || 'Login failed'));
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Sign In';
                 }
             } catch (error) {
-                console.error('Login error:', error);
+                console.error('❌ Login error:', error);
                 showError('❌ An error occurred. Please try again.');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Sign In';
@@ -406,14 +328,17 @@
 
         // Check if already logged in
         document.addEventListener('DOMContentLoaded', () => {
+            // Load remembered email
             const savedEmail = localStorage.getItem('rememberEmail');
             if (savedEmail) {
                 document.getElementById('email').value = savedEmail;
                 document.getElementById('rememberMe').checked = true;
             }
 
-            if (auth.isAuthenticated()) {
-                window.location.href = '/index.html';
+            // Redirect if already logged in
+            if (auth && auth.isAuthenticated()) {
+                console.log('ℹ️ Already logged in, redirecting...');
+                window.location.href = 'index.html';
             }
         });
 
