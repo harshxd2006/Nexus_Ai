@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All AI Tools - NexusAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ========================================
+           NAVBAR STYLES
+           ======================================== */
+        .navbar {
+            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #64c8ff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .navbar-menu a {
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .navbar-menu a:hover {
+            color: #64c8ff;
+        }
+
+        .navbar-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #64c8ff;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-menu a:hover::after {
+            width: 100%;
+        }
+
+        #nav-auth {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        /* ========================================
+           MAIN CONTAINER
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+        }
+
+        /* ========================================
+           FILTER & SEARCH SECTION
+           ======================================== */
+        .tools-controls {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: #707070;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #64c8ff;
+            background: rgba(100, 200, 255, 0.1);
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.2);
+        }
+
+        .search-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
+        }
+
+        /* ========================================
+           CATEGORY FILTER
+           ======================================== */
+        .category-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.7rem 1.5rem;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 25px;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            border-color: #64c8ff;
+            color: #64c8ff;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            border-color: #64c8ff;
+            color: white;
+        }
+
+        /* ========================================
+           TOOLS GRID
+           ======================================== */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(100, 200, 255, 0.5);
+            box-shadow: 0 8px 30px rgba(100, 200, 255, 0.2);
+        }
+
+        .tool-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+
+        .tool-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .tool-info {
+            flex: 1;
+        }
+
+        .tool-info h3 {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 0.3rem;
+        }
+
+        .tool-category {
+            color: #64c8ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .tool-description {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .tool-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .reviews {
+            color: #a0a0a0;
+        }
+
+        .tool-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 20, 147, 0.15);
+            color: #ff1493;
+            border: 1px solid rgba(255, 20, 147, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 20, 147, 0.25);
+            border-color: #ff1493;
+        }
+
+        /* ========================================
+           PAGINATION
+           ======================================== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 3rem 0;
+        }
+
+        .page-btn {
+            padding: 0.7rem 1rem;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 6px;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .page-btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            border-color: #64c8ff;
+            color: #64c8ff;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            border-color: #64c8ff;
+            color: white;
+        }
+
+        /* ========================================
+           NO RESULTS
+           ======================================== */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #a0a0a0;
+            font-size: 1.1rem;
+        }
+
+        /* ========================================
+           LOADING
+           ======================================== */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #a0a0a0;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+
+            .category-filter {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">🚀 NexusAI</div>
+            <div class="navbar-menu">
+                <a href="/index.html">Home</a>
+                <a href="/tools-listing.html">Tools</a>
+                <a href="/trending.html">Trending</a>
+            </div>
+            <div id="nav-auth"></div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h1>🔍 Discover AI Tools</h1>
+            <p>Browse and explore thousands of powerful AI tools</p>
+        </div>
+
+        <!-- SEARCH & CONTROLS -->
+        <div class="tools-controls">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search tools by name, description, or category..."
+                    autocomplete="off"
+                >
+            </div>
+            <button class="search-btn">🔎 Search</button>
+        </div>
+
+        <!-- CATEGORY FILTER -->
+        <div class="category-filter">
+            <button class="filter-btn active" onclick="loadAllTools()">All Tools</button>
+            <button class="filter-btn" onclick="filterByCategory('AI Writing')">📝 AI Writing</button>
+            <button class="filter-btn" onclick="filterByCategory('Image Generation')">🎨 Image Gen</button>
+            <button class="filter-btn" onclick="filterByCategory('Code Assistant')">💻 Code</button>
+            <button class="filter-btn" onclick="filterByCategory('Video')">🎥 Video</button>
+            <button class="filter-btn" onclick="filterByCategory('Music')">🎵 Music</button>
+            <button class="filter-btn" onclick="filterByCategory('Analytics')">📊 Analytics</button>
+        </div>
+
+        <!-- TOOLS GRID -->
+        <div class="tools-grid" id="tools-container">
+            <div class="loading">Loading tools...</div>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- PAGE-SPECIFIC LOGIC -->
+    <script>
+        let currentPage = 1;
+        let currentCategory = 'all';
+
+        // ============================================
+        // LOAD ALL TOOLS
+        // ============================================
+        async function loadAllTools(page = 1) {
+            showLoading();
+            currentCategory = 'all';
+            updateActiveFilter('All Tools');
+
+            try {
+                const response = await toolsAPI.getAll(page, 12);
+                hideLoading();
+
+                if (response.success) {
+                    currentPage = page;
+                    renderToolsList(response.data.tools, 'tools-container');
+                    
+                    if (response.data.totalPages > 1) {
+                        document.getElementById('pagination').innerHTML = 
+                            createPaginationButtons(page, response.data.totalPages, 'loadAllTools');
+                    }
+                    
+                    showToast(`✅ Loaded ${response.data.tools.length} tools`, 'success');
+                } else {
+                    showToast('❌ Failed to load tools', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error loading tools:', error);
+                showToast('❌ An error occurred', 'error');
+            }
+        }
+
+        // ============================================
+        // FILTER BY CATEGORY (OVERRIDE)
+        // ============================================
+        async function filterByCategoryPage(category, page = 1) {
+            showLoading();
+            currentCategory = category;
+            updateActiveFilter(category);
+
+            try {
+                const response = await toolsAPI.getByCategory(category, page, 12);
+                hideLoading();
+
+                if (response.success) {
+                    currentPage = page;
+                    renderToolsList(response.data.tools, 'tools-container');
+                    
+                    if (response.data.totalPages > 1) {
+                        document.getElementById('pagination').innerHTML = 
+                            createPaginationButtons(page, response.data.totalPages, (p) => filterByCategoryPage(category, p));
+                    }
+                    
+                    showToast(`✅ Showing ${response.data.tools.length} tools in ${category}`, 'success');
+                } else {
+                    showToast('❌ Failed to load category', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Category filter error:', error);
+                showToast('❌ An error occurred', 'error');
+            }
+        }
+
+        // ============================================
+        // UPDATE ACTIVE FILTER BUTTON
+        // ============================================
+        function updateActiveFilter(categoryName) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(categoryName) || 
+                    (categoryName === 'All Tools' && btn.textContent.includes('All'))) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // ============================================
+        // INITIALIZE PAGE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('📋 Tools Listing Page Loaded');
+            updateNavbar();
+            
+            // Load all tools on page load
+            await loadAllTools(1);
+
+            // Setup search
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const query = searchInput.value.trim();
+                        if (query.length >= 2) {
+                            performSearch(query, 1);
+                        }
+                    }
+                });
+            }
+
+            // Setup search button
+            document.querySelector('.search-btn').addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query.length >= 2) {
+                    performSearch(query, 1);
+                } else {
+                    showToast('Please enter at least 2 characters', 'warning');
+                }
+            });
+        });
+
+        // ============================================
+        // OVERRIDE FILTER TO USE PAGE-SPECIFIC VERSION
+        // ============================================
+        window.filterByCategory = function(category) {
+            filterByCategoryPage(category, 1);
+        };
+    </script>
+</body>
+</html>

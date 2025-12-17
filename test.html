@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test JS Loading</title>
+</head>
+<body>
+    <h1>Testing JavaScript Loading</h1>
+    
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <script>
+        console.log('Test page loaded');
+        
+        // Check if functions exist
+        console.log('updateNavbar exists?', typeof updateNavbar);
+        console.log('auth exists?', typeof auth);
+        console.log('usersAPI exists?', typeof usersAPI);
+        
+        // Try to call updateNavbar if it exists
+        if (typeof updateNavbar === 'function') {
+            updateNavbar();
+        }
+    </script>
+</body>
+</html>

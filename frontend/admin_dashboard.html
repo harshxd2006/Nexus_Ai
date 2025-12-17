@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NexusAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ========================================
+           NAVBAR STYLES
+           ======================================== */
+        .navbar {
+            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #64c8ff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .navbar-menu a {
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .navbar-menu a:hover {
+            color: #64c8ff;
+        }
+
+        #nav-auth {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        /* ========================================
+           MAIN CONTAINER
+           ======================================== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ========================================
+           TABS
+           ======================================== */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(100, 200, 255, 0.1);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: #a0a0a0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #64c8ff;
+        }
+
+        .tab-btn.active {
+            color: #64c8ff;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #64c8ff, #4a9fd8);
+        }
+
+        /* ========================================
+           TAB CONTENT
+           ======================================== */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ========================================
+           STATS GRID
+           ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            color: #64c8ff;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        /* ========================================
+           TABLE STYLES
+           ======================================== */
+        .table-section {
+            background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
+            border: 1px solid rgba(100, 200, 255, 0.15);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            color: #64c8ff;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(100, 200, 255, 0.1);
+            padding: 1rem;
+            text-align: left;
+            color: #64c8ff;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            color: #a0a0a0;
+        }
+
+        tr:hover {
+            background: rgba(100, 200, 255, 0.05);
+        }
+
+        /* ========================================
+           ACTION BUTTONS
+           ======================================== */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: rgba(100, 200, 255, 0.2);
+            color: #64c8ff;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+
+        .btn-view:hover {
+            background: rgba(100, 200, 255, 0.3);
+        }
+
+        .btn-approve {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-approve:hover {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-reject {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef5350;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-reject:hover {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-primary {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
+        }
+
+        /* ========================================
+           FORM STYLES
+           ======================================== */
+        .form-section {
+            background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
+            border: 1px solid rgba(100, 200, 255, 0.15);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.7rem;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #64c8ff;
+            background: rgba(100, 200, 255, 0.1);
+        }
+
+        /* ========================================
+           STATUS BADGES
+           ======================================== */
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #fbc02d;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .badge-approved {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .badge-rejected {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef5350;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .badge-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .badge-inactive {
+            background: rgba(158, 158, 158, 0.2);
+            color: #b0b0b0;
+            border: 1px solid rgba(158, 158, 158, 0.3);
+        }
+
+        /* ========================================
+           NO DATA
+           ======================================== */
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #a0a0a0;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .admin-tabs {
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .table-wrapper {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.7rem;
+            }
+
+            .action-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">🚀 NexusAI Admin</div>
+            <div class="navbar-menu">
+                <a href="/index.html">Home</a>
+                <a href="/tools-listing.html">Tools</a>
+                <a href="/admin-dashboard.html">Dashboard</a>
+            </div>
+            <div id="nav-auth"></div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h1>👨‍💼 Admin Dashboard</h1>
+            <button class="btn-primary" onclick="refreshData()">🔄 Refresh</button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🛠️</div>
+                <div class="stat-value" id="statTotalTools">0</div>
+                <div class="stat-label">Total Tools</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="statTotalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="statTotalReviews">0</div>
+                <div class="stat-label">Total Reviews</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="statPendingTools">0</div>
+                <div class="stat-label">Pending Tools</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('tools')">🛠️ Tools</button>
+            <button class="tab-btn" onclick="switchTab('pending')">⏳ Pending</button>
+            <button class="tab-btn" onclick="switchTab('users')">👥 Users</button>
+            <button class="tab-btn" onclick="switchTab('reports')">🚩 Reports</button>
+            <button class="tab-btn" onclick="switchTab('addTool')">➕ Add Tool</button>
+        </div>
+
+        <!-- TOOLS TAB -->
+        <div class="tab-content active" id="toolsTab">
+            <div class="table-section">
+                <div class="section-header">
+                    <h2>All Tools</h2>
+                    <span style="color: #64c8ff;">Total: <span id="toolsCount">0</span></span>
+                </div>
+                <div class="table-wrapper">
+                    <table id="toolsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Rating</th>
+                                <th>Reviews</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="toolsTableBody">
+                            <tr><td colspan="6" class="no-data">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENDING TOOLS TAB -->
+        <div class="tab-content" id="pendingTab">
+            <div class="table-section">
+                <div class="section-header">
+                    <h2>Pending Tool Approvals</h2>
+                    <span style="color: #64c8ff;">Count: <span id="pendingCount">0</span></span>
+                </div>
+                <div class="table-wrapper">
+                    <table id="pendingTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Submitted By</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingTableBody">
+                            <tr><td colspan="6" class="no-data">No pending tools</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div class="tab-content" id="usersTab">
+            <div class="table-section">
+                <div class="section-header">
+                    <h2>Registered Users</h2>
+                    <span style="color: #64c8ff;">Total: <span id="usersCount">0</span></span>
+                </div>
+                <div class="table-wrapper">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Joined</th>
+                                <th>Reviews</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="6" class="no-data">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTS TAB -->
+        <div class="tab-content" id="reportsTab">
+            <div class="table-section">
+                <div class="section-header">
+                    <h2>Flagged Reviews</h2>
+                    <span style="color: #64c8ff;">Count: <span id="reportsCount">0</span></span>
+                </div>
+                <div class="table-wrapper">
+                    <table id="reportsTable">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Reviewer</th>
+                                <th>Reason</th>
+                                <th>Date Reported</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <tr><td colspan="6" class="no-data">No flagged reviews</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD TOOL TAB -->
+        <div class="tab-content" id="addToolTab">
+            <div class="form-section">
+                <h2 style="color: #64c8ff; margin-bottom: 2rem;">➕ Add New Tool</h2>
+                <form id="addToolForm">
+                    <div class="form-group">
+                        <label class="form-label" for="toolName">Tool Name</label>
+                        <input type="text" id="toolName" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="toolCategory">Category</label>
+                        <input type="text" id="toolCategory" class="form-input" placeholder="e.g., AI Writing" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="toolDescription">Description</label>
+                        <textarea id="toolDescription" class="form-textarea" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="toolWebsite">Website URL</label>
+                        <input type="url" id="toolWebsite" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="toolLogo">Logo URL</label>
+                        <input type="url" id="toolLogo" class="form-input">
+                    </div>
+
+                    <button type="submit" class="btn-primary">✅ Add Tool</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- ADMIN LOGIC -->
+    <script>
+        // ============================================
+        // CHECK ADMIN ACCESS
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavbar();
+
+            if (!auth.isAuthenticated()) {
+                showToast('❌ Please login', 'warning');
+                setTimeout(() => window.location.href = '/login.html', 1500);
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user.role !== 'admin') {
+                showToast('❌ Admin access required', 'error');
+                setTimeout(() => window.location.href = '/index.html', 1500);
+                return;
+            }
+
+            loadAdminData();
+        });
+
+        // ============================================
+        // LOAD ALL ADMIN DATA
+        // ============================================
+        async function loadAdminData() {
+            showLoading();
+            try {
+                await Promise.all([
+                    loadTools(),
+                    loadPendingTools(),
+                    loadUsers(),
+                    loadReports()
+                ]);
+                hideLoading();
+            } catch (error) {
+                hideLoading();
+                console.error('Error loading admin data:', error);
+                showToast('❌ Error loading data', 'error');
+            }
+        }
+
+        // ============================================
+        // LOAD TOOLS
+        // ============================================
+        async function loadTools() {
+            try {
+                const response = await adminAPI.getTools();
+                if (response.success) {
+                    const tools = response.data;
+                    document.getElementById('statTotalTools').textContent = tools.length;
+                    document.getElementById('toolsCount').textContent = tools.length;
+
+                    const tableBody = document.getElementById('toolsTableBody');
+                    if (tools.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="no-data">No tools found</td></tr>';
+                        return;
+                    }
+
+                    tableBody.innerHTML = tools.map(tool => `
+                        <tr>
+                            <td><strong>${tool.name}</strong></td>
+                            <td>${tool.category || '-'}</td>
+                            <td>⭐ ${tool.averageRating ? tool.averageRating.toFixed(1) : 'N/A'}</td>
+                            <td>${tool.reviewCount || 0}</td>
+                            <td><span class="badge badge-active">Active</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-small btn-view" onclick="viewTool('${tool._id}')">View</button>
+                                    <button class="btn-small btn-delete" onclick="deleteTool('${tool._id}')">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading tools:', error);
+            }
+        }
+
+        // ============================================
+        // LOAD PENDING TOOLS
+        // ============================================
+        async function loadPendingTools() {
+            try {
+                const response = await adminAPI.getPendingTools();
+                if (response.success) {
+                    const tools = response.data;
+                    document.getElementById('statPendingTools').textContent = tools.length;
+                    document.getElementById('pendingCount').textContent = tools.length;
+
+                    const tableBody = document.getElementById('pendingTableBody');
+                    if (tools.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="no-data">No pending tools</td></tr>';
+                        return;
+                    }
+
+                    tableBody.innerHTML = tools.map(tool => `
+                        <tr>
+                            <td><strong>${tool.name}</strong></td>
+                            <td>${tool.submittedBy?.name || 'Unknown'}</td>
+                            <td>${tool.category || '-'}</td>
+                            <td>${formatDate(tool.createdAt)}</td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-small btn-approve" onclick="approveTool('${tool._id}')">Approve</button>
+                                    <button class="btn-small btn-reject" onclick="rejectTool('${tool._id}')">Reject</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading pending tools:', error);
+            }
+        }
+
+        // ============================================
+        // LOAD USERS
+        // ============================================
+        async function loadUsers() {
+            try {
+                const response = await adminAPI.getUsers();
+                if (response.success) {
+                    const users = response.data;
+                    document.getElementById('statTotalUsers').textContent = users.length;
+                    document.getElementById('usersCount').textContent = users.length;
+
+                    const tableBody = document.getElementById('usersTableBody');
+                    if (users.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="no-data">No users found</td></tr>';
+                        return;
+                    }
+
+                    tableBody.innerHTML = users.map(user => `
+                        <tr>
+                            <td><strong>${user.name}</strong></td>
+                            <td>${user.email}</td>
+                            <td>${formatDate(user.createdAt)}</td>
+                            <td>${user.reviewCount || 0}</td>
+                            <td><span class="badge ${user.isActive ? 'badge-active' : 'badge-inactive'}">${user.isActive ? 'Active' : 'Inactive'}</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-small btn-view" onclick="viewUser('${user._id}')">View</button>
+                                    <button class="btn-small btn-delete" onclick="deleteUser('${user._id}')">Ban</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        // ============================================
+        // LOAD REPORTS
+        // ============================================
+        async function loadReports() {
+            try {
+                const response = await adminAPI.getReports();
+                if (response.success) {
+                    const reports = response.data;
+                    document.getElementById('statTotalReviews').textContent = reports.length;
+                    document.getElementById('reportsCount').textContent = reports.length;
+
+                    const tableBody = document.getElementById('reportsTableBody');
+                    if (reports.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="no-data">No flagged reviews</td></tr>';
+                        return;
+                    }
+
+                    tableBody.innerHTML = reports.map(report => `
+                        <tr>
+                            <td>${report.toolId?.name || 'Unknown'}</td>
+                            <td>${report.reviewerId?.name || 'Unknown'}</td>
+                            <td>${report.reason}</td>
+                            <td>${formatDate(report.createdAt)}</td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-small btn-approve" onclick="resolveReport('${report._id}')">Resolve</button>
+                                    <button class="btn-small btn-reject" onclick="dismissReport('${report._id}')">Dismiss</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        // ============================================
+        // TAB SWITCHING
+        // ============================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ============================================
+        // APPROVE TOOL
+        // ============================================
+        async function approveTool(toolId) {
+            if (confirm('Approve this tool?')) {
+                showLoading();
+                try {
+                    const response = await adminAPI.approveTool(toolId);
+                    hideLoading();
+                    if (response.success) {
+                        showToast('✅ Tool approved!', 'success');
+                        loadPendingTools();
+                        loadTools();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    showToast('❌ Error approving tool', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // REJECT TOOL
+        // ============================================
+        async function rejectTool(toolId) {
+            const reason = prompt('Enter rejection reason:');
+            if (!reason) return;
+
+            showLoading();
+            try {
+                const response = await adminAPI.rejectTool(toolId, reason);
+                hideLoading();
+                if (response.success) {
+                    showToast('✅ Tool rejected', 'success');
+                    loadPendingTools();
+                }
+            } catch (error) {
+                hideLoading();
+                showToast('❌ Error rejecting tool', 'error');
+            }
+        }
+
+        // ============================================
+        // DELETE TOOL
+        // ============================================
+        async function deleteTool(toolId) {
+            if (confirm('Delete this tool? This cannot be undone.')) {
+                showLoading();
+                try {
+                    const response = await adminAPI.deleteTool(toolId);
+                    hideLoading();
+                    if (response.success) {
+                        showToast('✅ Tool deleted', 'success');
+                        loadTools();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    showToast('❌ Error deleting tool', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // DELETE USER
+        // ============================================
+        async function deleteUser(userId) {
+            if (confirm('Ban this user? Their account will be deactivated.')) {
+                showLoading();
+                try {
+                    const response = await adminAPI.banUser(userId);
+                    hideLoading();
+                    if (response.success) {
+                        showToast('✅ User banned', 'success');
+                        loadUsers();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    showToast('❌ Error banning user', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // RESOLVE REPORT
+        // ============================================
+        async function resolveReport(reportId) {
+            if (confirm('Delete the flagged review?')) {
+                showLoading();
+                try {
+                    const response = await adminAPI.resolveReport(reportId);
+                    hideLoading();
+                    if (response.success) {
+                        showToast('✅ Report resolved', 'success');
+                        loadReports();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    showToast('❌ Error resolving report', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // DISMISS REPORT
+        // ============================================
+        async function dismissReport(reportId) {
+            if (confirm('Dismiss this report?')) {
+                showLoading();
+                try {
+                    const response = await adminAPI.dismissReport(reportId);
+                    hideLoading();
+                    if (response.success) {
+                        showToast('✅ Report dismissed', 'success');
+                        loadReports();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    showToast('❌ Error dismissing report', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // ADD NEW TOOL
+        // ============================================
+        document.getElementById('addToolForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const toolData = {
+                name: document.getElementById('toolName').value,
+                category: document.getElementById('toolCategory').value,
+                description: document.getElementById('toolDescription').value,
+                websiteUrl: document.getElementById('toolWebsite').value,
+                logo: document.getElementById('toolLogo').value
+            };
+
+            showLoading();
+            try {
+                const response = await toolsAPI.create(toolData);
+                hideLoading();
+
+                if (response.success) {
+                    showToast('✅ Tool added successfully!', 'success');
+                    document.getElementById('addToolForm').reset();
+                    switchTab('tools');
+                    loadTools();
+                } else {
+                    showToast('❌ ' + (response.message || 'Error adding tool'), 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error adding tool:', error);
+                showToast('❌ Error adding tool', 'error');
+            }
+        });
+
+        // ============================================
+        // REFRESH DATA
+        // ============================================
+        function refreshData() {
+            showToast('🔄 Refreshing data...', 'info');
+            loadAdminData();
+        }
+
+        // ============================================
+        // VIEW TOOL/USER (PLACEHOLDER)
+        // ============================================
+        function viewTool(toolId) {
+            window.location.href = `/tool-detail.html?id=${toolId}`;
+        }
+
+        function viewUser(userId) {
+            showToast('👤 User details modal would open here', 'info');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending - NexusAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ========================================
+           NAVBAR STYLES
+           ======================================== */
+        .navbar {
+            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #64c8ff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .navbar-menu a {
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .navbar-menu a:hover {
+            color: #64c8ff;
+        }
+
+        .navbar-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #64c8ff;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-menu a:hover::after {
+            width: 100%;
+        }
+
+        #nav-auth {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        /* ========================================
+           MAIN CONTAINER
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* ========================================
+           HEADER
+           ======================================== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           FILTERS
+           ======================================== */
+        .trending-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            color: #b0b0b0;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* ========================================
+           TRENDING GRID
+           ======================================== */
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .trending-card {
+            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trending-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(100, 200, 255, 0.5);
+            box-shadow: 0 8px 30px rgba(100, 200, 255, 0.2);
+        }
+
+        .trending-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #ff1493, #ff6b9d);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .trending-rank {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #64c8ff;
+        }
+
+        .trending-card-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            padding-top: 2rem;
+        }
+
+        .trending-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .trending-info h3 {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 0.3rem;
+        }
+
+        .trending-category {
+            color: #64c8ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .trending-description {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .trending-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .trending-rating {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .trending-growth {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .trending-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view {
+            flex: 1;
+            padding: 0.7rem;
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
+        }
+
+        /* ========================================
+           LOADING STATE
+           ======================================== */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #a0a0a0;
+        }
+
+        /* ========================================
+           NO RESULTS
+           ======================================== */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #a0a0a0;
+            background: linear-gradient(135deg, rgba(20, 50, 80, 0.15), rgba(30, 30, 50, 0.15));
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            border-radius: 8px;
+            grid-column: 1 / -1;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .trending-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trending-filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">🚀 NexusAI</div>
+            <div class="navbar-menu">
+                <a href="../index.html">Home</a>
+                <a href="tools_listing.html">Tools</a>
+                <a href="trending.html" style="color: #64c8ff;">Trending</a>
+            </div>
+            <div id="nav-auth"></div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <div class="page-header">
+            <h1>🔥 Trending AI Tools</h1>
+            <p>Discover the most popular and fastest-growing AI tools this week</p>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="trending-filters">
+            <button class="filter-btn active" onclick="filterTools('all')">All</button>
+            <button class="filter-btn" onclick="filterTools('week')">This Week</button>
+            <button class="filter-btn" onclick="filterTools('month')">This Month</button>
+            <button class="filter-btn" onclick="filterTools('rising')">Rising</button>
+            <button class="filter-btn" onclick="filterTools('top')">Top Rated</button>
+        </div>
+
+        <!-- TRENDING GRID -->
+        <div class="trending-grid" id="trendingContainer">
+            <div class="loading">Loading trending tools...</div>
+        </div>
+    </div>
+
+    <!-- FIXED: CORRECT SCRIPT PATHS -->
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+
+    <!-- PAGE-SPECIFIC LOGIC -->
+    <script>
+        // ============================================
+        // INITIALIZE PAGE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Trending Page Loaded');
+            
+            // Initialize navbar
+            if (typeof updateNavbar === 'function') {
+                updateNavbar();
+            } else {
+                console.error('updateNavbar function not found');
+                // Fallback: create a basic navbar
+                const navAuth = document.getElementById('nav-auth');
+                if (navAuth) {
+                    navAuth.innerHTML = `
+                        <div style="display: flex; gap: 1rem;">
+                            <a href="login.html" style="color: #64c8ff;">Login</a>
+                            <a href="signup.html" style="background: #64c8ff; color: white; padding: 0.5rem 1rem; border-radius: 6px;">Sign Up</a>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Load trending tools
+            loadTrendingTools();
+            
+            // Setup filter buttons
+            setupFilters();
+        });
+
+        // ============================================
+        // LOAD TRENDING TOOLS
+        // ============================================
+        async function loadTrendingTools() {
+            const container = document.getElementById('trendingContainer');
+            if (!container) return;
+            
+            try {
+                // Show loading
+                container.innerHTML = '<div class="loading">Loading trending tools...</div>';
+                
+                // Try to get tools from API
+                let tools = [];
+                
+                // First try: Check if toolsAPI exists
+                if (typeof toolsAPI !== 'undefined' && typeof toolsAPI.getTrending === 'function') {
+                    const response = await toolsAPI.getTrending();
+                    if (response.success) {
+                        tools = response.data;
+                    }
+                }
+                
+                // Fallback: Mock data if API fails
+                if (tools.length === 0) {
+                    tools = getMockTrendingTools();
+                }
+                
+                // Display tools
+                if (tools.length > 0) {
+                    renderTrendingTools(tools);
+                } else {
+                    container.innerHTML = `
+                        <div class="no-results">
+                            <h3>No trending tools found</h3>
+                            <p>Check back later for the latest AI tools!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading trending tools:', error);
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>Error loading trending tools</h3>
+                        <p>Please try again later</p>
+                        <button onclick="loadTrendingTools()" style="
+                            margin-top: 1rem;
+                            padding: 0.5rem 1rem;
+                            background: #64c8ff;
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                        ">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================
+        // RENDER TRENDING TOOLS
+        // ============================================
+        function renderTrendingTools(tools) {
+            const container = document.getElementById('trendingContainer');
+            if (!container) return;
+            
+            const toolsHTML = tools.map((tool, index) => `
+                <div class="trending-card">
+                    <div class="trending-rank">#${index + 1}</div>
+                    ${tool.isNew ? '<div class="trending-badge">NEW</div>' : ''}
+                    ${tool.isHot ? '<div class="trending-badge" style="background: linear-gradient(135deg, #ff6b00, #ff9e00);">HOT</div>' : ''}
+                    
+                    <div class="trending-card-header">
+                        <img src="${tool.logo || 'https://via.placeholder.com/60x60?text=AI'}" 
+                             alt="${tool.name}" 
+                             class="trending-logo"
+                             onerror="this.src='https://via.placeholder.com/60x60?text=AI'">
+                        <div class="trending-info">
+                            <h3>${tool.name}</h3>
+                            <p class="trending-category">${tool.category || 'AI Tool'}</p>
+                        </div>
+                    </div>
+                    
+                    <p class="trending-description">
+                        ${tool.description || 'No description available'}
+                    </p>
+                    
+                    <div class="trending-stats">
+                        <span class="trending-rating">⭐ ${tool.rating || 'New'}</span>
+                        <span class="trending-growth">📈 ${tool.growth || '+0%'}</span>
+                        <span style="color: #a0a0a0;">${tool.reviews || 0} reviews</span>
+                    </div>
+                    
+                    <div class="trending-actions">
+                        <a href="tools_detail.html?id=${tool.id || '1'}" class="btn-view">View Details</a>
+                        <button class="btn-view" style="background: rgba(100, 200, 255, 0.1); color: #64c8ff;" 
+                                onclick="addToFavorites('${tool.id || '1'}')">
+                            ❤️ Save
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = toolsHTML;
+        }
+
+        // ============================================
+        // MOCK DATA (Fallback)
+        // ============================================
+        function getMockTrendingTools() {
+            return [
+                {
+                    id: 1,
+                    name: "ChatGPT Pro",
+                    category: "Chat Assistant",
+                    description: "Advanced AI conversation with multimodal capabilities",
+                    rating: 4.8,
+                    growth: "+45%",
+                    reviews: 12500,
+                    isHot: true,
+                    logo: "https://via.placeholder.com/60x60/64c8ff/fff?text=CP"
+                },
+                {
+                    id: 2,
+                    name: "Midjourney V6",
+                    category: "Image Generation",
+                    description: "State-of-the-art AI image generator with enhanced realism",
+                    rating: 4.7,
+                    growth: "+32%",
+                    reviews: 8900,
+                    isNew: true,
+                    logo: "https://via.placeholder.com/60x60/ff1493/fff?text=MJ"
+                },
+                {
+                    id: 3,
+                    name: "GitHub Copilot",
+                    category: "Code Assistant",
+                    description: "AI pair programmer that suggests code completions",
+                    rating: 4.6,
+                    growth: "+28%",
+                    reviews: 15600,
+                    logo: "https://via.placeholder.com/60x60/4CAF50/fff?text=GC"
+                },
+                {
+                    id: 4,
+                    name: "DALL-E 3",
+                    category: "Image Generation",
+                    description: "Create realistic images and art from text descriptions",
+                    rating: 4.5,
+                    growth: "+38%",
+                    reviews: 7600,
+                    isHot: true,
+                    logo: "https://via.placeholder.com/60x60/FF9800/fff?text=DE"
+                },
+                {
+                    id: 5,
+                    name: "Claude AI",
+                    category: "Chat Assistant",
+                    description: "Constitutional AI with strong safety features",
+                    rating: 4.4,
+                    growth: "+52%",
+                    reviews: 5400,
+                    logo: "https://via.placeholder.com/60x60/9C27B0/fff?text=CA"
+                },
+                {
+                    id: 6,
+                    name: "Runway ML",
+                    category: "Video Editing",
+                    description: "AI-powered video editing and generation tools",
+                    rating: 4.3,
+                    growth: "+41%",
+                    reviews: 3200,
+                    isNew: true,
+                    logo: "https://via.placeholder.com/60x60/2196F3/fff?text=RM"
+                }
+            ];
+        }
+
+        // ============================================
+        // FILTER FUNCTIONS
+        // ============================================
+        function setupFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function filterTools(filter) {
+            console.log('Filtering by:', filter);
+            // In a real app, this would filter the data
+            // For now, just reload with a message
+            const container = document.getElementById('trendingContainer');
+            container.innerHTML = '<div class="loading">Filtering tools...</div>';
+            
+            setTimeout(() => {
+                loadTrendingTools();
+            }, 500);
+        }
+
+        // ============================================
+        // ADD TO FAVORITES
+        // ============================================
+        function addToFavorites(toolId) {
+            if (!auth || !auth.isAuthenticated || !auth.isAuthenticated()) {
+                alert('Please login to save favorites');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Check if usersAPI exists
+            if (typeof usersAPI !== 'undefined' && typeof usersAPI.addFavorite === 'function') {
+                usersAPI.addFavorite(toolId)
+                    .then(response => {
+                        if (response.success) {
+                            alert('Added to favorites!');
+                        } else {
+                            alert('Failed to add to favorites');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error saving favorite');
+                    });
+            } else {
+                alert('Added to favorites! (demo)');
+            }
+        }
+
+        // ============================================
+        // FALLBACK FUNCTIONS
+        // ============================================
+        // In case JavaScript files don't load
+        if (typeof updateNavbar === 'undefined') {
+            console.warn('updateNavbar not found, using fallback');
+            // Simple fallback navbar
+            document.addEventListener('DOMContentLoaded', function() {
+                const navAuth = document.getElementById('nav-auth');
+                if (navAuth) {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        navAuth.innerHTML = `
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <a href="profile.html" style="color: #64c8ff;">Profile</a>
+                                <button onclick="localStorage.removeItem('token'); window.location.reload();" 
+                                        style="background: #f44336; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px;">
+                                    Logout
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        navAuth.innerHTML = `
+                            <div style="display: flex; gap: 1rem;">
+                                <a href="login.html" style="color: #64c8ff;">Login</a>
+                                <a href="signup.html" style="background: #64c8ff; color: white; padding: 0.5rem 1rem; border-radius: 6px;">Sign Up</a>
+                            </div>
+                        `;
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
