@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Tools - NexusAI</title>
+    <style>
+        :root {
+            --color-primary: #32b8c6;
+            --color-primary-hover: #1d748f;
+            --color-bg: #1f2122;
+            --color-surface: #26282a;
+            --color-text: #e8e8e8;
+            --color-text-secondary: #a7a9a9;
+            --color-border: #3a3d3e;
+            --color-success: #2bb877;
+            --color-warning: #e68161;
+            --color-error: #c0152f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        nav {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--color-primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+        }
+
+        .page-header p {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Compare Section */
+        .compare-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tool-selector {
+            background: var(--color-surface);
+            padding: 1.5rem;
+            border-radius: 0.8rem;
+            border: 1px solid var(--color-border);
+        }
+
+        .tool-selector h3 {
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+        }
+
+        .tool-search {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .tool-search input {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            color: var(--color-text);
+            font-size: 1rem;
+        }
+
+        .tool-search input::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        .tool-search input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(50, 184, 198, 0.2);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: var(--color-bg);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-name {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .result-category {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        .selected-tool {
+            background: var(--color-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .selected-tool.active {
+            border: 2px solid var(--color-primary);
+        }
+
+        .tool-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--color-border);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .btn-remove {
+            background: var(--color-error);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-remove:hover {
+            background: #a0111f;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            background: var(--color-surface);
+            border-radius: 0.8rem;
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 200px 1fr 1fr;
+            background: var(--color-bg);
+            border-bottom: 2px solid var(--color-border);
+            font-weight: 600;
+        }
+
+        .table-header > div {
+            padding: 1rem;
+            border-right: 1px solid var(--color-border);
+        }
+
+        .table-header > div:last-child {
+            border-right: none;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 1fr;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row > div {
+            padding: 1rem;
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+        }
+
+        .table-row > div:last-child {
+            border-right: none;
+        }
+
+        .table-label {
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            background: var(--color-bg);
+        }
+
+        .rating {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .price-free {
+            color: var(--color-success);
+            font-weight: 600;
+        }
+
+        .price-paid {
+            color: var(--color-warning);
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-check {
+            color: var(--color-success);
+            font-weight: bold;
+        }
+
+        /* Loading & Empty State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--color-text-secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--color-border);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Export & Share */
+        .compare-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .btn-export {
+            background: var(--color-primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-export:hover {
+            background: var(--color-primary-hover);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--color-text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .compare-section {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 100px 1fr 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .compare-actions {
+                flex-direction: column;
+            }
+
+            .btn,
+            .btn-export {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav id="navbar"></nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1>🔄 Compare Tools</h1>
+            <p>Side-by-side comparison of AI tools to make the right choice</p>
+        </div>
+
+        <!-- Tool Selectors -->
+        <div class="compare-section">
+            <!-- Tool 1 -->
+            <div class="tool-selector">
+                <h3>Tool 1</h3>
+                <div class="tool-search">
+                    <input 
+                        type="text" 
+                        id="search1" 
+                        placeholder="Search tools..."
+                        autocomplete="off"
+                    >
+                    <div class="search-results" id="results1"></div>
+                </div>
+                <div class="selected-tool" id="selected1">
+                    <p style="color: var(--color-text-secondary);">Search and select a tool</p>
+                </div>
+            </div>
+
+            <!-- Tool 2 -->
+            <div class="tool-selector">
+                <h3>Tool 2</h3>
+                <div class="tool-search">
+                    <input 
+                        type="text" 
+                        id="search2" 
+                        placeholder="Search tools..."
+                        autocomplete="off"
+                    >
+                    <div class="search-results" id="results2"></div>
+                </div>
+                <div class="selected-tool" id="selected2">
+                    <p style="color: var(--color-text-secondary);">Search and select a tool</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div id="comparisonContainer" style="display: none;">
+            <div class="comparison-table">
+                <div class="table-header">
+                    <div>Feature</div>
+                    <div id="tool1Header">Tool 1</div>
+                    <div id="tool2Header">Tool 2</div>
+                </div>
+
+                <!-- Overview -->
+                <div class="table-row">
+                    <div class="table-label">Name</div>
+                    <div id="name1">-</div>
+                    <div id="name2">-</div>
+                </div>
+
+                <div class="table-row">
+                    <div class="table-label">Description</div>
+                    <div id="desc1">-</div>
+                    <div id="desc2">-</div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="table-row">
+                    <div class="table-label">Pricing</div>
+                    <div id="price1">-</div>
+                    <div id="price2">-</div>
+                </div>
+
+                <!-- Category -->
+                <div class="table-row">
+                    <div class="table-label">Category</div>
+                    <div id="category1">-</div>
+                    <div id="category2">-</div>
+                </div>
+
+                <!-- Ratings -->
+                <div class="table-row">
+                    <div class="table-label">Average Rating</div>
+                    <div id="rating1">-</div>
+                    <div id="rating2">-</div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="table-row">
+                    <div class="table-label">Reviews</div>
+                    <div id="reviews1">-</div>
+                    <div id="reviews2">-</div>
+                </div>
+
+                <!-- Website -->
+                <div class="table-row">
+                    <div class="table-label">Website</div>
+                    <div id="website1">-</div>
+                    <div id="website2">-</div>
+                </div>
+
+                <!-- Features -->
+                <div class="table-row">
+                    <div class="table-label">Features</div>
+                    <div id="features1">-</div>
+                    <div id="features2">-</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="compare-actions">
+                <button class="btn-export" onclick="compareTools.exportToCSV()">📥 Export as CSV</button>
+                <button class="btn-export" onclick="compareTools.shareComparison()">📤 Share</button>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <p>👈 Select two tools to start comparing</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 NexusAI. All rights reserved.</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/app.js"></script>
+
+    <script>
+        const compareTools = {
+            tool1: null,
+            tool2: null,
+            allTools: [],
+
+            async init() {
+                await this.loadTools();
+                this.setupSearchListeners();
+                this.updateNavbar();
+            },
+
+            async loadTools() {
+                try {
+                    const response = await toolsAPI.getAll(1, 500);
+                    this.allTools = response.tools || [];
+                } catch (error) {
+                    console.error('Failed to load tools:', error);
+                    this.allTools = [];
+                }
+            },
+
+            setupSearchListeners() {
+                document.getElementById('search1').addEventListener('input', (e) => {
+                    this.handleSearch(e.target.value, 1);
+                });
+                document.getElementById('search2').addEventListener('input', (e) => {
+                    this.handleSearch(e.target.value, 2);
+                });
+
+                // Close search results on outside click
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.tool-search')) {
+                        document.getElementById('results1').classList.remove('show');
+                        document.getElementById('results2').classList.remove('show');
+                    }
+                });
+            },
+
+            handleSearch(query, toolNumber) {
+                if (!query) {
+                    document.getElementById(`results${toolNumber}`).classList.remove('show');
+                    return;
+                }
+
+                const filtered = this.allTools.filter(tool =>
+                    tool.name.toLowerCase().includes(query.toLowerCase()) ||
+                    tool.description.toLowerCase().includes(query.toLowerCase())
+                ).slice(0, 10);
+
+                this.displaySearchResults(filtered, toolNumber);
+            },
+
+            displaySearchResults(tools, toolNumber) {
+                const resultsDiv = document.getElementById(`results${toolNumber}`);
+                
+                if (tools.length === 0) {
+                    resultsDiv.innerHTML = '<div class="search-result-item">No tools found</div>';
+                    resultsDiv.classList.add('show');
+                    return;
+                }
+
+                resultsDiv.innerHTML = tools.map(tool => `
+                    <div class="search-result-item" onclick="compareTools.selectTool(${tool.id}, ${toolNumber})">
+                        <div class="result-name">${tool.name}</div>
+                        <div class="result-category">${tool.category}</div>
+                    </div>
+                `).join('');
+                resultsDiv.classList.add('show');
+            },
+
+            selectTool(toolId, toolNumber) {
+                const tool = this.allTools.find(t => t.id === toolId);
+                if (!tool) return;
+
+                if (toolNumber === 1) {
+                    this.tool1 = tool;
+                    document.getElementById('search1').value = tool.name;
+                } else {
+                    this.tool2 = tool;
+                    document.getElementById('search2').value = tool.name;
+                }
+
+                // Close search results
+                document.getElementById(`results${toolNumber}`).classList.remove('show');
+
+                // Update selected tool display
+                this.updateSelectedToolDisplay();
+
+                // Show comparison if both tools selected
+                if (this.tool1 && this.tool2) {
+                    this.displayComparison();
+                }
+            },
+
+            updateSelectedToolDisplay() {
+                // Update Tool 1
+                if (this.tool1) {
+                    document.getElementById('selected1').innerHTML = `
+                        <div class="tool-logo">🔧</div>
+                        <strong>${this.tool1.name}</strong>
+                        <small style="color: var(--color-text-secondary);">${this.tool1.category}</small>
+                        <button class="btn-remove" onclick="compareTools.removeTool(1)">Remove</button>
+                    `;
+                    document.getElementById('selected1').classList.add('active');
+                } else {
+                    document.getElementById('selected1').innerHTML = `<p style="color: var(--color-text-secondary);">Search and select a tool</p>`;
+                    document.getElementById('selected1').classList.remove('active');
+                }
+
+                // Update Tool 2
+                if (this.tool2) {
+                    document.getElementById('selected2').innerHTML = `
+                        <div class="tool-logo">⚙️</div>
+                        <strong>${this.tool2.name}</strong>
+                        <small style="color: var(--color-text-secondary);">${this.tool2.category}</small>
+                        <button class="btn-remove" onclick="compareTools.removeTool(2)">Remove</button>
+                    `;
+                    document.getElementById('selected2').classList.add('active');
+                } else {
+                    document.getElementById('selected2').innerHTML = `<p style="color: var(--color-text-secondary);">Search and select a tool</p>`;
+                    document.getElementById('selected2').classList.remove('active');
+                }
+            },
+
+            removeTool(toolNumber) {
+                if (toolNumber === 1) {
+                    this.tool1 = null;
+                    document.getElementById('search1').value = '';
+                } else {
+                    this.tool2 = null;
+                    document.getElementById('search2').value = '';
+                }
+                this.updateSelectedToolDisplay();
+                document.getElementById('comparisonContainer').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            },
+
+            displayComparison() {
+                // Update headers
+                document.getElementById('tool1Header').textContent = this.tool1.name;
+                document.getElementById('tool2Header').textContent = this.tool2.name;
+
+                // Update all fields
+                document.getElementById('name1').textContent = this.tool1.name;
+                document.getElementById('name2').textContent = this.tool2.name;
+
+                document.getElementById('desc1').textContent = this.tool1.description;
+                document.getElementById('desc2').textContent = this.tool2.description;
+
+                document.getElementById('price1').innerHTML = this.getPriceHTML(this.tool1.pricing);
+                document.getElementById('price2').innerHTML = this.getPriceHTML(this.tool2.pricing);
+
+                document.getElementById('category1').textContent = this.tool1.category;
+                document.getElementById('category2').textContent = this.tool2.category;
+
+                document.getElementById('rating1').innerHTML = `<span class="rating">⭐ ${(this.tool1.averageRating || 0).toFixed(1)}/5</span>`;
+                document.getElementById('rating2').innerHTML = `<span class="rating">⭐ ${(this.tool2.averageRating || 0).toFixed(1)}/5</span>`;
+
+                document.getElementById('reviews1').textContent = `${this.tool1.reviewCount || 0} reviews`;
+                document.getElementById('reviews2').textContent = `${this.tool2.reviewCount || 0} reviews`;
+
+                document.getElementById('website1').innerHTML = `<a href="${this.tool1.website}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
+                document.getElementById('website2').innerHTML = `<a href="${this.tool2.website}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
+
+                document.getElementById('features1').innerHTML = this.getFeaturesHTML(this.tool1.features);
+                document.getElementById('features2').innerHTML = this.getFeaturesHTML(this.tool2.features);
+
+                // Show comparison
+                document.getElementById('comparisonContainer').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+            },
+
+            getPriceHTML(pricing) {
+                if (!pricing) return '-';
+                if (pricing.toLowerCase().includes('free')) {
+                    return `<span class="price-free">✓ ${pricing}</span>`;
+                }
+                return `<span class="price-paid">${pricing}</span>`;
+            },
+
+            getFeaturesHTML(features) {
+                if (!features || features.length === 0) return '-';
+                return `
+                    <div class="features-list">
+                        ${features.slice(0, 5).map(f => `
+                            <div class="feature-item">
+                                <span class="feature-check">✓</span>
+                                <span>${f}</span>
+                            </div>
+                        `).join('')}
+                        ${features.length > 5 ? `<div class="feature-item"><em>+${features.length - 5} more</em></div>` : ''}
+                    </div>
+                `;
+            },
+
+            exportToCSV() {
+                if (!this.tool1 || !this.tool2) return;
+
+                const data = [
+                    ['Feature', this.tool1.name, this.tool2.name],
+                    ['Pricing', this.tool1.pricing || '-', this.tool2.pricing || '-'],
+                    ['Category', this.tool1.category || '-', this.tool2.category || '-'],
+                    ['Rating', this.tool1.averageRating || '-', this.tool2.averageRating || '-'],
+                    ['Reviews', this.tool1.reviewCount || '-', this.tool2.reviewCount || '-']
+                ];
+
+                const csv = data.map(row => row.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `compare-${this.tool1.name}-${this.tool2.name}.csv`;
+                a.click();
+            },
+
+            shareComparison() {
+                if (!this.tool1 || !this.tool2) return;
+
+                const text = `Check out this comparison: ${this.tool1.name} vs ${this.tool2.name} on NexusAI!`;
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Tool Comparison',
+                        text: text,
+                        url: window.location.href
+                    });
+                } else {
+                    alert(text);
+                }
+            },
+
+            updateNavbar() {
+                updateNavbar();
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            compareTools.init();
+        });
+    </script>
+</body>
+</html>
