@@ -31,7 +31,6 @@
             line-height: 1.6;
         }
 
-        /* Navbar */
         nav {
             background: var(--color-surface);
             border-bottom: 1px solid var(--color-border);
@@ -109,14 +108,12 @@
             color: var(--color-primary);
         }
 
-        /* Main Content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
 
-        /* Header */
         .page-header {
             text-align: center;
             margin-bottom: 3rem;
@@ -133,7 +130,6 @@
             font-size: 1.1rem;
         }
 
-        /* Compare Section */
         .compare-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -191,6 +187,7 @@
             overflow-y: auto;
             display: none;
             z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
         .search-results.show {
@@ -267,7 +264,6 @@
             background: #a0111f;
         }
 
-        /* Comparison Table */
         .comparison-table {
             background: var(--color-surface);
             border-radius: 0.8rem;
@@ -352,7 +348,6 @@
             font-weight: bold;
         }
 
-        /* Loading & Empty State */
         .loading {
             text-align: center;
             padding: 2rem;
@@ -380,14 +375,6 @@
             color: var(--color-text-secondary);
         }
 
-        .empty-state svg {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Export & Share */
         .compare-actions {
             display: flex;
             gap: 1rem;
@@ -410,7 +397,6 @@
             background: var(--color-primary-hover);
         }
 
-        /* Footer */
         footer {
             background: var(--color-surface);
             border-top: 1px solid var(--color-border);
@@ -420,7 +406,6 @@
             color: var(--color-text-secondary);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .compare-section {
                 grid-template-columns: 1fr;
@@ -461,19 +446,15 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav id="navbar"></nav>
 
-    <!-- Main Content -->
     <div class="container">
         <div class="page-header">
             <h1>🔄 Compare Tools</h1>
             <p>Side-by-side comparison of AI tools to make the right choice</p>
         </div>
 
-        <!-- Tool Selectors -->
         <div class="compare-section">
-            <!-- Tool 1 -->
             <div class="tool-selector">
                 <h3>Tool 1</h3>
                 <div class="tool-search">
@@ -490,7 +471,6 @@
                 </div>
             </div>
 
-            <!-- Tool 2 -->
             <div class="tool-selector">
                 <h3>Tool 2</h3>
                 <div class="tool-search">
@@ -508,7 +488,6 @@
             </div>
         </div>
 
-        <!-- Comparison Table -->
         <div id="comparisonContainer" style="display: none;">
             <div class="comparison-table">
                 <div class="table-header">
@@ -517,7 +496,6 @@
                     <div id="tool2Header">Tool 2</div>
                 </div>
 
-                <!-- Overview -->
                 <div class="table-row">
                     <div class="table-label">Name</div>
                     <div id="name1">-</div>
@@ -530,42 +508,36 @@
                     <div id="desc2">-</div>
                 </div>
 
-                <!-- Pricing -->
                 <div class="table-row">
                     <div class="table-label">Pricing</div>
                     <div id="price1">-</div>
                     <div id="price2">-</div>
                 </div>
 
-                <!-- Category -->
                 <div class="table-row">
                     <div class="table-label">Category</div>
                     <div id="category1">-</div>
                     <div id="category2">-</div>
                 </div>
 
-                <!-- Ratings -->
                 <div class="table-row">
                     <div class="table-label">Average Rating</div>
                     <div id="rating1">-</div>
                     <div id="rating2">-</div>
                 </div>
 
-                <!-- Reviews -->
                 <div class="table-row">
                     <div class="table-label">Reviews</div>
                     <div id="reviews1">-</div>
                     <div id="reviews2">-</div>
                 </div>
 
-                <!-- Website -->
                 <div class="table-row">
                     <div class="table-label">Website</div>
                     <div id="website1">-</div>
                     <div id="website2">-</div>
                 </div>
 
-                <!-- Features -->
                 <div class="table-row">
                     <div class="table-label">Features</div>
                     <div id="features1">-</div>
@@ -573,20 +545,17 @@
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="compare-actions">
                 <button class="btn-export" onclick="compareTools.exportToCSV()">📥 Export as CSV</button>
                 <button class="btn-export" onclick="compareTools.shareComparison()">📤 Share</button>
             </div>
         </div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="empty-state">
             <p>👈 Select two tools to start comparing</p>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2025 NexusAI. All rights reserved.</p>
     </footer>
@@ -602,6 +571,7 @@
             allTools: [],
 
             async init() {
+                console.log('🔄 Initializing Compare Tools...');
                 await this.loadTools();
                 this.setupSearchListeners();
                 this.updateNavbar();
@@ -609,23 +579,42 @@
 
             async loadTools() {
                 try {
+                    console.log('📡 Loading all tools...');
+                    
+                    if (typeof toolsAPI === 'undefined') {
+                        console.error('❌ toolsAPI not available');
+                        return;
+                    }
+
                     const response = await toolsAPI.getAll(1, 500);
-                    this.allTools = response.tools || [];
+                    console.log('📦 API Response:', response);
+
+                    if (response.success && response.data) {
+                        this.allTools = response.data.tools || [];
+                        console.log(`✅ Loaded ${this.allTools.length} tools`);
+                    } else {
+                        console.error('❌ Failed to load tools:', response.message);
+                        this.allTools = [];
+                    }
                 } catch (error) {
-                    console.error('Failed to load tools:', error);
+                    console.error('❌ Error loading tools:', error);
                     this.allTools = [];
                 }
             },
 
             setupSearchListeners() {
-                document.getElementById('search1').addEventListener('input', (e) => {
+                const search1 = document.getElementById('search1');
+                const search2 = document.getElementById('search2');
+
+                search1.addEventListener('input', (e) => {
                     this.handleSearch(e.target.value, 1);
                 });
-                document.getElementById('search2').addEventListener('input', (e) => {
+
+                search2.addEventListener('input', (e) => {
                     this.handleSearch(e.target.value, 2);
                 });
 
-                // Close search results on outside click
+                // Close results on outside click
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.tool-search')) {
                         document.getElementById('results1').classList.remove('show');
@@ -635,15 +624,22 @@
             },
 
             handleSearch(query, toolNumber) {
-                if (!query) {
-                    document.getElementById(`results${toolNumber}`).classList.remove('show');
+                const resultsDiv = document.getElementById(`results${toolNumber}`);
+                
+                if (!query || query.length < 2) {
+                    resultsDiv.classList.remove('show');
                     return;
                 }
 
+                console.log(`🔍 Searching for: "${query}"`);
+
                 const filtered = this.allTools.filter(tool =>
                     tool.name.toLowerCase().includes(query.toLowerCase()) ||
-                    tool.description.toLowerCase().includes(query.toLowerCase())
+                    (tool.description && tool.description.toLowerCase().includes(query.toLowerCase())) ||
+                    (tool.category && tool.category.toLowerCase().includes(query.toLowerCase()))
                 ).slice(0, 10);
+
+                console.log(`📊 Found ${filtered.length} matches`);
 
                 this.displaySearchResults(filtered, toolNumber);
             },
@@ -658,17 +654,24 @@
                 }
 
                 resultsDiv.innerHTML = tools.map(tool => `
-                    <div class="search-result-item" onclick="compareTools.selectTool(${tool.id}, ${toolNumber})">
+                    <div class="search-result-item" onclick="compareTools.selectTool('${tool._id}', ${toolNumber})">
                         <div class="result-name">${tool.name}</div>
-                        <div class="result-category">${tool.category}</div>
+                        <div class="result-category">${tool.category || 'AI Tool'}</div>
                     </div>
                 `).join('');
+                
                 resultsDiv.classList.add('show');
             },
 
             selectTool(toolId, toolNumber) {
-                const tool = this.allTools.find(t => t.id === toolId);
-                if (!tool) return;
+                const tool = this.allTools.find(t => t._id === toolId);
+                
+                if (!tool) {
+                    console.error('❌ Tool not found:', toolId);
+                    return;
+                }
+
+                console.log(`✅ Selected tool ${toolNumber}:`, tool.name);
 
                 if (toolNumber === 1) {
                     this.tool1 = tool;
@@ -678,25 +681,20 @@
                     document.getElementById('search2').value = tool.name;
                 }
 
-                // Close search results
                 document.getElementById(`results${toolNumber}`).classList.remove('show');
-
-                // Update selected tool display
                 this.updateSelectedToolDisplay();
 
-                // Show comparison if both tools selected
                 if (this.tool1 && this.tool2) {
                     this.displayComparison();
                 }
             },
 
             updateSelectedToolDisplay() {
-                // Update Tool 1
                 if (this.tool1) {
                     document.getElementById('selected1').innerHTML = `
                         <div class="tool-logo">🔧</div>
                         <strong>${this.tool1.name}</strong>
-                        <small style="color: var(--color-text-secondary);">${this.tool1.category}</small>
+                        <small style="color: var(--color-text-secondary);">${this.tool1.category || 'AI Tool'}</small>
                         <button class="btn-remove" onclick="compareTools.removeTool(1)">Remove</button>
                     `;
                     document.getElementById('selected1').classList.add('active');
@@ -705,12 +703,11 @@
                     document.getElementById('selected1').classList.remove('active');
                 }
 
-                // Update Tool 2
                 if (this.tool2) {
                     document.getElementById('selected2').innerHTML = `
                         <div class="tool-logo">⚙️</div>
                         <strong>${this.tool2.name}</strong>
-                        <small style="color: var(--color-text-secondary);">${this.tool2.category}</small>
+                        <small style="color: var(--color-text-secondary);">${this.tool2.category || 'AI Tool'}</small>
                         <button class="btn-remove" onclick="compareTools.removeTool(2)">Remove</button>
                     `;
                     document.getElementById('selected2').classList.add('active');
@@ -728,56 +725,61 @@
                     this.tool2 = null;
                     document.getElementById('search2').value = '';
                 }
+                
                 this.updateSelectedToolDisplay();
                 document.getElementById('comparisonContainer').style.display = 'none';
                 document.getElementById('emptyState').style.display = 'block';
             },
 
             displayComparison() {
-                // Update headers
+                console.log('📊 Displaying comparison...');
+                
                 document.getElementById('tool1Header').textContent = this.tool1.name;
                 document.getElementById('tool2Header').textContent = this.tool2.name;
 
-                // Update all fields
                 document.getElementById('name1').textContent = this.tool1.name;
                 document.getElementById('name2').textContent = this.tool2.name;
 
-                document.getElementById('desc1').textContent = this.tool1.description;
-                document.getElementById('desc2').textContent = this.tool2.description;
+                document.getElementById('desc1').textContent = this.tool1.description || '-';
+                document.getElementById('desc2').textContent = this.tool2.description || '-';
 
                 document.getElementById('price1').innerHTML = this.getPriceHTML(this.tool1.pricing);
                 document.getElementById('price2').innerHTML = this.getPriceHTML(this.tool2.pricing);
 
-                document.getElementById('category1').textContent = this.tool1.category;
-                document.getElementById('category2').textContent = this.tool2.category;
+                document.getElementById('category1').textContent = this.tool1.category || '-';
+                document.getElementById('category2').textContent = this.tool2.category || '-';
 
                 document.getElementById('rating1').innerHTML = `<span class="rating">⭐ ${(this.tool1.averageRating || 0).toFixed(1)}/5</span>`;
                 document.getElementById('rating2').innerHTML = `<span class="rating">⭐ ${(this.tool2.averageRating || 0).toFixed(1)}/5</span>`;
 
-                document.getElementById('reviews1').textContent = `${this.tool1.reviewCount || 0} reviews`;
-                document.getElementById('reviews2').textContent = `${this.tool2.reviewCount || 0} reviews`;
+                document.getElementById('reviews1').textContent = `${this.tool1.totalReviews || 0} reviews`;
+                document.getElementById('reviews2').textContent = `${this.tool2.totalReviews || 0} reviews`;
 
-                document.getElementById('website1').innerHTML = `<a href="${this.tool1.website}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
-                document.getElementById('website2').innerHTML = `<a href="${this.tool2.website}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
+                document.getElementById('website1').innerHTML = `<a href="${this.tool1.website || '#'}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
+                document.getElementById('website2').innerHTML = `<a href="${this.tool2.website || '#'}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
 
                 document.getElementById('features1').innerHTML = this.getFeaturesHTML(this.tool1.features);
                 document.getElementById('features2').innerHTML = this.getFeaturesHTML(this.tool2.features);
 
-                // Show comparison
                 document.getElementById('comparisonContainer').style.display = 'block';
                 document.getElementById('emptyState').style.display = 'none';
             },
 
             getPriceHTML(pricing) {
                 if (!pricing) return '-';
-                if (pricing.toLowerCase().includes('free')) {
-                    return `<span class="price-free">✓ ${pricing}</span>`;
+                
+                const priceType = typeof pricing === 'string' ? pricing : (pricing.type || 'Paid');
+                
+                if (priceType && priceType.toLowerCase().includes('free')) {
+                    return '<span class="price-free">✓ ' + priceType + '</span>';
                 }
-                return `<span class="price-paid">${pricing}</span>`;
+                
+                return '<span class="price-paid">' + (priceType || 'Paid') + '</span>';
             },
 
             getFeaturesHTML(features) {
                 if (!features || features.length === 0) return '-';
+                
                 return `
                     <div class="features-list">
                         ${features.slice(0, 5).map(f => `
@@ -794,12 +796,15 @@
             exportToCSV() {
                 if (!this.tool1 || !this.tool2) return;
 
+                const pricing1 = this.tool1.pricing && this.tool1.pricing.type ? this.tool1.pricing.type : (this.tool1.pricing || '-');
+                const pricing2 = this.tool2.pricing && this.tool2.pricing.type ? this.tool2.pricing.type : (this.tool2.pricing || '-');
+
                 const data = [
                     ['Feature', this.tool1.name, this.tool2.name],
-                    ['Pricing', this.tool1.pricing || '-', this.tool2.pricing || '-'],
+                    ['Pricing', pricing1, pricing2],
                     ['Category', this.tool1.category || '-', this.tool2.category || '-'],
                     ['Rating', this.tool1.averageRating || '-', this.tool2.averageRating || '-'],
-                    ['Reviews', this.tool1.reviewCount || '-', this.tool2.reviewCount || '-']
+                    ['Reviews', this.tool1.totalReviews || '-', this.tool2.totalReviews || '-']
                 ];
 
                 const csv = data.map(row => row.join(',')).join('\n');
@@ -807,14 +812,19 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `compare-${this.tool1.name}-${this.tool2.name}.csv`;
+                a.download = 'compare-' + this.tool1.name + '-' + this.tool2.name + '.csv';
                 a.click();
+                
+                if (typeof showToast === 'function') {
+                    showToast('✅ Comparison exported!', 'success');
+                }
             },
 
             shareComparison() {
                 if (!this.tool1 || !this.tool2) return;
 
-                const text = `Check out this comparison: ${this.tool1.name} vs ${this.tool2.name} on NexusAI!`;
+                const text = 'Check out this comparison: ' + this.tool1.name + ' vs ' + this.tool2.name + ' on NexusAI!';
+                
                 if (navigator.share) {
                     navigator.share({
                         title: 'Tool Comparison',
@@ -822,17 +832,24 @@
                         url: window.location.href
                     });
                 } else {
-                    alert(text);
+                    navigator.clipboard.writeText(text + '\n' + window.location.href);
+                    if (typeof showToast === 'function') {
+                        showToast('✅ Link copied to clipboard!', 'success');
+                    } else {
+                        alert('Link copied to clipboard!');
+                    }
                 }
             },
 
             updateNavbar() {
-                updateNavbar();
+                if (typeof updateNavbar === 'function') {
+                    updateNavbar();
+                }
             }
         };
 
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Compare page loaded');
             compareTools.init();
         });
     </script>

@@ -124,7 +124,7 @@ const reviewsAPI = {
     }
 };
 
-// USER API
+// USER API - FIXED
 const userAPI = {
     getProfile: async () => {
         return await apiRequest('/users/me/profile', 'GET');
@@ -146,6 +146,18 @@ const userAPI = {
         return await apiRequest('/users/me/password', 'PUT', {
             currentPassword, newPassword, confirmPassword
         });
+    },
+
+    deleteAccount: async (password) => {
+        return await apiRequest('/users/me/account', 'DELETE', { password });
+    },
+
+    removeFavorite: async (toolId) => {
+        return await apiRequest(`/tools/${toolId}/favorite`, 'DELETE');
+    },
+
+    deleteReview: async (reviewId) => {
+        return await apiRequest(`/reviews/${reviewId}`, 'DELETE');
     }
 };
 
@@ -188,7 +200,7 @@ const adminAPI = {
     }
 };
 
-// EXPORT
+// EXPORT - FIXED
 window.authAPI = authAPI;
 window.userAPI = userAPI;
 window.toolsAPI = toolsAPI;

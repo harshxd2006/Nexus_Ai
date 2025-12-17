@@ -112,6 +112,38 @@
             box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
         }
 
+        /* CATEGORY FILTERS */
+        .category-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(100, 200, 255, 0.05);
+            border-radius: 12px;
+        }
+        .category-btn {
+            padding: 0.6rem 1.2rem;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 25px;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .category-btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            color: #64c8ff;
+            border-color: #64c8ff;
+        }
+        .category-btn.active {
+            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            color: white;
+            border-color: transparent;
+        }
+
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -239,6 +271,19 @@
             <p>Browse and explore thousands of powerful AI tools</p>
         </div>
 
+        <!-- CATEGORY FILTERS -->
+        <div class="category-filters">
+            <button class="category-btn active" onclick="filterByCategory(null)">All Categories</button>
+            <button class="category-btn" onclick="filterByCategory('AI Writing')">✍️ AI Writing</button>
+            <button class="category-btn" onclick="filterByCategory('AI Image Generation')">🎨 Image Generation</button>
+            <button class="category-btn" onclick="filterByCategory('AI Coding')">💻 Coding</button>
+            <button class="category-btn" onclick="filterByCategory('AI Video')">🎥 Video</button>
+            <button class="category-btn" onclick="filterByCategory('AI Voice')">🎤 Voice</button>
+            <button class="category-btn" onclick="filterByCategory('AI Chatbot')">💬 Chatbot</button>
+            <button class="category-btn" onclick="filterByCategory('AI Analytics')">📊 Analytics</button>
+            <button class="category-btn" onclick="filterByCategory('AI Design')">🎨 Design</button>
+        </div>
+
         <div class="tools-controls">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off">
@@ -257,14 +302,15 @@
     
     <script>
         let currentPage = 1;
+        let currentCategory = null;
 
-        async function loadAllTools(page = 1) {
+        async function loadAllTools(page = 1, category = null) {
             const container = document.getElementById('tools-container');
             container.innerHTML = '<div class="loading">Loading tools...</div>';
 
             try {
-                console.log('📡 Loading tools...');
-                const response = await toolsAPI.getAll(page, 12);
+                console.log('📡 Loading tools...', { page, category });
+                const response = await toolsAPI.getAll(page, 12, category);
                 console.log('📦 Response:', response);
 
                 if (response.success) {
@@ -272,7 +318,7 @@
                     currentPage = page;
                     
                     if (tools.length === 0) {
-                        container.innerHTML = '<div class="no-results">No tools found. Add some tools from the admin dashboard!</div>';
+                        container.innerHTML = '<div class="no-results">No tools found in this category.</div>';
                         return;
                     }
 
@@ -315,6 +361,18 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        async function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            await loadAllTools(1, category);
         }
 
         async function handleSearch() {

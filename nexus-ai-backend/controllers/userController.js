@@ -1,5 +1,5 @@
 // ============================================
-// USER CONTROLLER
+// USER CONTROLLER - FIXED VERSION
 // User management business logic
 // ============================================
 
@@ -26,7 +26,9 @@ exports.getUserProfile = async (req, res) => {
         const decoded = verifyToken(token);
         const userId = decoded.userId;
 
-        const user = await User.findById(userId).select('-password');
+        const user = await User.findById(userId)
+            .select('-password')
+            .populate('favoriteTools', 'name slug logo category averageRating');
 
         if (!user) {
             return res.status(404).json({
@@ -34,6 +36,10 @@ exports.getUserProfile = async (req, res) => {
                 message: 'User not found'
             });
         }
+
+        // Get user statistics
+        const reviewsCount = await Review.countDocuments({ user: userId });
+        const toolsCount = await Tool.countDocuments({ createdBy: userId });
 
         return res.status(200).json({
             success: true,
@@ -47,8 +53,10 @@ exports.getUserProfile = async (req, res) => {
                     bio: user.bio,
                     role: user.role,
                     isVerified: user.isVerified,
-                    favoriteTools: user.favoriteTools.length,
-                    createdTools: user.createdTools ? user.createdTools.length : 0,
+                    favoriteTools: user.favoriteTools,
+                    favoritesCount: user.favoriteTools.length,
+                    reviewsCount: reviewsCount,
+                    toolsCount: toolsCount,
                     createdAt: user.createdAt,
                     updatedAt: user.updatedAt
                 }
@@ -163,8 +171,8 @@ exports.updateUserProfile = async (req, res) => {
             user.name = name;
         }
 
-        if (bio) {
-            if (bio.length > 500) {
+        if (bio !== undefined) {
+            if (bio && bio.length > 500) {
                 return res.status(400).json({
                     success: false,
                     message: 'Bio must be less than 500 characters'
@@ -173,7 +181,7 @@ exports.updateUserProfile = async (req, res) => {
             user.bio = bio;
         }
 
-        if (profilePhoto) {
+        if (profilePhoto !== undefined) {
             user.profilePhoto = profilePhoto;
         }
 
@@ -205,7 +213,7 @@ exports.updateUserProfile = async (req, res) => {
 };
 
 // ============================================
-// GET USER FAVORITE TOOLS
+// GET USER FAVORITE TOOLS - FIXED
 // ============================================
 
 exports.getUserFavorites = async (req, res) => {
@@ -237,6 +245,7 @@ exports.getUserFavorites = async (req, res) => {
         const skip = (page - 1) * limit;
         const totalFavorites = user.favoriteTools.length;
 
+        // Fetch the actual tool documents
         const favoriteTools = await Tool.find({
             _id: { $in: user.favoriteTools }
         })
@@ -247,24 +256,23 @@ exports.getUserFavorites = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'Favorite tools retrieved',
-            data: {
-                tools: favoriteTools.map(tool => ({
-                    _id: tool._id,
-                    name: tool.name,
-                    slug: tool.slug,
-                    description: tool.description,
-                    logo: tool.logo,
-                    category: tool.category,
-                    averageRating: tool.averageRating,
-                    totalReviews: tool.totalReviews,
-                    pricing: tool.pricing
-                })),
-                pagination: {
-                    totalFavorites,
-                    currentPage: parseInt(page),
-                    totalPages: Math.ceil(totalFavorites / limit),
-                    limit: parseInt(limit)
-                }
+            data: favoriteTools.map(tool => ({
+                _id: tool._id,
+                name: tool.name,
+                slug: tool.slug,
+                description: tool.description,
+                logo: tool.logo,
+                category: tool.category,
+                averageRating: tool.averageRating,
+                totalReviews: tool.totalReviews,
+                pricing: tool.pricing,
+                website: tool.website
+            })),
+            pagination: {
+                totalFavorites,
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(totalFavorites / limit),
+                limit: parseInt(limit)
             }
         });
 
@@ -280,7 +288,7 @@ exports.getUserFavorites = async (req, res) => {
 };
 
 // ============================================
-// GET USER REVIEWS
+// GET USER REVIEWS - FIXED
 // ============================================
 
 exports.getUserReviews = async (req, res) => {
@@ -313,23 +321,22 @@ exports.getUserReviews = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'User reviews retrieved',
-            data: {
-                reviews: reviews.map(review => ({
-                    _id: review._id,
-                    rating: review.rating,
-                    title: review.title,
-                    content: review.content,
-                    tool: review.tool,
-                    helpfulCount: review.helpfulCount,
-                    unhelpfulCount: review.unhelpfulCount,
-                    createdAt: review.createdAt
-                })),
-                pagination: {
-                    totalReviews,
-                    currentPage: parseInt(page),
-                    totalPages: Math.ceil(totalReviews / limit),
-                    limit: parseInt(limit)
-                }
+            data: reviews.map(review => ({
+                _id: review._id,
+                rating: review.rating,
+                title: review.title,
+                content: review.content,
+                tool: review.tool,
+                helpfulCount: review.helpfulCount,
+                unhelpfulCount: review.unhelpfulCount,
+                createdAt: review.createdAt,
+                updatedAt: review.updatedAt
+            })),
+            pagination: {
+                totalReviews,
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(totalReviews / limit),
+                limit: parseInt(limit)
             }
         });
 
@@ -524,7 +531,7 @@ exports.changePassword = async (req, res) => {
             });
         }
 
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).select('+password');
 
         if (!user) {
             return res.status(404).json({
@@ -534,8 +541,7 @@ exports.changePassword = async (req, res) => {
         }
 
         // Check current password
-        const bcrypt = require('bcryptjs');
-        const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+        const isPasswordMatch = await user.comparePassword(currentPassword);
 
         if (!isPasswordMatch) {
             return res.status(400).json({
@@ -544,10 +550,8 @@ exports.changePassword = async (req, res) => {
             });
         }
 
-        // Hash new password
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
-
+        // Update password
+        user.password = newPassword;
         await user.save();
 
         return res.status(200).json({
@@ -594,7 +598,7 @@ exports.deleteAccount = async (req, res) => {
             });
         }
 
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).select('+password');
 
         if (!user) {
             return res.status(404).json({
@@ -604,8 +608,7 @@ exports.deleteAccount = async (req, res) => {
         }
 
         // Verify password
-        const bcrypt = require('bcryptjs');
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        const isPasswordMatch = await user.comparePassword(password);
 
         if (!isPasswordMatch) {
             return res.status(400).json({

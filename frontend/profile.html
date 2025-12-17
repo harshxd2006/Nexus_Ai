@@ -22,9 +22,7 @@
             scroll-behavior: smooth;
         }
 
-        /* ========================================
-           NAVBAR STYLES
-           ======================================== */
+        /* NAVBAR STYLES */
         .navbar {
             background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
             padding: 1.2rem 0;
@@ -62,26 +60,10 @@
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 500;
-            position: relative;
         }
 
         .navbar-menu a:hover {
             color: #64c8ff;
-        }
-
-        .navbar-menu a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #64c8ff;
-            transition: width 0.3s ease;
-        }
-
-        .navbar-menu a:hover::after {
-            width: 100%;
         }
 
         #nav-auth {
@@ -90,18 +72,38 @@
             align-items: center;
         }
 
-        /* ========================================
-           MAIN CONTAINER
-           ======================================== */
+        /* LOADING SPINNER */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(100, 200, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #64c8ff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* MAIN CONTAINER */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 30px;
+            min-height: 80vh;
         }
 
-        /* ========================================
-           TABS
-           ======================================== */
+        /* TABS */
         .profile-tabs {
             display: flex;
             gap: 1rem;
@@ -139,9 +141,7 @@
             background: linear-gradient(90deg, #64c8ff, #4a9fd8);
         }
 
-        /* ========================================
-           TAB CONTENT
-           ======================================== */
+        /* TAB CONTENT */
         .tab-content {
             display: none;
         }
@@ -150,9 +150,7 @@
             display: block;
         }
 
-        /* ========================================
-           PROFILE SECTION
-           ======================================== */
+        /* PROFILE SECTION */
         .profile-header {
             display: grid;
             grid-template-columns: 200px 1fr;
@@ -163,6 +161,7 @@
             border-radius: 12px;
             padding: 2rem;
             backdrop-filter: blur(10px);
+            min-height: 250px;
         }
 
         .profile-avatar {
@@ -235,9 +234,7 @@
             box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
         }
 
-        /* ========================================
-           EDIT PROFILE FORM
-           ======================================== */
+        /* EDIT PROFILE FORM */
         .edit-profile-form {
             background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
             border: 1px solid rgba(100, 200, 255, 0.15);
@@ -312,9 +309,7 @@
             background: rgba(100, 200, 255, 0.2);
         }
 
-        /* ========================================
-           FAVORITES SECTION
-           ======================================== */
+        /* FAVORITES SECTION */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -450,9 +445,7 @@
             background: rgba(244, 67, 54, 0.25);
         }
 
-        /* ========================================
-           REVIEWS SECTION
-           ======================================== */
+        /* REVIEWS SECTION */
         .review-card {
             background: linear-gradient(135deg, rgba(20, 50, 80, 0.15), rgba(30, 30, 50, 0.15));
             border: 1px solid rgba(100, 200, 255, 0.1);
@@ -509,9 +502,7 @@
             color: #ff1493;
         }
 
-        /* ========================================
-           NO RESULTS
-           ======================================== */
+        /* NO RESULTS */
         .no-results {
             text-align: center;
             padding: 3rem;
@@ -521,9 +512,7 @@
             border-radius: 8px;
         }
 
-        /* ========================================
-           RESPONSIVE
-           ======================================== */
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             .navbar-menu {
                 display: none;
@@ -566,13 +555,18 @@
     </style>
 </head>
 <body>
+    <!-- LOADING SPINNER -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-brand">🚀 NexusAI</div>
             <div class="navbar-menu">
                 <a href="/index.html">Home</a>
-                <a href="/tools-listing.html">Tools</a>
+                <a href="/tools_listing.html">Tools</a>
                 <a href="/trending.html">Trending</a>
             </div>
             <div id="nav-auth"></div>
@@ -699,74 +693,289 @@
     <script src="/js/auth.js"></script>
     <script src="/js/app.js"></script>
     
+    <!-- FIX: Add missing API function if not defined -->
+    <script>
+        // Ensure userAPI.getReviews exists
+        if (!userAPI.getReviews) {
+            console.log('⚠️ Adding missing userAPI.getReviews function');
+            userAPI.getReviews = async (page = 1, limit = 10) => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    return { success: false, message: 'No token' };
+                }
+                
+                try {
+                    const response = await fetch(`http://localhost:5000/api/users/reviews?page=${page}&limit=${limit}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    console.log('🔍 Raw API response:', data);
+                    return data;
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return { success: false, message: error.message };
+                }
+            };
+        }
+        
+        // Ensure userAPI.removeFavorite exists
+        if (!userAPI.removeFavorite) {
+            console.log('⚠️ Adding missing userAPI.removeFavorite function');
+            userAPI.removeFavorite = async (toolId) => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    return { success: false, message: 'No token' };
+                }
+                
+                try {
+                    const response = await fetch(`http://localhost:5000/api/tools/${toolId}/favorite`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return { success: false, message: error.message };
+                }
+            };
+        }
+        
+        // Ensure userAPI.updateUserProfile exists
+        if (!userAPI.updateUserProfile) {
+            console.log('⚠️ Adding missing userAPI.updateUserProfile function');
+            userAPI.updateUserProfile = async (userData) => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    return { success: false, message: 'No token' };
+                }
+                
+                try {
+                    const response = await fetch('http://localhost:5000/api/users/me/profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return { success: false, message: error.message };
+                }
+            };
+        }
+        
+        // Ensure userAPI.deleteAccount exists
+        if (!userAPI.deleteAccount) {
+            console.log('⚠️ Adding missing userAPI.deleteAccount function');
+            userAPI.deleteAccount = async () => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    return { success: false, message: 'No token' };
+                }
+                
+                try {
+                    const response = await fetch('http://localhost:5000/api/users/me/account', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return { success: false, message: error.message };
+                }
+            };
+        }
+    </script>
+    
     <!-- PAGE-SPECIFIC LOGIC -->
     <script>
-        // ============================================
-        // CHECK AUTHENTICATION
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            updateNavbar();
+        // UTILITY FUNCTIONS
+        function showLoading() {
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) spinner.style.display = 'block';
+        }
 
-            if (!auth.isAuthenticated()) {
+        function hideLoading() {
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) spinner.style.display = 'none';
+        }
+
+        function showToast(message, type = 'info') {
+            if (window.showToast) {
+                window.showToast(message, type);
+            } else {
+                alert(message);
+            }
+        }
+
+        function timeAgo(dateString) {
+            if (!dateString) return 'recently';
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // CHECK AUTHENTICATION
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Profile page loading...');
+            
+            // First update navbar
+            updateNavbar();
+            
+            // Check authentication
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token) {
+                console.log('No token found, redirecting to login');
                 showToast('❌ Please login to access your profile', 'warning');
                 setTimeout(() => {
                     window.location.href = '/login.html';
                 }, 1500);
                 return;
             }
-
-            loadUserProfile();
-            loadUserFavorites();
-            loadUserReviews();
+            
+            // Show user data from localStorage immediately
+            if (user.name || user.email) {
+                console.log('Using cached user data:', user);
+                updateProfileUI(user);
+            }
+            
+            // Load fresh data from API
+            try {
+                await loadUserProfile();
+                await loadUserFavorites();
+                await loadUserReviews();
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+                showToast('⚠️ Using cached data. Some features may be limited.', 'warning');
+            }
         });
 
-        // ============================================
-        // LOAD USER PROFILE
-        // ============================================
-        function loadUserProfile() {
-            const user = JSON.parse(localStorage.getItem('user'));
-            const token = localStorage.getItem('token');
-
-            if (!user) return;
-
-            // Display avatar
-            const initial = user.name.charAt(0).toUpperCase();
+        // UPDATE PROFILE UI
+        function updateProfileUI(user) {
+            console.log('Updating UI with user:', user);
+            
+            // Update avatar with first letter of name
+            const initial = (user.name || 'U').charAt(0).toUpperCase();
             document.getElementById('profileAvatar').textContent = initial;
-
-            // Display info
-            document.getElementById('profileName').textContent = user.name;
-            document.getElementById('profileEmail').textContent = user.email;
-
-            // Display join date
-            const joinDate = new Date(user.createdAt);
-            const monthYear = joinDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-            document.getElementById('statsJoinDate').textContent = monthYear;
-
-            // Fill edit form
-            document.getElementById('editName').value = user.name;
-            document.getElementById('editEmail').value = user.email;
+            
+            // Update name and email
+            document.getElementById('profileName').textContent = user.name || 'User';
+            document.getElementById('profileEmail').textContent = user.email || 'user@example.com';
+            
+            // Update join date if available
+            if (user.createdAt) {
+                const joinDate = new Date(user.createdAt);
+                const monthYear = joinDate.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+                document.getElementById('statsJoinDate').textContent = monthYear;
+            }
+            
+            // Update form fields
+            document.getElementById('editName').value = user.name || '';
+            document.getElementById('editEmail').value = user.email || '';
             document.getElementById('editBio').value = user.bio || '';
+            
+            // Update stats from localStorage cache
+            const cachedReviews = JSON.parse(localStorage.getItem('user_reviews') || '[]');
+            const cachedFavorites = JSON.parse(localStorage.getItem('user_favorites') || '[]');
+            
+            document.getElementById('statsReviews').textContent = cachedReviews.length;
+            document.getElementById('statsFavorites').textContent = cachedFavorites.length;
         }
 
-        // ============================================
+        // LOAD USER PROFILE FROM API
+        async function loadUserProfile() {
+            showLoading();
+            try {
+                console.log('Loading user profile from API...');
+                
+                // Try to get profile from API
+                const response = await userAPI.getProfile();
+                console.log('Profile API response:', response);
+                
+                if (response.success && response.data) {
+                    const user = response.data.user || response.data;
+                    console.log('User data received:', user);
+                    
+                    // Update UI with fresh data
+                    updateProfileUI(user);
+                    
+                    // Cache the user data
+                    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                    const updatedUser = { ...currentUser, ...user };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    
+                    hideLoading();
+                    return user;
+                } else {
+                    throw new Error(response.message || 'Failed to load profile');
+                }
+            } catch (error) {
+                hideLoading();
+                console.warn('Could not load profile from API:', error.message);
+                
+                // Fallback to localStorage data
+                const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+                if (storedUser.name) {
+                    updateProfileUI(storedUser);
+                    showToast('⚠️ Using cached profile data', 'info');
+                }
+                
+                return null;
+            }
+        }
+
         // LOAD USER FAVORITES
-        // ============================================
         async function loadUserFavorites() {
             showLoading();
             try {
-                const response = await usersAPI.getFavorites();
-                hideLoading();
-
+                console.log('Loading favorites from API...');
+                const response = await userAPI.getFavorites();
+                console.log('Favorites response:', response);
+                
                 if (response.success) {
-                    const tools = response.data;
-                    document.getElementById('statsFavorites').textContent = tools.length;
-                    document.getElementById('favCount').textContent = `${tools.length} tool${tools.length !== 1 ? 's' : ''}`;
-
+                    const tools = response.data?.tools || response.data || [];
+                    const totalFavorites = response.pagination?.total || tools.length;
+                    
+                    // Update stats
+                    document.getElementById('statsFavorites').textContent = totalFavorites;
+                    document.getElementById('favCount').textContent = `${totalFavorites} tool${totalFavorites !== 1 ? 's' : ''}`;
+                    
+                    // Cache favorites
+                    localStorage.setItem('user_favorites', JSON.stringify(tools));
+                    
                     if (tools.length > 0) {
+                        // Render favorites grid
                         const toolsHTML = tools.map(tool => `
                             <div class="tool-card">
                                 <div class="tool-header">
-                                    <img src="${tool.logo || 'https://via.placeholder.com/70?text=AI'}" 
+                                    <img src="${tool.logo || tool.image || 'https://via.placeholder.com/70?text=AI'}" 
                                          alt="${tool.name}" 
                                          class="tool-logo"
                                          onerror="this.src='https://via.placeholder.com/70?text=AI'">
@@ -776,16 +985,16 @@
                                     </div>
                                 </div>
 
-                                <p class="tool-description">${tool.description.substring(0, 120)}...</p>
+                                <p class="tool-description">${(tool.description || '').substring(0, 120)}...</p>
 
                                 <div class="tool-stats">
                                     <span class="rating">⭐ ${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'}</span>
-                                    <span class="reviews">${tool.reviewCount || 0} reviews</span>
+                                    <span class="reviews">${tool.totalReviews || 0} reviews</span>
                                 </div>
 
                                 <div class="tool-buttons">
-                                    <a href="/tool-detail.html?id=${tool._id}" class="btn-small btn-primary-small">View Details</a>
-                                    <button onclick="removeFavorite('${tool._id}')" class="btn-small btn-danger-small">Remove</button>
+                                    <a href="/tools_detail.html?id=${tool._id || tool.id}" class="btn-small btn-primary-small">View Details</a>
+                                    <button onclick="removeFavorite('${tool._id || tool.id}')" class="btn-small btn-danger-small">Remove</button>
                                 </div>
                             </div>
                         `).join('');
@@ -793,136 +1002,187 @@
                         document.getElementById('favoritesContainer').innerHTML = toolsHTML;
                     } else {
                         document.getElementById('favoritesContainer').innerHTML = 
-                            '<div class="no-results">No favorite tools yet. <a href="/tools-listing.html" style="color: #64c8ff;">Explore tools</a></div>';
+                            '<div class="no-results">No favorite tools yet. <a href="/tools_listing.html" style="color: #64c8ff;">Explore tools</a></div>';
                     }
+                } else {
+                    throw new Error(response.message || 'Failed to load favorites');
                 }
             } catch (error) {
-                hideLoading();
                 console.error('Error loading favorites:', error);
-                showToast('❌ Error loading favorites', 'error');
-            }
-        }
-
-        // ============================================
-        // REMOVE FAVORITE
-        // ============================================
-        async function removeFavorite(toolId) {
-            if (confirm('Remove this tool from favorites?')) {
-                showLoading();
-                try {
-                    const response = await usersAPI.removeFavorite(toolId);
-                    hideLoading();
-
-                    if (response.success) {
-                        showToast('✅ Removed from favorites', 'success');
-                        loadUserFavorites();
-                    } else {
-                        showToast('❌ Failed to remove favorite', 'error');
-                    }
-                } catch (error) {
-                    hideLoading();
-                    console.error('Error removing favorite:', error);
-                    showToast('❌ Error removing favorite', 'error');
+                
+                // Fallback to cached favorites
+                const cachedFavorites = JSON.parse(localStorage.getItem('user_favorites') || '[]');
+                if (cachedFavorites.length > 0) {
+                    document.getElementById('favCount').textContent = `${cachedFavorites.length} tools (cached)`;
+                    showToast('⚠️ Showing cached favorites', 'info');
+                } else {
+                    document.getElementById('favoritesContainer').innerHTML = 
+                        '<div class="no-results">Error loading favorites. Please try again later.</div>';
                 }
+            } finally {
+                hideLoading();
             }
         }
 
-        // ============================================
         // LOAD USER REVIEWS
-        // ============================================
         async function loadUserReviews() {
+            showLoading();
             try {
-                const response = await usersAPI.getReviews();
+                console.log('Loading reviews from API...');
+                const response = await userAPI.getReviews();
+                console.log('Reviews response:', response);
+                
                 if (response.success) {
-                    const reviews = response.data;
-                    document.getElementById('statsReviews').textContent = reviews.length;
-                    document.getElementById('reviewCount').textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
-
+                    let reviews = [];
+                    
+                    // Handle different response structures
+                    if (response.data && Array.isArray(response.data.reviews)) {
+                        reviews = response.data.reviews;
+                    } else if (Array.isArray(response.data)) {
+                        reviews = response.data;
+                    } else if (response.reviews) {
+                        reviews = response.reviews;
+                    } else if (response.data && response.data.length) {
+                        reviews = response.data;
+                    }
+                    
+                    const totalReviews = response.pagination?.total || reviews.length;
+                    
+                    // Update stats
+                    document.getElementById('statsReviews').textContent = totalReviews;
+                    document.getElementById('reviewCount').textContent = `${totalReviews} review${totalReviews !== 1 ? 's' : ''}`;
+                    
+                    // Cache reviews
+                    localStorage.setItem('user_reviews', JSON.stringify(reviews));
+                    
                     if (reviews.length > 0) {
-                        const reviewsHTML = reviews.map(review => `
-                            <div class="review-card">
-                                <div class="review-header">
-                                    <div>
-                                        <div class="review-tool">📝 ${review.toolId.name}</div>
-                                        <div class="review-time">${timeAgo(review.createdAt)}</div>
+                        const reviewsHTML = reviews.map(review => {
+                            const toolName = review.tool?.name || review.toolId?.name || 'Unknown Tool';
+                            const reviewTitle = review.title || 'No title';
+                            const reviewContent = review.content || review.review || 'No content';
+                            const reviewRating = review.rating || 5;
+                            const reviewId = review._id || review.id;
+                            const createdAt = review.createdAt || review.date;
+                            
+                            return `
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div>
+                                            <div class="review-tool">📝 ${toolName}</div>
+                                            <div class="review-time">${timeAgo(createdAt)}</div>
+                                        </div>
+                                        <div class="review-rating">${'⭐'.repeat(reviewRating)}</div>
                                     </div>
-                                    <div class="review-rating">${'⭐'.repeat(review.rating)}</div>
+                                    <h4 style="color: #e0e0e0; margin-bottom: 0.5rem;">${reviewTitle}</h4>
+                                    <p class="review-text">${reviewContent}</p>
+                                    <div class="review-actions">
+                                        <button class="review-btn" onclick="editReview('${reviewId}')">✏️ Edit</button>
+                                        <button class="review-btn" onclick="deleteReview('${reviewId}')">🗑️ Delete</button>
+                                    </div>
                                 </div>
-                                <h4 style="color: #e0e0e0; margin-bottom: 0.5rem;">${review.title}</h4>
-                                <p class="review-text">${review.review}</p>
-                                <div class="review-actions">
-                                    <button class="review-btn" onclick="editReview('${review._id}')">✏️ Edit</button>
-                                    <button class="review-btn" onclick="deleteReview('${review._id}')">🗑️ Delete</button>
-                                </div>
-                            </div>
-                        `).join('');
+                            `;
+                        }).join('');
 
                         document.getElementById('reviewsContainer').innerHTML = reviewsHTML;
                     } else {
                         document.getElementById('reviewsContainer').innerHTML = 
-                            '<div class="no-results">No reviews yet. <a href="/tools-listing.html" style="color: #64c8ff;">Write your first review</a></div>';
+                            '<div class="no-results">No reviews yet. <a href="/tools_listing.html" style="color: #64c8ff;">Write your first review</a></div>';
                     }
+                } else {
+                    throw new Error(response.message || 'Failed to load reviews');
                 }
             } catch (error) {
                 console.error('Error loading reviews:', error);
+                
+                // Fallback to cached reviews
+                const cachedReviews = JSON.parse(localStorage.getItem('user_reviews') || '[]');
+                if (cachedReviews.length > 0) {
+                    document.getElementById('reviewCount').textContent = `${cachedReviews.length} reviews (cached)`;
+                    showToast('⚠️ Showing cached reviews', 'info');
+                } else {
+                    document.getElementById('reviewsContainer').innerHTML = 
+                        '<div class="no-results">Error loading reviews. Please try again later.</div>';
+                }
+            } finally {
+                hideLoading();
             }
         }
 
-        // ============================================
-        // DELETE REVIEW
-        // ============================================
-        async function deleteReview(reviewId) {
-            if (confirm('Delete this review?')) {
+        // REMOVE FAVORITE
+        async function removeFavorite(toolId) {
+            if (confirm('Remove this tool from favorites?')) {
                 showLoading();
                 try {
-                    const response = await usersAPI.deleteReview(reviewId);
+                    const response = await userAPI.removeFavorite(toolId);
+                    
+                    if (response.success) {
+                        showToast('✅ Removed from favorites', 'success');
+                        // Reload favorites
+                        await loadUserFavorites();
+                        // Update profile stats
+                        await loadUserProfile();
+                    } else {
+                        showToast('❌ Failed to remove favorite', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error removing favorite:', error);
+                    showToast('❌ Error removing favorite', 'error');
+                } finally {
                     hideLoading();
+                }
+            }
+        }
 
+        // DELETE REVIEW
+        async function deleteReview(reviewId) {
+            if (confirm('Delete this review? This action cannot be undone.')) {
+                showLoading();
+                try {
+                    const response = await userAPI.deleteReview(reviewId);
+                    
                     if (response.success) {
                         showToast('✅ Review deleted', 'success');
-                        loadUserReviews();
+                        // Reload reviews
+                        await loadUserReviews();
+                        // Update profile stats
+                        await loadUserProfile();
                     } else {
                         showToast('❌ Failed to delete review', 'error');
                     }
                 } catch (error) {
-                    hideLoading();
                     console.error('Error deleting review:', error);
                     showToast('❌ Error deleting review', 'error');
+                } finally {
+                    hideLoading();
                 }
             }
         }
 
-        // ============================================
+        // EDIT REVIEW
+        function editReview(reviewId) {
+            showToast('Edit functionality coming soon', 'info');
+        }
+
         // TAB SWITCHING
-        // ============================================
         function switchTab(tabName) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
 
-            // Deactivate all buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Show selected tab
             document.getElementById(tabName + 'Tab').classList.add('active');
-
-            // Activate button
             event.target.classList.add('active');
         }
 
-        // ============================================
         // TOGGLE EDIT FORM
-        // ============================================
         function toggleEditForm() {
             document.getElementById('editProfileForm').classList.toggle('show');
         }
 
-        // ============================================
-        // UPDATE PROFILE
-        // ============================================
+        // UPDATE PROFILE FORM SUBMIT
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -937,36 +1197,34 @@
 
             showLoading();
             try {
-                const response = await usersAPI.updateProfile({ name, email, bio });
-                hideLoading();
-
+                const response = await userAPI.updateProfile({ name, email, bio });
+                
                 if (response.success) {
                     showToast('✅ Profile updated successfully!', 'success');
                     
                     // Update localStorage
-                    const user = JSON.parse(localStorage.getItem('user'));
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
                     user.name = name;
                     user.email = email;
                     user.bio = bio;
                     localStorage.setItem('user', JSON.stringify(user));
                     
-                    // Reload profile
-                    loadUserProfile();
+                    // Update UI
+                    updateProfileUI(user);
                     updateNavbar();
                     toggleEditForm();
                 } else {
                     showToast('❌ ' + (response.message || 'Failed to update profile'), 'error');
                 }
             } catch (error) {
-                hideLoading();
                 console.error('Error updating profile:', error);
                 showToast('❌ Error updating profile', 'error');
+            } finally {
+                hideLoading();
             }
         });
 
-        // ============================================
-        // CHANGE PASSWORD
-        // ============================================
+        // CHANGE PASSWORD FORM
         document.getElementById('passwordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -986,9 +1244,8 @@
 
             showLoading();
             try {
-                const response = await usersAPI.changePassword({ currentPassword, newPassword });
-                hideLoading();
-
+                const response = await userAPI.changePassword(currentPassword, newPassword, confirmPassword);
+                
                 if (response.success) {
                     showToast('✅ Password changed successfully!', 'success');
                     document.getElementById('passwordForm').reset();
@@ -996,38 +1253,48 @@
                     showToast('❌ ' + (response.message || 'Failed to change password'), 'error');
                 }
             } catch (error) {
-                hideLoading();
                 console.error('Error changing password:', error);
                 showToast('❌ Error changing password', 'error');
+            } finally {
+                hideLoading();
             }
         });
 
-        // ============================================
         // DELETE ACCOUNT
-        // ============================================
-        function deleteAccount() {
+        async function deleteAccount() {
             if (confirm('⚠️ Are you sure? This action cannot be undone!')) {
                 const confirmDelete = prompt('Type "DELETE" to confirm account deletion:');
                 
                 if (confirmDelete === 'DELETE') {
-                    showLoading();
-                    usersAPI.deleteAccount()
-                        .then(response => {
-                            hideLoading();
+                    const password = prompt('Enter your password to confirm:');
+                    
+                    if (password) {
+                        showLoading();
+                        try {
+                            const response = await userAPI.deleteAccount(password);
+                            
                             if (response.success) {
-                                showToast('❌ Account deleted permanently', 'success');
+                                showToast('✅ Account deleted successfully', 'success');
                                 localStorage.removeItem('token');
                                 localStorage.removeItem('user');
+                                localStorage.removeItem('user_favorites');
+                                localStorage.removeItem('user_reviews');
+                                
                                 setTimeout(() => {
                                     window.location.href = '/index.html';
                                 }, 2000);
+                            } else {
+                                showToast('❌ ' + (response.message || 'Failed to delete account'), 'error');
                             }
-                        })
-                        .catch(error => {
-                            hideLoading();
+                        } catch (error) {
                             console.error('Error deleting account:', error);
                             showToast('❌ Error deleting account', 'error');
-                        });
+                        } finally {
+                            hideLoading();
+                        }
+                    } else {
+                        showToast('Password required', 'warning');
+                    }
                 } else if (confirmDelete !== null) {
                     showToast('Confirmation text incorrect', 'warning');
                 }
