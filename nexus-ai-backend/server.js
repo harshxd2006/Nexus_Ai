@@ -1,5 +1,5 @@
 // ============================================
-// NEXUS AI - PRODUCTION READY SERVER
+// NEXUS AI - PRODUCTION SERVER - FINAL FIX
 // ============================================
 
 require('dotenv').config();
@@ -18,21 +18,25 @@ const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
 
 console.log('🌍 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
+console.log('📁 Current Directory:', __dirname);
+console.log('📁 Frontend Path:', path.join(__dirname, '../frontend'));
 
 // ============================================
-// CORS CONFIGURATION - PERMISSIVE ✅
+// PERMISSIVE CORS - ALLOW EVERYTHING
 // ============================================
-app.use(cors({
-    origin: true, // Allow all origins
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Authorization']
-}));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
 
-app.options('*', cors());
-
-console.log('✅ CORS enabled with permissive settings');
+console.log('✅ CORS enabled - permissive mode');
 
 // ============================================
 // MIDDLEWARE
@@ -43,38 +47,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Request logging
 app.use((req, res, next) => {
     console.log(`📨 ${req.method} ${req.path}`);
-    if (req.body && Object.keys(req.body).length > 0) {
-        console.log('📦 Body:', req.body);
-    }
     next();
 });
-
-// ============================================
-// SERVE FRONTEND STATIC FILES
-// ============================================
-app.use(express.static(path.join(__dirname, '../frontend'), {
-    setHeaders: (res, filepath) => {
-        if (filepath.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        } else if (filepath.endsWith('.css')) {
-            res.setHeader('Content-Type', 'text/css');
-        } else if (filepath.endsWith('.html')) {
-            res.setHeader('Content-Type', 'text/html');
-        } else if (filepath.endsWith('.json')) {
-            res.setHeader('Content-Type', 'application/json');
-        }
-    },
-    maxAge: isProduction ? '1d' : 0
-}));
-
-// ============================================
-// IMPORT ROUTES
-// ============================================
-const authRoutes = require('./routes/auth');
-const toolRoutes = require('./routes/tool');
-const reviewRoutes = require('./routes/review');
-const userRoutes = require('./routes/user');
-const adminRoutes = require('./routes/admin');
 
 // ============================================
 // MONGODB CONNECTION
@@ -98,43 +72,16 @@ const connectDB = async () => {
 connectDB();
 
 // ============================================
-// HEALTH CHECK ROUTE
+// IMPORT ROUTES
 // ============================================
-app.get('/api/health', (req, res) => {
-    res.json({
-        success: true,
-        message: 'NexusAI Backend is running! 🚀',
-        environment: process.env.NODE_ENV || 'development',
-        timestamp: new Date().toISOString(),
-        database: mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Disconnected ❌',
-        cors: 'Enabled ✅'
-    });
-});
-
-// Root health check
-app.get('/', (req, res, next) => {
-    // If requesting API info, return JSON
-    if (req.accepts('json') && !req.accepts('html')) {
-        return res.json({
-            success: true,
-            message: 'NexusAI API Server',
-            version: '1.0.0',
-            endpoints: {
-                health: '/api/health',
-                auth: '/api/auth',
-                tools: '/api/tools',
-                reviews: '/api/reviews',
-                users: '/api/users',
-                admin: '/api/admin'
-            }
-        });
-    }
-    // Otherwise serve the frontend
-    next();
-});
+const authRoutes = require('./routes/auth');
+const toolRoutes = require('./routes/tool');
+const reviewRoutes = require('./routes/review');
+const userRoutes = require('./routes/user');
+const adminRoutes = require('./routes/admin');
 
 // ============================================
-// API ROUTES (BEFORE STATIC FILE HANDLER)
+// API ROUTES - MUST BE BEFORE STATIC FILES
 // ============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/tools', toolRoutes);
@@ -142,34 +89,57 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 
-// ============================================
-// SERVE HTML FILES (SPA Support)
-// ============================================
-app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-        return next();
-    }
-    
-    // Serve index.html for all non-API routes
-    res.sendFile(path.join(__dirname, '../frontend/index.html'), (err) => {
-        if (err) {
-            console.error('Error serving index.html:', err);
-            res.status(500).send('Error loading page');
+// Health check
+app.get('/api/health', (req, res) => {
+    res.json({
+        success: true,
+        message: 'NexusAI Backend is running! 🚀',
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString(),
+        database: mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Disconnected ❌',
+        cors: 'Enabled ✅',
+        paths: {
+            __dirname: __dirname,
+            frontend: path.join(__dirname, '../frontend')
         }
     });
 });
 
 // ============================================
-// 404 ERROR HANDLER
+// SERVE FRONTEND STATIC FILES
 // ============================================
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: 'API endpoint not found',
-        path: req.path,
-        method: req.method
-    });
+const frontendPath = path.join(__dirname, '../frontend');
+console.log('📂 Serving static files from:', frontendPath);
+
+app.use(express.static(frontendPath, {
+    setHeaders: (res, filepath) => {
+        if (filepath.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        } else if (filepath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        } else if (filepath.endsWith('.html')) {
+            res.setHeader('Content-Type', 'text/html');
+        }
+    }
+}));
+
+// ============================================
+// SERVE HTML FILES - SPA FALLBACK
+// ============================================
+app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({
+            success: false,
+            message: 'API endpoint not found',
+            path: req.path
+        });
+    }
+    
+    // Serve index.html for all other routes
+    const indexPath = path.join(__dirname, '../frontend/index.html');
+    console.log('📄 Serving index.html from:', indexPath);
+    res.sendFile(indexPath);
 });
 
 // ============================================
@@ -177,6 +147,7 @@ app.use((req, res) => {
 // ============================================
 app.use((error, req, res, next) => {
     console.error('❌ Server Error:', error.message);
+    console.error('Stack:', error.stack);
     
     res.status(error.status || 500).json({
         success: false,
@@ -195,54 +166,42 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 ╔════════════════════════════════════════════════╗
 ║   🚀 NEXUS AI SERVER STARTED                  ║
 ╠════════════════════════════════════════════════╣
-║  Port:        ${PORT.toString().padEnd(30)} ║
-║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(30)} ║
+║  Port:        ${PORT}                         ║
+║  Environment: ${process.env.NODE_ENV || 'development'} ║
 ║  MongoDB:     Connected ✅                    ║
-║  CORS:        Permissive Mode ✅              ║
-║  Static:      Serving from /frontend ✅       ║
+║  CORS:        Permissive ✅                   ║
 ╚════════════════════════════════════════════════╝
 
-📝 API Endpoints:
-   Health:   http://localhost:${PORT}/api/health
-   Auth:     http://localhost:${PORT}/api/auth
-   Tools:    http://localhost:${PORT}/api/tools
-   Reviews:  http://localhost:${PORT}/api/reviews
-   Users:    http://localhost:${PORT}/api/users
-   Admin:    http://localhost:${PORT}/api/admin
+📝 API Endpoints Available:
+   • GET  /api/health
+   • POST /api/auth/register
+   • POST /api/auth/login
+   • GET  /api/tools
+   • And more...
 
-🌐 Frontend: http://localhost:${PORT}
+🌐 Server running at: http://localhost:${PORT}
+🌐 Production: https://nexus-ai-ajw0.onrender.com
     `);
 });
 
 // ============================================
 // GRACEFUL SHUTDOWN
 // ============================================
-process.on('SIGTERM', async () => {
-    console.log('👋 SIGTERM received, shutting down gracefully...');
+const gracefulShutdown = async () => {
+    console.log('👋 Shutting down gracefully...');
     server.close(async () => {
         try {
             await mongoose.connection.close();
-            console.log('MongoDB connection closed');
+            console.log('✅ MongoDB connection closed');
             process.exit(0);
         } catch (error) {
-            console.error('Error closing MongoDB connection:', error);
+            console.error('❌ Error during shutdown:', error);
             process.exit(1);
         }
     });
-});
+};
 
-process.on('SIGINT', async () => {
-    console.log('👋 SIGINT received, shutting down gracefully...');
-    server.close(async () => {
-        try {
-            await mongoose.connection.close();
-            console.log('MongoDB connection closed');
-            process.exit(0);
-        } catch (error) {
-            console.error('Error closing MongoDB connection:', error);
-            process.exit(1);
-        }
-    });
-});
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 module.exports = app;
