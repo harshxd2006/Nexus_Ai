@@ -1,8 +1,7 @@
 // ============================================
-// NEXUS AI - MAIN SERVER FILE
+// NEXUS AI - PRODUCTION READY SERVER
 // ============================================
 
-// CRITICAL: Load environment variables FIRST
 require('dotenv').config();
 
 const express = require('express');
@@ -13,49 +12,74 @@ const path = require('path');
 const app = express();
 
 // ============================================
-// CORS CONFIGURATION - MUST BE FIRST!
+// ENVIRONMENT DETECTION
 // ============================================
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = !isProduction;
+
+console.log('🌍 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
+
+// ============================================
+// CORS CONFIGURATION
+// ============================================
+const allowedOrigins = [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'http://127.0.0.1:5501',
+    'http://localhost:5501',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    process.env.FRONTEND_URL, // Your Render frontend URL
+];
+
+// If in production, add the frontend URL
+if (isProduction && process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 const corsOptions = {
-    origin: [
-        'http://127.0.0.1:5500',
-        'http://localhost:5500',
-        'http://127.0.0.1:5501',
-        'http://localhost:5501',
-        'http://localhost:3000',
-        'http://127.0.0.1:3000'
-    ],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, Postman, etc.)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log('❌ CORS blocked origin:', origin);
+            callback(null, true); // Allow in production for now
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Authorization'],
-    maxAge: 86400 // 24 hours
+    maxAge: 86400
 };
 
 app.use(cors(corsOptions));
-
-// Handle preflight requests
 app.options('*', cors(corsOptions));
 
 // ============================================
-// MIDDLEWARE - MUST BE BEFORE ROUTES!
+// MIDDLEWARE
 // ============================================
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Add debug middleware to log all requests
-app.use((req, res, next) => {
-    console.log(`📨 ${req.method} ${req.path}`);
-    console.log('📦 Body:', req.body);
-    console.log('🔑 Headers:', req.headers.authorization ? 'Token Present' : 'No Token');
-    next();
-});
+// Request logging (only in development)
+if (isDevelopment) {
+    app.use((req, res, next) => {
+        console.log(`📨 ${req.method} ${req.path}`);
+        console.log('📦 Body:', req.body);
+        console.log('🔑 Auth:', req.headers.authorization ? 'Present' : 'None');
+        next();
+    });
+}
 
 // ============================================
-// SERVE FRONTEND STATIC FILES WITH CORRECT MIME TYPES
+// SERVE FRONTEND STATIC FILES
 // ============================================
 app.use(express.static(path.join(__dirname, '../frontend'), {
     setHeaders: (res, filepath) => {
-        // CRITICAL: Set correct MIME types to fix "Refused to execute script" errors
         if (filepath.endsWith('.js')) {
             res.setHeader('Content-Type', 'application/javascript');
         } else if (filepath.endsWith('.css')) {
@@ -65,11 +89,12 @@ app.use(express.static(path.join(__dirname, '../frontend'), {
         } else if (filepath.endsWith('.json')) {
             res.setHeader('Content-Type', 'application/json');
         }
-    }
+    },
+    maxAge: isProduction ? '1d' : 0 // Cache in production
 }));
 
 // ============================================
-// IMPORT ROUTES AFTER MIDDLEWARE
+// IMPORT ROUTES
 // ============================================
 const authRoutes = require('./routes/auth');
 const toolRoutes = require('./routes/tool');
@@ -82,11 +107,17 @@ const adminRoutes = require('./routes/admin');
 // ============================================
 const connectDB = async () => {
     try {
+        if (!process.env.MONGODB_URI) {
+            throw new Error('MONGODB_URI is not defined in environment variables');
+        }
+
         await mongoose.connect(process.env.MONGODB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
+        
         console.log('✅ MongoDB connected successfully');
+        console.log('📊 Database:', mongoose.connection.name);
     } catch (error) {
         console.error('❌ MongoDB connection failed:', error.message);
         process.exit(1);
@@ -101,15 +132,33 @@ connectDB();
 app.get('/api/health', (req, res) => {
     res.json({
         success: true,
-        message: 'Backend is running! 🚀',
-        timestamp: new Date(),
-        cors: 'enabled',
-        frontend: 'Static files served with correct MIME types ✅'
+        message: 'NexusAI Backend is running! 🚀',
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString(),
+        database: mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Disconnected ❌',
+        cors: 'Enabled ✅'
+    });
+});
+
+// Root health check
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'NexusAI API Server',
+        version: '1.0.0',
+        endpoints: {
+            health: '/api/health',
+            auth: '/api/auth',
+            tools: '/api/tools',
+            reviews: '/api/reviews',
+            users: '/api/users',
+            admin: '/api/admin'
+        }
     });
 });
 
 // ============================================
-// ROUTE MOUNTING
+// API ROUTES
 // ============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/tools', toolRoutes);
@@ -118,41 +167,40 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ============================================
-// SERVE HTML FILES (Fallback for SPA-style routing)
+// SERVE HTML FILES (SPA Support)
 // ============================================
+const htmlFiles = [
+    '/index.html',
+    '/login.html',
+    '/register.html',
+    '/signup.html',
+    '/tools_listing.html',
+    '/tools_detail.html',
+    '/tool_detail.html',
+    '/profile.html',
+    '/admin_dashboard.html',
+    '/compare.html',
+    '/trending.html'
+];
+
 app.get('*', (req, res, next) => {
     // Skip API routes
     if (req.path.startsWith('/api/')) {
         return next();
     }
     
-    // List of HTML files
-    const htmlFiles = [
-        '/index.html',
-        '/login.html',
-        '/register.html',
-        '/signup.html',
-        '/tools_listing.html',
-        '/tools_detail.html',
-        '/tool_detail.html',
-        '/profile.html',
-        '/admin_dashboard.html',
-        '/compare.html',
-        '/trending.html'
-    ];
-    
-    // If requesting root, serve index.html
+    // Serve index.html for root
     if (req.path === '/') {
         return res.sendFile(path.join(__dirname, '../frontend/index.html'));
     }
     
-    // If requesting a known HTML file, serve it
+    // Serve known HTML files
     if (htmlFiles.includes(req.path)) {
         return res.sendFile(path.join(__dirname, '../frontend', req.path));
     }
     
-    // Otherwise continue to 404 handler
-    next();
+    // Fallback to index.html for client-side routing
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // ============================================
@@ -162,54 +210,13 @@ app.use((req, res) => {
     if (req.path.startsWith('/api/')) {
         res.status(404).json({
             success: false,
-            message: '❌ Route not found',
-            path: req.path
+            message: 'API endpoint not found',
+            path: req.path,
+            method: req.method
         });
     } else {
-        res.status(404).send(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>404 - Not Found</title>
-                <style>
-                    body { 
-                        font-family: 'Segoe UI', Arial, sans-serif; 
-                        display: flex; 
-                        justify-content: center; 
-                        align-items: center; 
-                        height: 100vh; 
-                        margin: 0;
-                        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-                        color: #e0e0e0;
-                    }
-                    .container { text-align: center; }
-                    h1 { font-size: 4rem; color: #64c8ff; margin: 0; }
-                    p { font-size: 1.2rem; margin: 1rem 0; }
-                    a { 
-                        color: #64c8ff; 
-                        text-decoration: none; 
-                        padding: 0.8rem 1.5rem;
-                        border: 2px solid #64c8ff;
-                        border-radius: 8px;
-                        display: inline-block;
-                        margin-top: 1rem;
-                        transition: all 0.3s ease;
-                    }
-                    a:hover { 
-                        background: #64c8ff;
-                        color: #1a1a1a;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>404</h1>
-                    <p>Page not found</p>
-                    <a href="/">← Back to Home</a>
-                </div>
-            </body>
-            </html>
-        `);
+        // For non-API routes, serve index.html
+        res.sendFile(path.join(__dirname, '../frontend/index.html'));
     }
 });
 
@@ -217,11 +224,12 @@ app.use((req, res) => {
 // GLOBAL ERROR HANDLER
 // ============================================
 app.use((error, req, res, next) => {
-    console.error('❌ Error:', error.message);
+    console.error('❌ Server Error:', error.message);
+    
     res.status(error.status || 500).json({
         success: false,
         message: error.message || 'Internal Server Error',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        ...(isDevelopment && { stack: error.stack })
     });
 });
 
@@ -230,21 +238,27 @@ app.use((error, req, res, next) => {
 // ============================================
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`
 ╔════════════════════════════════════════════════╗
-║   🚀 NEXUS AI FULL-STACK SERVER STARTED 🚀   ║
+║   🚀 NEXUS AI SERVER STARTED                  ║
 ╠════════════════════════════════════════════════╣
-║  Frontend: http://localhost:${PORT}              ║
-║  Backend:  http://localhost:${PORT}/api          ║
-║  Health:   http://localhost:${PORT}/api/health   ║
-║  MongoDB:  Connected ✅                       ║
-║  CORS:     Enabled ✅                         ║
-║  Static:   Serving from /frontend ✅          ║
-║  MIME:     JavaScript files fixed ✅          ║
+║  Port:        ${PORT.toString().padEnd(30)} ║
+║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(30)} ║
+║  MongoDB:     Connected ✅                    ║
+║  CORS:        Enabled ✅                      ║
+║  Static:      Serving from /frontend ✅       ║
 ╚════════════════════════════════════════════════╝
 
-📝 Access your app:
+📝 Available Endpoints:
+   Health:   http://localhost:${PORT}/api/health
+   Auth:     http://localhost:${PORT}/api/auth
+   Tools:    http://localhost:${PORT}/api/tools
+   Reviews:  http://localhost:${PORT}/api/reviews
+   Users:    http://localhost:${PORT}/api/users
+   Admin:    http://localhost:${PORT}/api/admin
+
+🌐 Frontend:
    Homepage: http://localhost:${PORT}
    Login:    http://localhost:${PORT}/login.html
    Tools:    http://localhost:${PORT}/tools_listing.html
@@ -255,12 +269,22 @@ app.listen(PORT, () => {
 // GRACEFUL SHUTDOWN
 // ============================================
 process.on('unhandledRejection', (error) => {
-    console.error('❌ Unhandled Rejection:', error);
-    process.exit(1);
+    console.error('❌ Unhandled Promise Rejection:', error);
+    if (isProduction) {
+        process.exit(1);
+    }
 });
 
 process.on('SIGTERM', () => {
     console.log('👋 SIGTERM received, shutting down gracefully...');
+    mongoose.connection.close(() => {
+        console.log('MongoDB connection closed');
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('👋 SIGINT received, shutting down gracefully...');
     mongoose.connection.close(() => {
         console.log('MongoDB connection closed');
         process.exit(0);

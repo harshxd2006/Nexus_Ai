@@ -1,5 +1,14 @@
-// API CONFIGURATION
-const API_BASE_URL = 'http://localhost:5000/api';
+// API CONFIGURATION - AUTO-DETECT ENVIRONMENT
+const isLocalhost = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname === '';
+
+const API_BASE_URL = isLocalhost 
+    ? 'http://localhost:5000/api' 
+    : 'https://YOUR-BACKEND-APP-NAME.onrender.com/api'; // REPLACE with your actual Render backend URL
+
+console.log('🌐 Environment:', isLocalhost ? 'LOCAL' : 'PRODUCTION');
+console.log('🌐 API Base URL:', API_BASE_URL);
 
 function getToken() {
     return localStorage.getItem('token');
@@ -100,7 +109,7 @@ const toolsAPI = {
         return await apiRequest(`/tools/${toolId}/favorite`, 'POST');
     },
 
-    removeFavorite: async (toolId) => {
+    removeFromFavorites: async (toolId) => {
         return await apiRequest(`/tools/${toolId}/favorite`, 'DELETE');
     }
 };
@@ -124,13 +133,17 @@ const reviewsAPI = {
     }
 };
 
-// USER API - FIXED
+// USER API - COMPLETE
 const userAPI = {
     getProfile: async () => {
         return await apiRequest('/users/me/profile', 'GET');
     },
 
     updateProfile: async (userData) => {
+        return await apiRequest('/users/me/profile', 'PUT', userData);
+    },
+
+    updateUserProfile: async (userData) => {
         return await apiRequest('/users/me/profile', 'PUT', userData);
     },
 
@@ -167,11 +180,23 @@ const adminAPI = {
         return await apiRequest('/admin/dashboard/stats', 'GET');
     },
 
+    getDashboardStats: async () => {
+        return await apiRequest('/admin/dashboard/stats', 'GET');
+    },
+
     getUsers: async (page = 1, limit = 20) => {
         return await apiRequest(`/admin/users?page=${page}&limit=${limit}`, 'GET');
     },
 
+    getAllUsers: async (page = 1, limit = 20) => {
+        return await apiRequest(`/admin/users?page=${page}&limit=${limit}`, 'GET');
+    },
+
     getTools: async (page = 1, limit = 20) => {
+        return await apiRequest(`/admin/tools?page=${page}&limit=${limit}`, 'GET');
+    },
+
+    getAllTools: async (page = 1, limit = 20) => {
         return await apiRequest(`/admin/tools?page=${page}&limit=${limit}`, 'GET');
     },
 
@@ -197,10 +222,18 @@ const adminAPI = {
 
     getReports: async (page = 1, limit = 20) => {
         return await apiRequest(`/admin/reviews/flagged?page=${page}&limit=${limit}`, 'GET');
+    },
+
+    getFlaggedReviews: async (page = 1, limit = 20) => {
+        return await apiRequest(`/admin/reviews/flagged?page=${page}&limit=${limit}`, 'GET');
+    },
+
+    deleteReview: async (reviewId) => {
+        return await apiRequest(`/admin/reviews/${reviewId}`, 'DELETE');
     }
 };
 
-// EXPORT - FIXED
+// EXPORT
 window.authAPI = authAPI;
 window.userAPI = userAPI;
 window.toolsAPI = toolsAPI;
@@ -208,3 +241,4 @@ window.reviewsAPI = reviewsAPI;
 window.adminAPI = adminAPI;
 
 console.log('✅ API module loaded successfully');
+console.log('📍 Running in:', isLocalhost ? 'DEVELOPMENT' : 'PRODUCTION', 'mode');
