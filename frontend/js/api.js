@@ -3,9 +3,12 @@ const isLocalhost = window.location.hostname === 'localhost' ||
                     window.location.hostname === '127.0.0.1' ||
                     window.location.hostname === '';
 
+// IMPORTANT: Replace 'nexus-ai-backend.onrender.com' with your actual backend Render URL
+// Check your Render dashboard to find your backend service URL
+// It should look like: https://nexus-ai-backend-xxxx.onrender.com
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:5000/api' 
-    : 'https://YOUR-BACKEND-APP-NAME.onrender.com/api'; // REPLACE with your actual Render backend URL
+    : 'https://nexus-ai-backend.onrender.com/api'; // CHANGE THIS TO YOUR ACTUAL BACKEND URL
 
 console.log('🌐 Environment:', isLocalhost ? 'LOCAL' : 'PRODUCTION');
 console.log('🌐 API Base URL:', API_BASE_URL);
@@ -27,14 +30,15 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         const url = `${API_BASE_URL}${endpoint}`;
         const options = {
             method,
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
+            credentials: 'include' // Add this for CORS with credentials
         };
 
         if (body) {
             options.body = JSON.stringify(body);
         }
 
-        console.log(`📡 API Request: ${method} ${endpoint}`);
+        console.log(`📡 API Request: ${method} ${url}`);
 
         const response = await fetch(url, options);
         
@@ -52,7 +56,11 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         return data;
     } catch (error) {
         console.error('❌ API Error:', error);
-        return { success: false, message: 'Network error: ' + error.message };
+        return { 
+            success: false, 
+            message: 'Network error: ' + error.message,
+            details: 'Check if backend is running and CORS is configured'
+        };
     }
 }
 

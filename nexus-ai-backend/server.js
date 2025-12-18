@@ -1,5 +1,5 @@
 // ============================================
-// NEXUS AI - PRODUCTION READY SERVER
+// NEXUS AI - PRODUCTION READY SERVER (WITH CORS FIX)
 // ============================================
 
 require('dotenv').config();
@@ -20,7 +20,7 @@ const isDevelopment = !isProduction;
 console.log('🌍 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
 
 // ============================================
-// CORS CONFIGURATION
+// CORS CONFIGURATION - UPDATED
 // ============================================
 const allowedOrigins = [
     'http://127.0.0.1:5500',
@@ -29,35 +29,45 @@ const allowedOrigins = [
     'http://localhost:5501',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    process.env.FRONTEND_URL, // Your Render frontend URL
-];
-
-// If in production, add the frontend URL
-if (isProduction && process.env.FRONTEND_URL) {
-    allowedOrigins.push(process.env.FRONTEND_URL);
-}
+    
+    // Your development URLs
+    
+    // ADD YOUR LIVE FRONTEND URL HERE
+    'https://nexus-ai-ajw0.onrender.com',
+    
+    // Use environment variable as fallback
+    process.env.FRONTEND_URL
+].filter(Boolean); // Removes undefined values
 
 const corsOptions = {
     origin: function (origin, callback) {
         // Allow requests with no origin (mobile apps, Postman, etc.)
         if (!origin) return callback(null, true);
         
+        // Allow if origin is in the allowed list
         if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.log('❌ CORS blocked origin:', origin);
-            callback(null, true); // Allow in production for now
+            // In production, be stricter
+            if (isProduction) {
+                console.log('❌ CORS blocked origin in production:', origin);
+                callback(new Error('Not allowed by CORS'));
+            } else {
+                // In development, be more permissive
+                console.log('⚠️  Allowing origin in development:', origin);
+                callback(null, true);
+            }
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposedHeaders: ['Authorization'],
-    maxAge: 86400
+    maxAge: 86400 // Cache preflight for 24 hours 
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // Explicit preflight handling
 
 // ============================================
 // MIDDLEWARE
@@ -136,7 +146,8 @@ app.get('/api/health', (req, res) => {
         environment: process.env.NODE_ENV || 'development',
         timestamp: new Date().toISOString(),
         database: mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Disconnected ❌',
-        cors: 'Enabled ✅'
+        cors: 'Enabled ✅',
+        allowedOrigins: allowedOrigins
     });
 });
 
@@ -153,6 +164,10 @@ app.get('/', (req, res) => {
             reviews: '/api/reviews',
             users: '/api/users',
             admin: '/api/admin'
+        },
+        cors: {
+            enabled: true,
+            frontend: 'https://nexus-ai-ajw0.onrender.com'
         }
     });
 });
@@ -247,6 +262,7 @@ app.listen(PORT, '0.0.0.0', () => {
 ║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(30)} ║
 ║  MongoDB:     Connected ✅                    ║
 ║  CORS:        Enabled ✅                      ║
+║  Allowed Origins: ${allowedOrigins.length.toString().padEnd(24)} ║
 ║  Static:      Serving from /frontend ✅       ║
 ╚════════════════════════════════════════════════╝
 
@@ -257,6 +273,9 @@ app.listen(PORT, '0.0.0.0', () => {
    Reviews:  http://localhost:${PORT}/api/reviews
    Users:    http://localhost:${PORT}/api/users
    Admin:    http://localhost:${PORT}/api/admin
+
+🌐 Frontend URLs Allowed:
+${allowedOrigins.map(url => `   • ${url}`).join('\n')}
 
 🌐 Frontend:
    Homepage: http://localhost:${PORT}
