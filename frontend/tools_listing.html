@@ -273,15 +273,15 @@
 
         <!-- CATEGORY FILTERS -->
         <div class="category-filters">
-            <button class="category-btn active" onclick="filterByCategory(null)">All Categories</button>
-            <button class="category-btn" onclick="filterByCategory('AI Writing')">✍️ AI Writing</button>
-            <button class="category-btn" onclick="filterByCategory('AI Image Generation')">🎨 Image Generation</button>
-            <button class="category-btn" onclick="filterByCategory('AI Coding')">💻 Coding</button>
-            <button class="category-btn" onclick="filterByCategory('AI Video')">🎥 Video</button>
-            <button class="category-btn" onclick="filterByCategory('AI Voice')">🎤 Voice</button>
-            <button class="category-btn" onclick="filterByCategory('AI Chatbot')">💬 Chatbot</button>
-            <button class="category-btn" onclick="filterByCategory('AI Analytics')">📊 Analytics</button>
-            <button class="category-btn" onclick="filterByCategory('AI Design')">🎨 Design</button>
+            <button class="category-btn active" onclick="filterByCategory(null, event)">All Categories</button>
+            <button class="category-btn" onclick="filterByCategory('AI Writing', event)">✍️ AI Writing</button>
+            <button class="category-btn" onclick="filterByCategory('AI Image Generation', event)">🎨 Image Generation</button>
+            <button class="category-btn" onclick="filterByCategory('AI Coding', event)">💻 Coding</button>
+            <button class="category-btn" onclick="filterByCategory('AI Video', event)">🎥 Video</button>
+            <button class="category-btn" onclick="filterByCategory('AI Voice', event)">🎤 Voice</button>
+            <button class="category-btn" onclick="filterByCategory('AI Chatbot', event)">💬 Chatbot</button>
+            <button class="category-btn" onclick="filterByCategory('AI Analytics', event)">📊 Analytics</button>
+            <button class="category-btn" onclick="filterByCategory('AI Design', event)">🎨 Design</button>
         </div>
 
         <div class="tools-controls">
@@ -311,10 +311,27 @@
             try {
                 console.log('📡 Loading tools...', { page, category });
                 const response = await toolsAPI.getAll(page, 12, category);
-                console.log('📦 Response:', response);
+                console.log('📦 Full Response:', response);
 
                 if (response.success) {
-                    const tools = response.data?.tools || [];
+                    // FIX: Handle different response formats
+                    let tools = [];
+                    
+                    // Check multiple possible locations for tools data
+                    if (response.data && response.data.tools) {
+                        tools = response.data.tools;
+                        console.log('✅ Found tools in response.data.tools');
+                    } else if (response.tools) {
+                        tools = response.tools;
+                        console.log('✅ Found tools in response.tools');
+                    } else if (Array.isArray(response.data)) {
+                        tools = response.data;
+                        console.log('✅ Found tools in response.data (array)');
+                    }
+
+                    console.log('📊 Tools count:', tools.length);
+                    console.log('📋 First tool:', tools[0]);
+                    
                     currentPage = page;
                     
                     if (tools.length === 0) {
@@ -325,12 +342,21 @@
                     renderTools(tools);
                     showToast(`✅ Loaded ${tools.length} tools`, 'success');
                 } else {
-                    container.innerHTML = '<div class="no-results">❌ Failed to load tools</div>';
+                    console.error('❌ Response not successful:', response);
+                    container.innerHTML = `<div class="no-results">❌ Failed to load tools: ${response.message || 'Unknown error'}</div>`;
                     showToast('❌ ' + (response.message || 'Failed to load tools'), 'error');
                 }
             } catch (error) {
                 console.error('❌ Error:', error);
-                container.innerHTML = '<div class="no-results">❌ Error loading tools. Please check if backend is running on port 5000.</div>';
+                container.innerHTML = `
+                    <div class="no-results">
+                        <p>❌ Error loading tools</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">${error.message}</p>
+                        <button onclick="loadAllTools()" style="margin-top: 20px; padding: 10px 20px; background: #64c8ff; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            🔄 Try Again
+                        </button>
+                    </div>
+                `;
                 showToast('❌ Error: ' + error.message, 'error');
             }
         }
@@ -338,6 +364,11 @@
         function renderTools(tools) {
             const container = document.getElementById('tools-container');
             
+            if (!Array.isArray(tools) || tools.length === 0) {
+                container.innerHTML = '<div class="no-results">No tools to display</div>';
+                return;
+            }
+
             container.innerHTML = tools.map(tool => `
                 <div class="tool-card">
                     <div class="tool-header">
@@ -361,16 +392,20 @@
                     </div>
                 </div>
             `).join('');
+            
+            console.log('✅ Rendered', tools.length, 'tools to DOM');
         }
 
-        async function filterByCategory(category) {
+        async function filterByCategory(category, event) {
             currentCategory = category;
             
             // Update active button
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
             
             await loadAllTools(1, category);
         }
@@ -387,8 +422,20 @@
 
             try {
                 const response = await toolsAPI.search(query, 1, 12);
+                console.log('🔍 Search response:', response);
+                
                 if (response.success) {
-                    const tools = response.data?.tools || [];
+                    let tools = [];
+                    
+                    // Handle different response formats
+                    if (response.data && response.data.tools) {
+                        tools = response.data.tools;
+                    } else if (response.tools) {
+                        tools = response.tools;
+                    } else if (Array.isArray(response.data)) {
+                        tools = response.data;
+                    }
+                    
                     if (tools.length === 0) {
                         container.innerHTML = '<div class="no-results">No tools found for your search</div>';
                         return;
@@ -424,6 +471,20 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             console.log('📋 Tools Listing Page Loaded');
+            console.log('🌐 API Base URL:', typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'Not defined');
+            
+            // Check if API is loaded
+            if (typeof toolsAPI === 'undefined') {
+                console.error('❌ toolsAPI is not defined! Make sure api.js is loaded.');
+                document.getElementById('tools-container').innerHTML = `
+                    <div class="no-results">
+                        ❌ Error: API not loaded<br>
+                        <small>Make sure js/api.js is included before this script</small>
+                    </div>
+                `;
+                return;
+            }
+            
             updateNavbar();
             loadAllTools(1);
 
