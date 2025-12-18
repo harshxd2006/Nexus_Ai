@@ -1,5 +1,5 @@
 // ============================================
-// NEXUS AI - PRODUCTION SERVER - FIXED
+// NEXUS AI - BACKEND API ONLY
 // ============================================
 
 require('dotenv').config();
@@ -7,7 +7,6 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
 
 const app = express();
 
@@ -18,18 +17,16 @@ const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
 
 console.log('🌍 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
-console.log('📁 Current Directory:', __dirname);
-console.log('📁 Frontend Path:', path.join(__dirname, '../frontend'));
 
 // ============================================
-// CORS CONFIGURATION - MUST BE FIRST
+// CORS CONFIGURATION
 // ============================================
 const corsOptions = {
     origin: function (origin, callback) {
         // Allow requests with no origin (mobile apps, Postman, etc.)
         if (!origin) return callback(null, true);
         
-        // Allow all origins in production (you can restrict this later)
+        // Allow all origins (frontend will be on Vercel)
         callback(null, true);
     },
     credentials: true,
@@ -54,7 +51,7 @@ app.use((req, res, next) => {
     next();
 });
 
-console.log('✅ CORS enabled - permissive mode');
+console.log('✅ CORS enabled - allowing all origins');
 
 // ============================================
 // MIDDLEWARE
@@ -62,7 +59,7 @@ console.log('✅ CORS enabled - permissive mode');
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Request logging with more details
+// Request logging
 app.use((req, res, next) => {
     console.log(`📨 ${req.method} ${req.path} - Origin: ${req.get('origin') || 'none'}`);
     next();
@@ -86,7 +83,6 @@ const connectDB = async () => {
         console.log('📊 Database:', mongoose.connection.name);
     } catch (error) {
         console.error('❌ MongoDB connection failed:', error.message);
-        // Don't exit in production, keep server running
         if (isDevelopment) {
             process.exit(1);
         }
@@ -95,7 +91,7 @@ const connectDB = async () => {
 
 connectDB();
 
-// Handle MongoDB connection errors after initial connection
+// Handle MongoDB connection events
 mongoose.connection.on('error', err => {
     console.error('❌ MongoDB connection error:', err);
 });
@@ -118,7 +114,7 @@ const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
 
 // ============================================
-// API ROUTES - MUST BE BEFORE STATIC FILES
+// API ROUTES
 // ============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/tools', toolRoutes);
@@ -126,80 +122,59 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Enhanced health check with more info
+// Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
         success: true,
-        message: 'NexusAI Backend is running! 🚀',
+        message: 'NexusAI Backend API is running! 🚀',
         environment: process.env.NODE_ENV || 'development',
         timestamp: new Date().toISOString(),
         database: mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Disconnected ❌',
         cors: 'Enabled ✅',
-        uptime: process.uptime(),
-        memory: process.memoryUsage(),
-        paths: {
-            __dirname: __dirname,
-            frontend: path.join(__dirname, '../frontend')
-        }
+        uptime: process.uptime()
     });
 });
 
-// Test endpoint to verify CORS
-app.get('/api/test-cors', (req, res) => {
+// Root endpoint
+app.get('/', (req, res) => {
     res.json({
-        success: true,
-        message: 'CORS is working!',
-        origin: req.get('origin'),
-        headers: req.headers
+        name: 'NexusAI API',
+        version: '1.0.0',
+        message: 'Backend API is running',
+        documentation: 'https://nexus-ai-ajw0.onrender.com/api/health',
+        endpoints: {
+            health: '/api/health',
+            tools: '/api/tools',
+            auth: '/api/auth/login',
+            register: '/api/auth/register'
+        }
     });
 });
 
-// ============================================
-// SERVE FRONTEND STATIC FILES
-// ============================================
-const frontendPath = path.join(__dirname, '../frontend');
-console.log('📂 Serving static files from:', frontendPath);
+// 404 handler for undefined API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'API endpoint not found',
+        path: req.path,
+        availableEndpoints: [
+            'GET /api/health',
+            'POST /api/auth/register',
+            'POST /api/auth/login',
+            'GET /api/tools',
+            'GET /api/tools/:id',
+            'POST /api/reviews',
+            'GET /api/users/me/profile'
+        ]
+    });
+});
 
-app.use(express.static(frontendPath, {
-    setHeaders: (res, filepath) => {
-        if (filepath.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        } else if (filepath.endsWith('.css')) {
-            res.setHeader('Content-Type', 'text/css');
-        } else if (filepath.endsWith('.html')) {
-            res.setHeader('Content-Type', 'text/html');
-        }
-    }
-}));
-
-// ============================================
-// SERVE HTML FILES - SPA FALLBACK
-// ============================================
-app.get('*', (req, res) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-        return res.status(404).json({
-            success: false,
-            message: 'API endpoint not found',
-            path: req.path,
-            availableEndpoints: [
-                'GET /api/health',
-                'GET /api/test-cors',
-                'POST /api/auth/register',
-                'POST /api/auth/login',
-                'GET /api/tools',
-            ]
-        });
-    }
-    
-    // Serve index.html for all other routes
-    const indexPath = path.join(__dirname, '../frontend/index.html');
-    console.log('📄 Serving index.html from:', indexPath);
-    res.sendFile(indexPath, (err) => {
-        if (err) {
-            console.error('❌ Error serving index.html:', err);
-            res.status(500).send('Error loading page');
-        }
+// Catch all other routes (non-API)
+app.use('*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'This is an API server. Please use /api/* endpoints.',
+        hint: 'Try /api/health to check server status'
     });
 });
 
@@ -227,26 +202,27 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`
 ╔════════════════════════════════════════════════╗
-║   🚀 NEXUS AI SERVER STARTED                  ║
+║   🚀 NEXUS AI BACKEND API                     ║
 ╠════════════════════════════════════════════════╣
 ║  Port:        ${PORT}                         ║
 ║  Environment: ${process.env.NODE_ENV || 'development'} ║
 ║  MongoDB:     ${mongoose.connection.readyState === 1 ? 'Connected ✅' : 'Connecting...'}     ║
-║  CORS:        Permissive ✅                   ║
+║  CORS:        All Origins ✅                  ║
 ╚════════════════════════════════════════════════╝
 
-📝 API Endpoints Available:
+📝 API Endpoints:
    • GET  /api/health
-   • GET  /api/test-cors
    • POST /api/auth/register
    • POST /api/auth/login
    • GET  /api/tools
-   • And more...
+   • GET  /api/tools/:id
+   • POST /api/reviews
+   • GET  /api/users/me/profile
 
-🌐 Server running at: http://localhost:${PORT}
-🌐 Production: https://nexus-ai-ajw0.onrender.com
+🌐 Backend API URL: https://nexus-ai-ajw0.onrender.com
+🎯 Frontend will be deployed separately on Vercel
 
-✅ Ready to accept connections!
+✅ Ready to accept API requests!
     `);
 });
 

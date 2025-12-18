@@ -1,14 +1,11 @@
-// API CONFIGURATION - AUTO-DETECT ENVIRONMENT
+// API CONFIGURATION - FIXED VERSION
 const isLocalhost = window.location.hostname === 'localhost' || 
                     window.location.hostname === '127.0.0.1' ||
                     window.location.hostname === '';
 
-// IMPORTANT: Replace 'nexus-ai-backend.onrender.com' with your actual backend Render URL
-// Check your Render dashboard to find your backend service URL
-// It should look like: https://nexus-ai-backend-xxxx.onrender.com
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:5000/api' 
-    : 'https://nexus-ai-ajw0.onrender.com/api'; // ✅ UPDATED WITH YOUR ACTUAL BACKEND URL
+    : 'https://nexus-ai-ajw0.onrender.com/api';
 
 console.log('🌐 Environment:', isLocalhost ? 'LOCAL' : 'PRODUCTION');
 console.log('🌐 API Base URL:', API_BASE_URL);
@@ -31,7 +28,8 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         const options = {
             method,
             headers: getAuthHeaders(),
-            credentials: 'include' // Add this for CORS with credentials
+            mode: 'cors', // Explicitly set CORS mode
+            credentials: 'omit' // Changed from 'include' - this was causing issues
         };
 
         if (body) {
@@ -39,9 +37,12 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         }
 
         console.log(`📡 API Request: ${method} ${url}`);
+        console.log('📋 Options:', options);
 
         const response = await fetch(url, options);
         
+        console.log(`📨 Response Status: ${response.status} ${response.statusText}`);
+
         if (response.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
@@ -51,15 +52,42 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
             return { success: false, message: 'Session expired' };
         }
 
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('❌ Response is not JSON:', contentType);
+            const text = await response.text();
+            console.error('Response text:', text);
+            return { 
+                success: false, 
+                message: 'Invalid response from server',
+                details: text.substring(0, 100)
+            };
+        }
+
         const data = await response.json();
         console.log(`✅ API Response:`, data);
         return data;
+
     } catch (error) {
         console.error('❌ API Error:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        
+        // More specific error messages
+        if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            return { 
+                success: false, 
+                message: 'Cannot connect to server. Please check your internet connection.',
+                details: 'The backend server may be sleeping (free tier) or not responding. Try refreshing in 30 seconds.',
+                networkError: true
+            };
+        }
+        
         return { 
             success: false, 
-            message: 'Network error: ' + error.message,
-            details: 'Check if backend is running and CORS is configured'
+            message: error.message || 'Network error occurred',
+            details: error.stack
         };
     }
 }
@@ -85,11 +113,15 @@ const authAPI = {
     }
 };
 
-// TOOLS API
+// TOOLS API - FIXED
 const toolsAPI = {
     getAll: async (page = 1, limit = 10, category = null) => {
         let endpoint = `/tools?page=${page}&limit=${limit}`;
-        if (category) endpoint += `&category=${category}`;
+        if (category) endpoint += `&category=${encodeURIComponent(category)}`;
+        
+        console.log('🔧 toolsAPI.getAll called:', { page, limit, category });
+        console.log('🔗 Full URL:', API_BASE_URL + endpoint);
+        
         return await apiRequest(endpoint, 'GET');
     },
 
@@ -102,7 +134,9 @@ const toolsAPI = {
     },
 
     search: async (query, page = 1, limit = 12) => {
-        return await apiRequest(`/tools/search/${query}?page=${page}&limit=${limit}`, 'GET');
+        const endpoint = `/tools/search/${encodeURIComponent(query)}?page=${page}&limit=${limit}`;
+        console.log('🔍 Search endpoint:', API_BASE_URL + endpoint);
+        return await apiRequest(endpoint, 'GET');
     },
 
     getTrending: async (limit = 10) => {
@@ -110,7 +144,7 @@ const toolsAPI = {
     },
 
     getByCategory: async (category, page = 1, limit = 10) => {
-        return await apiRequest(`/tools/category/${category}?page=${page}&limit=${limit}`, 'GET');
+        return await apiRequest(`/tools/category/${encodeURIComponent(category)}?page=${page}&limit=${limit}`, 'GET');
     },
 
     addToFavorites: async (toolId) => {
@@ -141,7 +175,7 @@ const reviewsAPI = {
     }
 };
 
-// USER API - COMPLETE
+// USER API
 const userAPI = {
     getProfile: async () => {
         return await apiRequest('/users/me/profile', 'GET');
@@ -247,6 +281,21 @@ window.userAPI = userAPI;
 window.toolsAPI = toolsAPI;
 window.reviewsAPI = reviewsAPI;
 window.adminAPI = adminAPI;
+window.API_BASE_URL = API_BASE_URL;
 
 console.log('✅ API module loaded successfully');
 console.log('📍 Running in:', isLocalhost ? 'DEVELOPMENT' : 'PRODUCTION', 'mode');
+
+// Test the API connection on load
+console.log('🧪 Testing API connection...');
+fetch(`${API_BASE_URL.replace('/api', '')}/api/health`)
+    .then(r => r.json())
+    .then(data => {
+        console.log('✅ API Connection Test:', data);
+        console.log('🎉 Backend is responding!');
+    })
+    .catch(err => {
+        console.error('❌ API Connection Test Failed:', err.message);
+        console.error('⚠️ The backend may be sleeping or not responding.');
+        console.error('💡 Try refreshing in 30-60 seconds if on free tier.');
+    });
