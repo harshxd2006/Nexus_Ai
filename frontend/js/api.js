@@ -1,11 +1,12 @@
 // API CONFIGURATION - FIXED VERSION
+// API CONFIGURATION - FIXED VERSION
 const isLocalhost = window.location.hostname === 'localhost' || 
                     window.location.hostname === '127.0.0.1' ||
                     window.location.hostname === '';
 
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:5000/api' 
-    : ' https://nexus-ai-sjfi.onrender.com';
+    : 'https://nexus-ai-sjfi.onrender.com/api';  // ✅ FIXED: Removed space and added /api
 
 console.log('🌐 Environment:', isLocalhost ? 'LOCAL' : 'PRODUCTION');
 console.log('🌐 API Base URL:', API_BASE_URL);
