@@ -20,9 +20,10 @@ const isDevelopment = !isProduction;
 console.log('🌍 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
 
 // ============================================
-// CORS CONFIGURATION - UPDATED
+// CORS CONFIGURATION - FIXED ✅
 // ============================================
 const allowedOrigins = [
+    // Localhost for development
     'http://127.0.0.1:5500',
     'http://localhost:5500',
     'http://127.0.0.1:5501',
@@ -30,33 +31,31 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     
-    // Your development URLs
-    
-    // ADD YOUR LIVE FRONTEND URL HERE
+    // ✅ Production URL - Your actual Render deployment
     'https://nexus-ai-ajw0.onrender.com',
     
-    // Use environment variable as fallback
+    // Environment variable fallback
     process.env.FRONTEND_URL
 ].filter(Boolean); // Removes undefined values
 
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (mobile apps, Postman, etc.)
+        // Allow requests with no origin (mobile apps, Postman, same-origin requests)
         if (!origin) return callback(null, true);
         
         // Allow if origin is in the allowed list
         if (allowedOrigins.includes(origin)) {
-            callback(null, true);
+            return callback(null, true);
+        }
+        
+        // In production, be stricter
+        if (isProduction) {
+            console.log('❌ CORS blocked origin in production:', origin);
+            callback(new Error('Not allowed by CORS'));
         } else {
-            // In production, be stricter
-            if (isProduction) {
-                console.log('❌ CORS blocked origin in production:', origin);
-                callback(new Error('Not allowed by CORS'));
-            } else {
-                // In development, be more permissive
-                console.log('⚠️  Allowing origin in development:', origin);
-                callback(null, true);
-            }
+            // In development, be more permissive
+            console.log('⚠️  Allowing origin in development:', origin);
+            callback(null, true);
         }
     },
     credentials: true,
@@ -285,7 +284,7 @@ ${allowedOrigins.map(url => `   • ${url}`).join('\n')}
 });
 
 // ============================================
-// GRACEFUL SHUTDOWN
+// GRACEFUL SHUTDOWN - FIXED ✅
 // ============================================
 process.on('unhandledRejection', (error) => {
     console.error('❌ Unhandled Promise Rejection:', error);
@@ -294,20 +293,28 @@ process.on('unhandledRejection', (error) => {
     }
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
     console.log('👋 SIGTERM received, shutting down gracefully...');
-    mongoose.connection.close(() => {
+    try {
+        await mongoose.connection.close();
         console.log('MongoDB connection closed');
         process.exit(0);
-    });
+    } catch (error) {
+        console.error('Error closing MongoDB connection:', error);
+        process.exit(1);
+    }
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     console.log('👋 SIGINT received, shutting down gracefully...');
-    mongoose.connection.close(() => {
+    try {
+        await mongoose.connection.close();
         console.log('MongoDB connection closed');
         process.exit(0);
-    });
+    } catch (error) {
+        console.error('Error closing MongoDB connection:', error);
+        process.exit(1);
+    }
 });
 
 module.exports = app;
