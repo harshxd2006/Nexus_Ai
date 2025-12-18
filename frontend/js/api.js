@@ -5,7 +5,7 @@ const isLocalhost = window.location.hostname === 'localhost' ||
 
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:5000/api' 
-    : 'https://nexus-ai-ajw0.onrender.com/api';
+    : ' https://nexus-ai-sjfi.onrender.com';
 
 console.log('🌐 Environment:', isLocalhost ? 'LOCAL' : 'PRODUCTION');
 console.log('🌐 API Base URL:', API_BASE_URL);

@@ -219,7 +219,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
    • POST /api/reviews
    • GET  /api/users/me/profile
 
-🌐 Backend API URL: https://nexus-ai-ajw0.onrender.com
+🌐 Backend API URL: https://nexus-ai-sjfi.onrender.com
 🎯 Frontend will be deployed separately on Vercel
 
 ✅ Ready to accept API requests!
