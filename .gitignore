@@ -1,0 +1,112 @@
+# ============================================
+# NEXUS AI - .gitignore
+# ============================================
+
+# Dependencies
+node_modules/
+nexus-ai-backend/node_modules/
+frontend/node_modules/
+package-lock.json
+yarn.lock
+
+# Environment variables - CRITICAL: Never commit these!
+.env
+.env.local
+.env.production
+.env.development
+.env*.local
+nexus-ai-backend/.env
+frontend/.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Build files
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# Testing
+coverage/
+.nyc_output/
+*.test.js.snap
+
+# Vercel deployment
+.vercel
+
+# Render deployment
+.render/
+
+# Misc
+.cache/
+temp/
+tmp/
+*.tmp
+.sass-cache/
+
+# MongoDB
+*.mongodb
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Security
+*.pem
+*.key
+*.cert
+config/production.json
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Debug
+.debug
