@@ -8,7 +8,7 @@ const isLocalhost = window.location.hostname === 'localhost' ||
 // It should look like: https://nexus-ai-backend-xxxx.onrender.com
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:5000/api' 
-    : 'https://nexus-ai-backend.onrender.com/api'; // CHANGE THIS TO YOUR ACTUAL BACKEND URL
+    : 'https://nexus-ai-ajw0.onrender.com/api'; // ✅ UPDATED WITH YOUR ACTUAL BACKEND URL
 
 console.log('🌐 Environment:', isLocalhost ? 'LOCAL' : 'PRODUCTION');
 console.log('🌐 API Base URL:', API_BASE_URL);
