@@ -96,7 +96,7 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 // AUTHENTICATION API
 const authAPI = {
     register: async (name, email, password, confirmPassword) => {
-        return await apiRequest('/auth/register', 'POST', {
+        return await apiRequest('/auth/signup', 'POST', {
             name, email, password, confirmPassword
         });
     },
