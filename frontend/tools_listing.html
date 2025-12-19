@@ -6,22 +6,26 @@
     <title>All AI Tools - NexusAI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             line-height: 1.6;
         }
         
+        /* PROFESSIONAL NAVBAR - SAME AS INDEX */
         .navbar {
-            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
-            padding: 1.2rem 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
+
         .navbar-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -30,23 +34,60 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .navbar-brand {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
+            letter-spacing: 0.5px;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+
+        .navbar-brand::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            border-radius: 50%;
+        }
+
         .navbar-menu {
             display: flex;
-            gap: 3rem;
+            gap: 2.5rem;
         }
+
         .navbar-menu a {
-            color: #b0b0b0;
+            color: #94a3b8;
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 0.5rem 0;
         }
-        .navbar-menu a:hover { color: #64c8ff; }
+
+        .navbar-menu a:hover {
+            color: #64c8ff;
+        }
+
+        .navbar-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-menu a:hover::after {
+            width: 100%;
+        }
+
         #nav-auth { display: flex; gap: 1.5rem; align-items: center; }
 
         .container {
@@ -59,15 +100,18 @@
             margin-bottom: 3rem;
             text-align: center;
         }
+        
         .page-header h1 {
             font-size: 2.5rem;
-            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
+            font-weight: 700;
         }
+        
         .page-header p {
-            color: #a0a0a0;
+            color: #94a3b8;
             font-size: 1.1rem;
         }
 
@@ -78,28 +122,33 @@
             flex-wrap: wrap;
             align-items: center;
         }
+        
         .search-box {
             flex: 1;
             min-width: 250px;
         }
+        
         .search-box input {
             width: 100%;
             padding: 1rem;
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(100, 200, 255, 0.2);
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.2);
             border-radius: 8px;
-            color: #e0e0e0;
+            color: #e2e8f0;
             font-size: 1rem;
             transition: all 0.3s ease;
         }
+        
         .search-box input:focus {
             outline: none;
             border-color: #64c8ff;
-            background: rgba(100, 200, 255, 0.1);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.1);
         }
+        
         .search-btn {
             padding: 1rem 2rem;
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             border: none;
             border-radius: 8px;
             color: white;
@@ -107,39 +156,42 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
+        
         .search-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
-        /* CATEGORY FILTERS */
         .category-filters {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
             margin-bottom: 2rem;
-            padding: 1rem;
-            background: rgba(100, 200, 255, 0.05);
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.3);
             border-radius: 12px;
         }
+        
         .category-btn {
-            padding: 0.6rem 1.2rem;
-            background: rgba(100, 200, 255, 0.1);
+            padding: 0.7rem 1.3rem;
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 25px;
-            color: #b0b0b0;
+            border-radius: 6px;
+            color: #94a3b8;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.9rem;
             font-weight: 500;
         }
+        
         .category-btn:hover {
-            background: rgba(100, 200, 255, 0.2);
+            background: rgba(59, 130, 246, 0.2);
             color: #64c8ff;
             border-color: #64c8ff;
         }
+        
         .category-btn.active {
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
             border-color: transparent;
         }
@@ -152,17 +204,17 @@
         }
 
         .tool-card {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
-            border: 1px solid rgba(100, 200, 255, 0.2);
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
+        
         .tool-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(100, 200, 255, 0.5);
-            box-shadow: 0 8px 30px rgba(100, 200, 255, 0.2);
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
         .tool-header {
@@ -170,6 +222,7 @@
             gap: 1rem;
             margin-bottom: 1rem;
         }
+        
         .tool-logo {
             width: 70px;
             height: 70px;
@@ -177,21 +230,26 @@
             object-fit: cover;
             background: rgba(100, 200, 255, 0.1);
         }
+        
         .tool-info h3 {
             font-size: 1.2rem;
-            color: #e0e0e0;
+            color: #e2e8f0;
             margin-bottom: 0.3rem;
+            font-weight: 600;
         }
+        
         .tool-category {
             color: #64c8ff;
             font-size: 0.85rem;
             font-weight: 600;
         }
+        
         .tool-description {
-            color: #a0a0a0;
+            color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
+        
         .tool-stats {
             display: flex;
             gap: 1rem;
@@ -200,13 +258,15 @@
             border-bottom: 1px solid rgba(100, 200, 255, 0.1);
             font-size: 0.9rem;
         }
-        .rating { color: #ffd700; font-weight: 600; }
-        .reviews { color: #a0a0a0; }
+        
+        .rating { color: #fbbf24; font-weight: 600; }
+        .reviews { color: #94a3b8; }
 
         .tool-buttons {
             display: flex;
             gap: 0.5rem;
         }
+        
         .btn {
             flex: 1;
             padding: 0.7rem;
@@ -222,44 +282,54 @@
             align-items: center;
             justify-content: center;
         }
+        
         .btn-primary {
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
         }
+        
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
+        
         .btn-secondary {
-            background: rgba(255, 20, 147, 0.15);
-            color: #ff1493;
-            border: 1px solid rgba(255, 20, 147, 0.3);
+            background: rgba(100, 200, 255, 0.1);
+            color: #64c8ff;
+            border: 1px solid rgba(100, 200, 255, 0.3);
         }
 
         .no-results {
             text-align: center;
             padding: 3rem;
-            color: #a0a0a0;
+            color: #94a3b8;
             font-size: 1.1rem;
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
-            border: 1px solid rgba(100, 200, 255, 0.15);
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
         }
 
         .loading {
             text-align: center;
             padding: 2rem;
-            color: #a0a0a0;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-menu { display: none; }
+            .tools-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-container">
-            <a href="index.html" class="navbar-brand">🚀 NexusAI</a>
+            <a href="index.html" class="navbar-brand">NexusAI</a>
             <div class="navbar-menu">
                 <a href="index.html">Home</a>
                 <a href="tools_listing.html">Tools</a>
+                <a href="trending.html">Trending</a>
+                <a href="compare.html">Compare</a>
             </div>
             <div id="nav-auth"></div>
         </div>
@@ -267,28 +337,26 @@
 
     <div class="container">
         <div class="page-header">
-            <h1>🔍 Discover AI Tools</h1>
+            <h1>Discover AI Tools</h1>
             <p>Browse and explore thousands of powerful AI tools</p>
         </div>
 
-        <!-- CATEGORY FILTERS -->
         <div class="category-filters">
             <button class="category-btn active" onclick="filterByCategory(null, event)">All Categories</button>
-            <button class="category-btn" onclick="filterByCategory('AI Writing', event)">✍️ AI Writing</button>
-            <button class="category-btn" onclick="filterByCategory('AI Image Generation', event)">🎨 Image Generation</button>
-            <button class="category-btn" onclick="filterByCategory('AI Coding', event)">💻 Coding</button>
-            <button class="category-btn" onclick="filterByCategory('AI Video', event)">🎥 Video</button>
-            <button class="category-btn" onclick="filterByCategory('AI Voice', event)">🎤 Voice</button>
-            <button class="category-btn" onclick="filterByCategory('AI Chatbot', event)">💬 Chatbot</button>
-            <button class="category-btn" onclick="filterByCategory('AI Analytics', event)">📊 Analytics</button>
-            <button class="category-btn" onclick="filterByCategory('AI Design', event)">🎨 Design</button>
+            <button class="category-btn" onclick="filterByCategory('AI Writing', event)">AI Writing</button>
+            <button class="category-btn" onclick="filterByCategory('AI Image Generation', event)">Image Generation</button>
+            <button class="category-btn" onclick="filterByCategory('AI Coding', event)">Coding</button>
+            <button class="category-btn" onclick="filterByCategory('AI Video', event)">Video</button>
+            <button class="category-btn" onclick="filterByCategory('AI Voice', event)">Voice</button>
+            <button class="category-btn" onclick="filterByCategory('AI Chatbot', event)">Chatbot</button>
+            <button class="category-btn" onclick="filterByCategory('AI Analytics', event)">Analytics</button>
         </div>
 
         <div class="tools-controls">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off">
             </div>
-            <button class="search-btn" onclick="handleSearch()">🔎 Search</button>
+            <button class="search-btn" onclick="handleSearch()">Search</button>
         </div>
 
         <div class="tools-grid" id="tools-container">
@@ -309,28 +377,18 @@
             container.innerHTML = '<div class="loading">Loading tools...</div>';
 
             try {
-                console.log('📡 Loading tools...', { page, category });
                 const response = await toolsAPI.getAll(page, 12, category);
-                console.log('📦 Full Response:', response);
 
                 if (response.success) {
-                    // FIX: Handle different response formats
                     let tools = [];
                     
-                    // Check multiple possible locations for tools data
                     if (response.data && response.data.tools) {
                         tools = response.data.tools;
-                        console.log('✅ Found tools in response.data.tools');
                     } else if (response.tools) {
                         tools = response.tools;
-                        console.log('✅ Found tools in response.tools');
                     } else if (Array.isArray(response.data)) {
                         tools = response.data;
-                        console.log('✅ Found tools in response.data (array)');
                     }
-
-                    console.log('📊 Tools count:', tools.length);
-                    console.log('📋 First tool:', tools[0]);
                     
                     currentPage = page;
                     
@@ -340,24 +398,22 @@
                     }
 
                     renderTools(tools);
-                    showToast(`✅ Loaded ${tools.length} tools`, 'success');
+                    showToast(`Loaded ${tools.length} tools`, 'success');
                 } else {
-                    console.error('❌ Response not successful:', response);
-                    container.innerHTML = `<div class="no-results">❌ Failed to load tools: ${response.message || 'Unknown error'}</div>`;
-                    showToast('❌ ' + (response.message || 'Failed to load tools'), 'error');
+                    container.innerHTML = `<div class="no-results">Failed to load tools: ${response.message || 'Unknown error'}</div>`;
+                    showToast(response.message || 'Failed to load tools', 'error');
                 }
             } catch (error) {
-                console.error('❌ Error:', error);
                 container.innerHTML = `
                     <div class="no-results">
-                        <p>❌ Error loading tools</p>
+                        <p>Error loading tools</p>
                         <p style="font-size: 0.9rem; margin-top: 10px;">${error.message}</p>
-                        <button onclick="loadAllTools()" style="margin-top: 20px; padding: 10px 20px; background: #64c8ff; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                            🔄 Try Again
+                        <button onclick="loadAllTools()" style="margin-top: 20px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Try Again
                         </button>
                     </div>
                 `;
-                showToast('❌ Error: ' + error.message, 'error');
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
@@ -383,23 +439,20 @@
                     </div>
                     <p class="tool-description">${(tool.description || '').substring(0, 120)}...</p>
                     <div class="tool-stats">
-                        <span class="rating">⭐ ${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'}</span>
+                        <span class="rating">Rating: ${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'}</span>
                         <span class="reviews">${tool.totalReviews || 0} reviews</span>
                     </div>
                     <div class="tool-buttons">
                         <a href="tools_detail.html?id=${tool._id}" class="btn btn-primary">View Details</a>
-                        <button onclick="addToFavorites('${tool._id}')" class="btn btn-secondary">❤️ Save</button>
+                        <button onclick="addToFavorites('${tool._id}')" class="btn btn-secondary">Save</button>
                     </div>
                 </div>
             `).join('');
-            
-            console.log('✅ Rendered', tools.length, 'tools to DOM');
         }
 
         async function filterByCategory(category, event) {
             currentCategory = category;
             
-            // Update active button
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -422,12 +475,10 @@
 
             try {
                 const response = await toolsAPI.search(query, 1, 12);
-                console.log('🔍 Search response:', response);
                 
                 if (response.success) {
                     let tools = [];
                     
-                    // Handle different response formats
                     if (response.data && response.data.tools) {
                         tools = response.data.tools;
                     } else if (response.tools) {
@@ -441,11 +492,10 @@
                         return;
                     }
                     renderTools(tools);
-                    showToast(`✅ Found ${tools.length} tools`, 'success');
+                    showToast(`Found ${tools.length} tools`, 'success');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                container.innerHTML = '<div class="no-results">❌ Search failed</div>';
+                container.innerHTML = '<div class="no-results">Search failed</div>';
             }
         }
 
@@ -459,32 +509,15 @@
             toolsAPI.addToFavorites(toolId)
                 .then(response => {
                     if (response.success) {
-                        showToast('✅ Added to favorites!', 'success');
+                        showToast('Added to favorites!', 'success');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showToast('❌ Error adding favorite', 'error');
+                    showToast('Error adding favorite', 'error');
                 });
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📋 Tools Listing Page Loaded');
-            console.log('🌐 API Base URL:', typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'Not defined');
-            
-            // Check if API is loaded
-            if (typeof toolsAPI === 'undefined') {
-                console.error('❌ toolsAPI is not defined! Make sure api.js is loaded.');
-                document.getElementById('tools-container').innerHTML = `
-                    <div class="no-results">
-                        ❌ Error: API not loaded<br>
-                        <small>Make sure js/api.js is included before this script</small>
-                    </div>
-                `;
-                return;
-            }
-            
             updateNavbar();
             loadAllTools(1);
 
