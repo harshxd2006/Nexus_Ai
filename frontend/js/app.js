@@ -140,10 +140,11 @@ function updateNavbar() {
 }
 
 function showLoginLinks(navAuth) {
+    // ✅ FIXED: Changed /register.html to /signup.html
     navAuth.innerHTML = `
         <div class="nav-auth-links" style="display: flex; gap: 1rem; align-items: center;">
             <a href="/login.html" class="nav-link" style="color: #b0b0b0; text-decoration: none; font-weight: 500; transition: color 0.3s ease;">Login</a>
-            <a href="/register.html" class="nav-link" style="padding: 0.6rem 1.3rem; background: linear-gradient(135deg, #64c8ff, #4a9fd8); border-radius: 25px; color: white; font-weight: 600; text-decoration: none; transition: all 0.3s ease; display: inline-block;">Sign Up</a>
+            <a href="/signup.html" class="nav-link" style="padding: 0.6rem 1.3rem; background: linear-gradient(135deg, #64c8ff, #4a9fd8); border-radius: 25px; color: white; font-weight: 600; text-decoration: none; transition: all 0.3s ease; display: inline-block;">Sign Up</a>
         </div>
     `;
 }

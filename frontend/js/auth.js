@@ -122,7 +122,7 @@ class AuthManager {
 // CREATE GLOBAL AUTH INSTANCE
 const auth = new AuthManager();
 
-// UPDATE NAVBAR FUNCTION
+// UPDATE NAVBAR FUNCTION - FIXED: Changed register.html to signup.html
 function updateNavbar() {
     const navAuth = document.getElementById('nav-auth');
     if (!navAuth) return;
@@ -144,6 +144,7 @@ function updateNavbar() {
             </div>
         `;
     } else {
+        // ✅ FIXED: Changed register.html to signup.html
         navAuth.innerHTML = `
             <div class="nav-auth-links" style="display: flex; gap: 1rem; align-items: center;">
                 <a href="login.html" class="nav-link" style="color: #b0b0b0; text-decoration: none; font-weight: 500;">Login</a>
