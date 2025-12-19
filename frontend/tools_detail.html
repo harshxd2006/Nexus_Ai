@@ -483,8 +483,8 @@
                             </div>
                             <div class="action-buttons">
                                 <a href="${website}" target="_blank" rel="noopener" class="btn btn-primary">Visit Website</a>
-                                <button onclick="addToFavorites('${tool._id || tool.id}')" class="btn btn-secondary">❤️ Add to Favorites</button>
-                                <button onclick="shareToolnull" class="btn btn-secondary">🔗 Share</button>
+                                <button type="button" onclick="handleAddToFavorites('${tool._id || tool.id}')" class="btn btn-secondary">❤️ Add to Favorites</button>
+                                <button type="button" onclick="handleShareTool()" class="btn btn-secondary">🔗 Share</button>
                             </div>
                         </div>
                     </div>
@@ -520,7 +520,7 @@
                 <div class="reviews-section">
                     <div class="reviews-header">
                         <h2>User Reviews</h2>
-                        <button onclick="writeReview()" class="btn btn-primary">Write a Review</button>
+                        <button type="button" onclick="handleWriteReview()" class="btn btn-primary">Write a Review</button>
                     </div>
                     <div id="reviews-container">
                         <p class="loading">Loading reviews...</p>
@@ -562,13 +562,14 @@
             }
         }
 
-        async function addToFavorites(toolId) {
+        // Fixed function name to avoid conflicts
+        async function handleAddToFavorites(toolId) {
             if (!localStorage.getItem('token')) {
                 if (typeof showToast === 'function') {
                     showToast('Please login to add favorites', 'warning');
                 }
                 setTimeout(() => {
-                    window.location.href = '/login.html';
+                    window.location.href = 'login.html';
                 }, 1000);
                 return;
             }
@@ -594,7 +595,8 @@
             }
         }
 
-        function shareTool() {
+        // Fixed function name to avoid conflicts
+        function handleShareTool() {
             const url = window.location.href;
             if (navigator.share) {
                 navigator.share({
@@ -612,13 +614,14 @@
             }
         }
 
-        function writeReview() {
+        // Fixed function name to avoid conflicts
+        function handleWriteReview() {
             if (!localStorage.getItem('token')) {
                 if (typeof showToast === 'function') {
                     showToast('Please login to write a review', 'warning');
                 }
                 setTimeout(() => {
-                    window.location.href = '/login.html';
+                    window.location.href = 'login.html';
                 }, 1000);
                 return;
             }
