@@ -454,7 +454,15 @@
             const container = document.getElementById('tool-content');
             
             const features = tool.features || [];
-            const pricing = tool.pricing || 'Contact for pricing';
+            // Fix: Handle pricing as object or string
+            let pricing = 'Contact for pricing';
+            if (tool.pricing) {
+                if (typeof tool.pricing === 'string') {
+                    pricing = tool.pricing;
+                } else if (typeof tool.pricing === 'object' && tool.pricing.type) {
+                    pricing = tool.pricing.type;
+                }
+            }
             const website = tool.website || tool.url || '#';
             
             container.innerHTML = `
@@ -511,7 +519,7 @@
                     <div class="tool-section">
                         <h2>Pricing</h2>
                         <p>${tool.pricingDescription || 'Check the website for pricing details.'}</p>
-                        <div class="pricing-tag ${pricing.toLowerCase().includes('free') ? 'free' : ''}">
+                        <div class="pricing-tag ${(typeof pricing === 'string' && pricing.toLowerCase().includes('free')) ? 'free' : ''}">
                             ${pricing}
                         </div>
                     </div>
