@@ -109,10 +109,6 @@ function updateNavbar() {
     const navAuth = document.getElementById('nav-auth');
     if (!navAuth) return;
 
-    // Hide during update to prevent glitch
-    navAuth.style.opacity = '0';
-    navAuth.style.transition = 'opacity 0.2s ease';
-
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
 
@@ -141,11 +137,6 @@ function updateNavbar() {
         // USER IS NOT LOGGED IN
         showLoginLinks(navAuth);
     }
-
-    // Show after content is ready
-    setTimeout(() => {
-        navAuth.style.opacity = '1';
-    }, 10);
 }
 
 function showLoginLinks(navAuth) {
