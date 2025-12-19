@@ -236,7 +236,7 @@ function createToolCard(tool) {
             </div>
 
             <div class="tool-buttons">
-                <a href="/tool-detail.html?id=${tool._id}" class="btn btn-primary">View Details</a>
+                <a href="/tools_detail.html?id=${tool._id}" class="btn btn-primary">View Details</a>
                 <button onclick="toggleFavorite('${tool._id}')" class="btn btn-secondary">❤️ Save</button>
             </div>
         </div>
