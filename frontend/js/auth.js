@@ -122,10 +122,14 @@ class AuthManager {
 // CREATE GLOBAL AUTH INSTANCE
 const auth = new AuthManager();
 
-// UPDATE NAVBAR FUNCTION - FIXED: Changed register.html to signup.html
+// UPDATE NAVBAR FUNCTION - FIXED: Changed register.html to signup.html and added glitch fix
 function updateNavbar() {
     const navAuth = document.getElementById('nav-auth');
     if (!navAuth) return;
+
+    // Show the nav-auth element after updating (prevents glitch)
+    navAuth.style.opacity = '0';
+    navAuth.style.transition = 'opacity 0.2s ease';
 
     if (auth.isAuthenticated()) {
         const userName = auth.getDisplayName();
@@ -152,6 +156,11 @@ function updateNavbar() {
             </div>
         `;
     }
+
+    // Fade in after content is ready (prevents glitch)
+    setTimeout(() => {
+        navAuth.style.opacity = '1';
+    }, 10);
 }
 
 // LOGOUT HANDLER
