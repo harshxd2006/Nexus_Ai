@@ -368,6 +368,113 @@
             text-align: center;
         }
 
+        /* REVIEW FORM MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            color: #e2e8f0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #64c8ff;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #64c8ff;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .rating-input span {
+            cursor: pointer;
+            color: #4b5563;
+            transition: color 0.3s ease;
+        }
+
+        .rating-input span.active,
+        .rating-input span:hover {
+            color: #fbbf24;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .navbar-menu { display: none; }
@@ -400,21 +507,48 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Write a Review</h2>
+                <button class="close-modal" onclick="closeReviewModal()">&times;</button>
+            </div>
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                <div class="form-group">
+                    <label>Rating</label>
+                    <div class="rating-input" id="ratingInput">
+                        <span data-rating="1">★</span>
+                        <span data-rating="2">★</span>
+                        <span data-rating="3">★</span>
+                        <span data-rating="4">★</span>
+                        <span data-rating="5">★</span>
+                    </div>
+                    <input type="hidden" id="ratingValue" name="rating" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewComment">Your Review</label>
+                    <textarea id="reviewComment" name="comment" required placeholder="Share your experience with this tool..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
         let currentTool = null;
+        let selectedRating = 0;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🔧 Tool Detail Page Loaded');
+            console.log('Tool Detail Page Loaded');
             
-            // Update navbar
             if (typeof updateNavbar === 'function') {
                 updateNavbar();
             }
             
-            // Get tool ID from URL
             const urlParams = new URLSearchParams(window.location.search);
             const toolId = urlParams.get('id');
             
@@ -424,11 +558,43 @@
             }
             
             await loadToolDetails(toolId);
+            setupRatingInput();
         });
+
+        function setupRatingInput() {
+            const stars = document.querySelectorAll('.rating-input span');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.getAttribute('data-rating'));
+                    document.getElementById('ratingValue').value = selectedRating;
+                    updateStars(selectedRating);
+                });
+
+                star.addEventListener('mouseenter', function() {
+                    const hoverRating = parseInt(this.getAttribute('data-rating'));
+                    updateStars(hoverRating);
+                });
+            });
+
+            document.querySelector('.rating-input').addEventListener('mouseleave', function() {
+                updateStars(selectedRating);
+            });
+        }
+
+        function updateStars(rating) {
+            const stars = document.querySelectorAll('.rating-input span');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
 
         async function loadToolDetails(toolId) {
             try {
-                console.log('📡 Fetching tool details for ID:', toolId);
+                console.log('Fetching tool details for ID:', toolId);
                 
                 if (typeof toolsAPI === 'undefined') {
                     showError('API not loaded. Please refresh the page.');
@@ -436,7 +602,7 @@
                 }
 
                 const response = await toolsAPI.getById(toolId);
-                console.log('📦 API Response:', response);
+                console.log('API Response:', response);
                 
                 if (response.success && response.data) {
                     currentTool = response.data.tool || response.data;
@@ -445,7 +611,7 @@
                     showError(response.message || 'Failed to load tool details');
                 }
             } catch (error) {
-                console.error('❌ Error loading tool:', error);
+                console.error('Error loading tool:', error);
                 showError('An error occurred while loading the tool. Please try again.');
             }
         }
@@ -454,7 +620,6 @@
             const container = document.getElementById('tool-content');
             
             const features = tool.features || [];
-            // Fix: Handle pricing as object or string
             let pricing = 'Contact for pricing';
             if (tool.pricing) {
                 if (typeof tool.pricing === 'string') {
@@ -478,7 +643,7 @@
                             <div class="tool-stats">
                                 <div class="stat">
                                     <span class="stat-label">Rating</span>
-                                    <span class="stat-value">${tool.averageRating ? tool.averageRating.toFixed(1) + ' ⭐' : 'New'}</span>
+                                    <span class="stat-value">${tool.averageRating ? tool.averageRating.toFixed(1) + ' ★' : 'New'}</span>
                                 </div>
                                 <div class="stat">
                                     <span class="stat-label">Reviews</span>
@@ -491,8 +656,7 @@
                             </div>
                             <div class="action-buttons">
                                 <a href="${website}" target="_blank" rel="noopener" class="btn btn-primary">Visit Website</a>
-                                <button type="button" onclick="handleAddToFavorites('${tool._id || tool.id}')" class="btn btn-secondary">❤️ Add to Favorites</button>
-                                <button type="button" onclick="handleShareTool()" class="btn btn-secondary">🔗 Share</button>
+                                <button type="button" onclick="handleShareTool()" class="btn btn-secondary">Share</button>
                             </div>
                         </div>
                     </div>
@@ -549,13 +713,14 @@
                 }
 
                 const response = await reviewsAPI.getAll(toolId, 1, 10);
+                console.log('Reviews response:', response);
                 
                 if (response.success && response.data && response.data.reviews && response.data.reviews.length > 0) {
                     container.innerHTML = response.data.reviews.map(review => `
                         <div class="review-card">
                             <div class="review-header">
                                 <span class="reviewer-name">${review.user?.name || review.userName || 'Anonymous'}</span>
-                                <span class="review-rating">${'⭐'.repeat(review.rating || 5)}</span>
+                                <span class="review-rating">${'★'.repeat(review.rating || 5)}</span>
                             </div>
                             <p class="review-text">${review.comment || review.review || 'No comment provided.'}</p>
                             <p class="review-date">${review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ''}</p>
@@ -570,40 +735,6 @@
             }
         }
 
-        // Fixed function name to avoid conflicts
-        async function handleAddToFavorites(toolId) {
-            if (!localStorage.getItem('token')) {
-                if (typeof showToast === 'function') {
-                    showToast('Please login to add favorites', 'warning');
-                }
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1000);
-                return;
-            }
-
-            try {
-                const response = await toolsAPI.addToFavorites(toolId);
-                if (response.success) {
-                    if (typeof showToast === 'function') {
-                        showToast('✅ Added to favorites!', 'success');
-                    } else {
-                        alert('Added to favorites!');
-                    }
-                } else {
-                    if (typeof showToast === 'function') {
-                        showToast('❌ ' + (response.message || 'Failed to add favorite'), 'error');
-                    }
-                }
-            } catch (error) {
-                console.error('Error adding favorite:', error);
-                if (typeof showToast === 'function') {
-                    showToast('❌ An error occurred', 'error');
-                }
-            }
-        }
-
-        // Fixed function name to avoid conflicts
         function handleShareTool() {
             const url = window.location.href;
             if (navigator.share) {
@@ -615,14 +746,13 @@
             } else {
                 navigator.clipboard.writeText(url);
                 if (typeof showToast === 'function') {
-                    showToast('✅ Link copied to clipboard!', 'success');
+                    showToast('Link copied to clipboard!', 'success');
                 } else {
                     alert('Link copied to clipboard!');
                 }
             }
         }
 
-        // Fixed function name to avoid conflicts
         function handleWriteReview() {
             if (!localStorage.getItem('token')) {
                 if (typeof showToast === 'function') {
@@ -634,37 +764,66 @@
                 return;
             }
             
-            // Simple implementation - you can enhance this
-            const rating = prompt('Rate this tool (1-5 stars):');
-            const comment = prompt('Write your review:');
-            
-            if (rating && comment) {
-                submitReview(currentTool._id || currentTool.id, parseInt(rating), comment);
-            }
+            openReviewModal();
         }
 
-        async function submitReview(toolId, rating, comment) {
+        function openReviewModal() {
+            document.getElementById('reviewModal').classList.add('active');
+            document.getElementById('reviewForm').reset();
+            selectedRating = 0;
+            updateStars(0);
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+        }
+
+        async function submitReview(event) {
+            event.preventDefault();
+            
+            if (!selectedRating) {
+                if (typeof showToast === 'function') {
+                    showToast('Please select a rating', 'warning');
+                }
+                return;
+            }
+
+            const comment = document.getElementById('reviewComment').value.trim();
+            
+            if (!comment) {
+                if (typeof showToast === 'function') {
+                    showToast('Please write a review', 'warning');
+                }
+                return;
+            }
+
+            if (typeof showLoading === 'function') showLoading();
+
             try {
                 const response = await reviewsAPI.create({
-                    toolId: toolId,
-                    rating: rating,
+                    toolId: currentTool._id || currentTool.id,
+                    rating: selectedRating,
                     comment: comment
                 });
                 
+                if (typeof hideLoading === 'function') hideLoading();
+                
                 if (response.success) {
                     if (typeof showToast === 'function') {
-                        showToast('✅ Review submitted!', 'success');
+                        showToast('Review submitted successfully!', 'success');
                     }
-                    loadReviews(toolId);
+                    closeReviewModal();
+                    loadReviews(currentTool._id || currentTool.id);
                 } else {
                     if (typeof showToast === 'function') {
-                        showToast('❌ ' + (response.message || 'Failed to submit review'), 'error');
+                        showToast(response.message || 'Failed to submit review', 'error');
                     }
                 }
             } catch (error) {
+                if (typeof hideLoading === 'function') hideLoading();
                 console.error('Error submitting review:', error);
                 if (typeof showToast === 'function') {
-                    showToast('❌ An error occurred', 'error');
+                    showToast('An error occurred while submitting review', 'error');
                 }
             }
         }
@@ -680,6 +839,13 @@
                 </div>
             `;
         }
+
+        // Close modal on outside click
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReviewModal();
+            }
+        });
     </script>
 </body>
 </html>

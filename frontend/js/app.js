@@ -140,7 +140,6 @@ function updateNavbar() {
 }
 
 function showLoginLinks(navAuth) {
-    // ✅ FIXED: Changed /register.html to /signup.html
     navAuth.innerHTML = `
         <div class="nav-auth-links" style="display: flex; gap: 1rem; align-items: center;">
             <a href="/login.html" class="nav-link" style="color: #b0b0b0; text-decoration: none; font-weight: 500; transition: color 0.3s ease;">Login</a>
@@ -154,7 +153,7 @@ function logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('rememberEmail');
-        showToast('✅ Logged out successfully', 'success');
+        showToast('Logged out successfully', 'success');
         setTimeout(() => {
             window.location.href = '/index.html';
         }, 1000);
@@ -213,7 +212,7 @@ function timeAgo(date) {
 // ============================================
 
 function createToolCard(tool) {
-    const ratingStars = tool.averageRating ? '⭐'.repeat(Math.round(tool.averageRating)) : 'N/A';
+    const ratingStars = tool.averageRating ? '★'.repeat(Math.round(tool.averageRating)) : 'N/A';
     
     return `
         <div class="tool-card">
@@ -237,7 +236,6 @@ function createToolCard(tool) {
 
             <div class="tool-buttons">
                 <a href="/tools_detail.html?id=${tool._id}" class="btn btn-primary">View Details</a>
-                <button onclick="toggleFavorite('${tool._id}')" class="btn btn-secondary">❤️ Save</button>
             </div>
         </div>
     `;
@@ -260,36 +258,6 @@ function renderToolsList(tools, containerId) {
     }
 
     container.innerHTML = tools.map(tool => createToolCard(tool)).join('');
-}
-
-// ============================================
-// TOGGLE FAVORITE
-// ============================================
-
-async function toggleFavorite(toolId) {
-    if (!localStorage.getItem('token')) {
-        showToast('Please login to save favorites', 'warning');
-        setTimeout(() => {
-            window.location.href = '/login.html';
-        }, 1000);
-        return;
-    }
-
-    showLoading();
-    try {
-        const response = await toolsAPI.addFavorite(toolId);
-        hideLoading();
-
-        if (response.success) {
-            showToast('✅ Added to favorites!', 'success');
-        } else {
-            showToast('❌ Failed to add favorite', 'error');
-        }
-    } catch (error) {
-        hideLoading();
-        console.error('Error adding favorite:', error);
-        showToast('❌ An error occurred', 'error');
-    }
 }
 
 // ============================================
@@ -376,7 +344,7 @@ function createPaginationButtons(currentPage, totalPages, onPageClick) {
     let html = '';
 
     if (currentPage > 1) {
-        html += `<button class="page-btn" onclick="${onPageClick}(${currentPage - 1})">← Previous</button>`;
+        html += `<button class="page-btn" onclick="${onPageClick}(${currentPage - 1})">Previous</button>`;
     }
 
     for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
@@ -388,7 +356,7 @@ function createPaginationButtons(currentPage, totalPages, onPageClick) {
     }
 
     if (currentPage < totalPages) {
-        html += `<button class="page-btn" onclick="${onPageClick}(${currentPage + 1})">Next →</button>`;
+        html += `<button class="page-btn" onclick="${onPageClick}(${currentPage + 1})">Next</button>`;
     }
 
     return html;
@@ -410,7 +378,7 @@ async function markHelpful(reviewId) {
         hideLoading();
 
         if (response.success) {
-            showToast('👍 Thanks for your feedback!', 'success');
+            showToast('Thanks for your feedback!', 'success');
             location.reload();
         } else {
             showToast('Failed to mark as helpful', 'error');
@@ -418,7 +386,7 @@ async function markHelpful(reviewId) {
     } catch (error) {
         hideLoading();
         console.error('Error marking helpful:', error);
-        showToast('❌ An error occurred', 'error');
+        showToast('An error occurred', 'error');
     }
 }
 
@@ -432,14 +400,14 @@ async function flagReview(reviewId) {
         hideLoading();
 
         if (response.success) {
-            showToast('🚩 Review reported successfully', 'success');
+            showToast('Review reported successfully', 'success');
         } else {
             showToast('Failed to report review', 'error');
         }
     } catch (error) {
         hideLoading();
         console.error('Error flagging review:', error);
-        showToast('❌ An error occurred', 'error');
+        showToast('An error occurred', 'error');
     }
 }
 
@@ -476,7 +444,7 @@ async function performSearch(query, page = 1) {
                 }
             }
         } else {
-            showToast('❌ ' + (response.message || 'Search failed'), 'error');
+            showToast(response.message || 'Search failed', 'error');
             const container = document.getElementById('tools-container');
             if (container) {
                 container.innerHTML = '<p class="no-results">No tools found for your search</p>';
@@ -485,7 +453,7 @@ async function performSearch(query, page = 1) {
     } catch (error) {
         hideLoading();
         console.error('Search error:', error);
-        showToast('❌ An error occurred while searching', 'error');
+        showToast('An error occurred while searching', 'error');
     }
 }
 
@@ -508,14 +476,14 @@ async function filterByCategory(category, page = 1) {
 
         if (response.success) {
             renderToolsList(response.data.tools, 'tools-container');
-            showToast(`✅ Showing ${response.data.tools.length} tools in ${category}`, 'success');
+            showToast(`Showing ${response.data.tools.length} tools in ${category}`, 'success');
         } else {
-            showToast('❌ Failed to load category', 'error');
+            showToast('Failed to load category', 'error');
         }
     } catch (error) {
         hideLoading();
         console.error('Category filter error:', error);
-        showToast('❌ An error occurred', 'error');
+        showToast('An error occurred', 'error');
     }
 }
 
@@ -524,7 +492,7 @@ async function filterByCategory(category, page = 1) {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 NexusAI App Initialized');
+    console.log('NexusAI App Initialized');
 
     // Update navbar first
     updateNavbar();
@@ -624,7 +592,6 @@ window.logout = logout;
 window.formatDate = formatDate;
 window.timeAgo = timeAgo;
 window.renderToolsList = renderToolsList;
-window.toggleFavorite = toggleFavorite;
 window.markHelpful = markHelpful;
 window.flagReview = flagReview;
 window.performSearch = performSearch;
