@@ -5,19 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compare Tools - NexusAI</title>
     <style>
-        :root {
-            --color-primary: #32b8c6;
-            --color-primary-hover: #1d748f;
-            --color-bg: #1f2122;
-            --color-surface: #26282a;
-            --color-text: #e8e8e8;
-            --color-text-secondary: #a7a9a9;
-            --color-border: #3a3d3e;
-            --color-success: #2bb877;
-            --color-warning: #e68161;
-            --color-error: #c0152f;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -25,87 +12,128 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             line-height: 1.6;
         }
 
-        nav {
-            background: var(--color-surface);
-            border-bottom: 1px solid var(--color-border);
-            padding: 1rem 2rem;
+        /* PROFESSIONAL NAVBAR */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        nav .container {
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
-        .logo {
+        .navbar-brand {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--color-primary);
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        nav ul {
+            font-weight: 700;
+            color: #64c8ff;
+            letter-spacing: 0.5px;
             display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: var(--color-text);
+            align-items: center;
+            gap: 0.5rem;
             text-decoration: none;
-            transition: color 0.3s;
         }
 
-        nav a:hover {
-            color: var(--color-primary);
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-            text-decoration: none;
+        .navbar-brand::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            border-radius: 50%;
             display: inline-block;
         }
 
-        .btn-primary {
-            background: var(--color-primary);
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .navbar-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .navbar-link:hover {
+            color: #64c8ff;
+        }
+
+        .navbar-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-link:hover::after {
+            width: 100%;
+        }
+
+        #nav-auth {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-auth-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            color: #64c8ff;
+        }
+
+        .nav-link.signup {
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 6px;
             color: white;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
-            background: var(--color-primary-hover);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--color-text);
-            border: 1px solid var(--color-border);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--color-primary);
-            color: var(--color-primary);
+        .nav-link.signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
         .container {
@@ -121,12 +149,15 @@
 
         .page-header h1 {
             font-size: 2.5rem;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
-            color: var(--color-primary);
+            font-weight: 700;
         }
 
         .page-header p {
-            color: var(--color-text-secondary);
+            color: #94a3b8;
             font-size: 1.1rem;
         }
 
@@ -138,15 +169,16 @@
         }
 
         .tool-selector {
-            background: var(--color-surface);
+            background: rgba(30, 41, 59, 0.5);
             padding: 1.5rem;
-            border-radius: 0.8rem;
-            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.1);
         }
 
         .tool-selector h3 {
             margin-bottom: 1rem;
-            color: var(--color-primary);
+            color: #64c8ff;
+            font-weight: 600;
         }
 
         .tool-search {
@@ -157,21 +189,21 @@
         .tool-search input {
             width: 100%;
             padding: 0.8rem;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: 0.5rem;
-            color: var(--color-text);
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #e2e8f0;
             font-size: 1rem;
         }
 
         .tool-search input::placeholder {
-            color: var(--color-text-secondary);
+            color: #94a3b8;
         }
 
         .tool-search input:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(50, 184, 198, 0.2);
+            border-color: #64c8ff;
+            box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.2);
         }
 
         .search-results {
@@ -179,10 +211,10 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.2);
             border-top: none;
-            border-radius: 0 0 0.5rem 0.5rem;
+            border-radius: 0 0 6px 6px;
             max-height: 300px;
             overflow-y: auto;
             display: none;
@@ -196,13 +228,13 @@
 
         .search-result-item {
             padding: 0.8rem;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
             cursor: pointer;
             transition: background 0.2s;
         }
 
         .search-result-item:hover {
-            background: var(--color-bg);
+            background: rgba(100, 200, 255, 0.1);
         }
 
         .search-result-item:last-child {
@@ -211,18 +243,18 @@
 
         .result-name {
             font-weight: 600;
-            color: var(--color-primary);
+            color: #e2e8f0;
         }
 
         .result-category {
-            font-size: 0.9rem;
-            color: var(--color-text-secondary);
+            font-size: 0.85rem;
+            color: #94a3b8;
         }
 
         .selected-tool {
-            background: var(--color-bg);
+            background: rgba(15, 23, 42, 0.6);
             padding: 1.5rem;
-            border-radius: 0.5rem;
+            border-radius: 6px;
             margin-top: 1rem;
             text-align: center;
             min-height: 150px;
@@ -230,30 +262,31 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            border: 1px solid rgba(100, 200, 255, 0.1);
         }
 
         .selected-tool.active {
-            border: 2px solid var(--color-primary);
+            border: 2px solid #64c8ff;
         }
 
         .tool-logo {
             width: 60px;
             height: 60px;
-            background: var(--color-border);
-            border-radius: 0.5rem;
+            background: rgba(100, 200, 255, 0.1);
+            border-radius: 8px;
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
 
         .btn-remove {
-            background: var(--color-error);
+            background: #ef4444;
             color: white;
             padding: 0.5rem 1rem;
             border: none;
-            border-radius: 0.3rem;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.9rem;
             margin-top: 1rem;
@@ -261,13 +294,13 @@
         }
 
         .btn-remove:hover {
-            background: #a0111f;
+            background: #dc2626;
         }
 
         .comparison-table {
-            background: var(--color-surface);
-            border-radius: 0.8rem;
-            border: 1px solid var(--color-border);
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.1);
             overflow: hidden;
             margin-bottom: 3rem;
         }
@@ -275,14 +308,14 @@
         .table-header {
             display: grid;
             grid-template-columns: 200px 1fr 1fr;
-            background: var(--color-bg);
-            border-bottom: 2px solid var(--color-border);
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 2px solid rgba(100, 200, 255, 0.2);
             font-weight: 600;
         }
 
         .table-header > div {
             padding: 1rem;
-            border-right: 1px solid var(--color-border);
+            border-right: 1px solid rgba(100, 200, 255, 0.1);
         }
 
         .table-header > div:last-child {
@@ -292,7 +325,7 @@
         .table-row {
             display: grid;
             grid-template-columns: 200px 1fr 1fr;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
         }
 
         .table-row:last-child {
@@ -301,7 +334,7 @@
 
         .table-row > div {
             padding: 1rem;
-            border-right: 1px solid var(--color-border);
+            border-right: 1px solid rgba(100, 200, 255, 0.1);
             display: flex;
             align-items: center;
         }
@@ -311,23 +344,23 @@
         }
 
         .table-label {
-            color: var(--color-text-secondary);
+            color: #94a3b8;
             font-weight: 500;
-            background: var(--color-bg);
+            background: rgba(15, 23, 42, 0.5);
         }
 
         .rating {
-            color: #ffd700;
+            color: #fbbf24;
             font-weight: 600;
         }
 
         .price-free {
-            color: var(--color-success);
+            color: #4CAF50;
             font-weight: 600;
         }
 
         .price-paid {
-            color: var(--color-warning);
+            color: #ff9800;
         }
 
         .features-list {
@@ -340,39 +373,24 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .feature-check {
-            color: var(--color-success);
+            color: #4CAF50;
             font-weight: bold;
         }
 
         .loading {
             text-align: center;
             padding: 2rem;
-            color: var(--color-text-secondary);
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--color-border);
-            border-top: 3px solid var(--color-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            color: #94a3b8;
         }
 
         .empty-state {
             text-align: center;
             padding: 3rem;
-            color: var(--color-text-secondary);
+            color: #94a3b8;
         }
 
         .compare-actions {
@@ -383,30 +401,24 @@
         }
 
         .btn-export {
-            background: var(--color-primary);
-            color: white;
             padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 6px;
+            color: white;
             cursor: pointer;
             font-size: 1rem;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
         .btn-export:hover {
-            background: var(--color-primary-hover);
-        }
-
-        footer {
-            background: var(--color-surface);
-            border-top: 1px solid var(--color-border);
-            padding: 2rem;
-            margin-top: 3rem;
-            text-align: center;
-            color: var(--color-text-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
         @media (max-width: 768px) {
+            .navbar-menu { display: none; }
             .compare-section {
                 grid-template-columns: 1fr;
             }
@@ -417,40 +429,33 @@
             }
 
             .page-header h1 {
-                font-size: 1.8rem;
-            }
-
-            nav ul {
-                gap: 1rem;
-            }
-
-            .auth-buttons {
-                flex-direction: column;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .compare-actions {
-                flex-direction: column;
-            }
-
-            .btn,
-            .btn-export {
-                width: 100%;
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <nav id="navbar"></nav>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">NexusAI</a>
+            <div class="navbar-menu">
+                <a href="index.html" class="navbar-link">Home</a>
+                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="trending.html" class="navbar-link">Trending</a>
+                <a href="compare.html" class="navbar-link">Compare</a>
+            </div>
+            <div id="nav-auth">
+                <div class="nav-auth-links">
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="signup.html" class="nav-link signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <div class="container">
         <div class="page-header">
-            <h1>🔄 Compare Tools</h1>
+            <h1>Compare Tools</h1>
             <p>Side-by-side comparison of AI tools to make the right choice</p>
         </div>
 
@@ -467,7 +472,7 @@
                     <div class="search-results" id="results1"></div>
                 </div>
                 <div class="selected-tool" id="selected1">
-                    <p style="color: var(--color-text-secondary);">Search and select a tool</p>
+                    <p style="color: #94a3b8;">Search and select a tool</p>
                 </div>
             </div>
 
@@ -483,7 +488,7 @@
                     <div class="search-results" id="results2"></div>
                 </div>
                 <div class="selected-tool" id="selected2">
-                    <p style="color: var(--color-text-secondary);">Search and select a tool</p>
+                    <p style="color: #94a3b8;">Search and select a tool</p>
                 </div>
             </div>
         </div>
@@ -521,7 +526,7 @@
                 </div>
 
                 <div class="table-row">
-                    <div class="table-label">Average Rating</div>
+                    <div class="table-label">Rating</div>
                     <div id="rating1">-</div>
                     <div id="rating2">-</div>
                 </div>
@@ -546,23 +551,19 @@
             </div>
 
             <div class="compare-actions">
-                <button class="btn-export" onclick="compareTools.exportToCSV()">📥 Export as CSV</button>
-                <button class="btn-export" onclick="compareTools.shareComparison()">📤 Share</button>
+                <button class="btn-export" onclick="compareTools.exportToCSV()">Export as CSV</button>
+                <button class="btn-export" onclick="compareTools.shareComparison()">Share Comparison</button>
             </div>
         </div>
 
         <div id="emptyState" class="empty-state">
-            <p>👈 Select two tools to start comparing</p>
+            <p>Select two tools above to start comparing</p>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2025 NexusAI. All rights reserved.</p>
-    </footer>
-
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
 
     <script>
         const compareTools = {
@@ -571,7 +572,7 @@
             allTools: [],
 
             async init() {
-                console.log('🔄 Initializing Compare Tools...');
+                console.log('Initializing Compare Tools...');
                 await this.loadTools();
                 this.setupSearchListeners();
                 this.updateNavbar();
@@ -579,25 +580,25 @@
 
             async loadTools() {
                 try {
-                    console.log('📡 Loading all tools...');
+                    console.log('Loading all tools...');
                     
                     if (typeof toolsAPI === 'undefined') {
-                        console.error('❌ toolsAPI not available');
+                        console.error('toolsAPI not available');
                         return;
                     }
 
                     const response = await toolsAPI.getAll(1, 500);
-                    console.log('📦 API Response:', response);
+                    console.log('API Response:', response);
 
                     if (response.success && response.data) {
                         this.allTools = response.data.tools || [];
-                        console.log(`✅ Loaded ${this.allTools.length} tools`);
+                        console.log(`Loaded ${this.allTools.length} tools`);
                     } else {
-                        console.error('❌ Failed to load tools:', response.message);
+                        console.error('Failed to load tools:', response.message);
                         this.allTools = [];
                     }
                 } catch (error) {
-                    console.error('❌ Error loading tools:', error);
+                    console.error('Error loading tools:', error);
                     this.allTools = [];
                 }
             },
@@ -614,7 +615,6 @@
                     this.handleSearch(e.target.value, 2);
                 });
 
-                // Close results on outside click
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.tool-search')) {
                         document.getElementById('results1').classList.remove('show');
@@ -631,7 +631,7 @@
                     return;
                 }
 
-                console.log(`🔍 Searching for: "${query}"`);
+                console.log(`Searching for: "${query}"`);
 
                 const filtered = this.allTools.filter(tool =>
                     tool.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -639,7 +639,7 @@
                     (tool.category && tool.category.toLowerCase().includes(query.toLowerCase()))
                 ).slice(0, 10);
 
-                console.log(`📊 Found ${filtered.length} matches`);
+                console.log(`Found ${filtered.length} matches`);
 
                 this.displaySearchResults(filtered, toolNumber);
             },
@@ -667,11 +667,11 @@
                 const tool = this.allTools.find(t => t._id === toolId);
                 
                 if (!tool) {
-                    console.error('❌ Tool not found:', toolId);
+                    console.error('Tool not found:', toolId);
                     return;
                 }
 
-                console.log(`✅ Selected tool ${toolNumber}:`, tool.name);
+                console.log(`Selected tool ${toolNumber}:`, tool.name);
 
                 if (toolNumber === 1) {
                     this.tool1 = tool;
@@ -692,27 +692,27 @@
             updateSelectedToolDisplay() {
                 if (this.tool1) {
                     document.getElementById('selected1').innerHTML = `
-                        <div class="tool-logo">🔧</div>
+                        <div class="tool-logo">AI</div>
                         <strong>${this.tool1.name}</strong>
-                        <small style="color: var(--color-text-secondary);">${this.tool1.category || 'AI Tool'}</small>
+                        <small style="color: #94a3b8;">${this.tool1.category || 'AI Tool'}</small>
                         <button class="btn-remove" onclick="compareTools.removeTool(1)">Remove</button>
                     `;
                     document.getElementById('selected1').classList.add('active');
                 } else {
-                    document.getElementById('selected1').innerHTML = `<p style="color: var(--color-text-secondary);">Search and select a tool</p>`;
+                    document.getElementById('selected1').innerHTML = `<p style="color: #94a3b8;">Search and select a tool</p>`;
                     document.getElementById('selected1').classList.remove('active');
                 }
 
                 if (this.tool2) {
                     document.getElementById('selected2').innerHTML = `
-                        <div class="tool-logo">⚙️</div>
+                        <div class="tool-logo">AI</div>
                         <strong>${this.tool2.name}</strong>
-                        <small style="color: var(--color-text-secondary);">${this.tool2.category || 'AI Tool'}</small>
+                        <small style="color: #94a3b8;">${this.tool2.category || 'AI Tool'}</small>
                         <button class="btn-remove" onclick="compareTools.removeTool(2)">Remove</button>
                     `;
                     document.getElementById('selected2').classList.add('active');
                 } else {
-                    document.getElementById('selected2').innerHTML = `<p style="color: var(--color-text-secondary);">Search and select a tool</p>`;
+                    document.getElementById('selected2').innerHTML = `<p style="color: #94a3b8;">Search and select a tool</p>`;
                     document.getElementById('selected2').classList.remove('active');
                 }
             },
@@ -732,7 +732,7 @@
             },
 
             displayComparison() {
-                console.log('📊 Displaying comparison...');
+                console.log('Displaying comparison...');
                 
                 document.getElementById('tool1Header').textContent = this.tool1.name;
                 document.getElementById('tool2Header').textContent = this.tool2.name;
@@ -749,14 +749,14 @@
                 document.getElementById('category1').textContent = this.tool1.category || '-';
                 document.getElementById('category2').textContent = this.tool2.category || '-';
 
-                document.getElementById('rating1').innerHTML = `<span class="rating">⭐ ${(this.tool1.averageRating || 0).toFixed(1)}/5</span>`;
-                document.getElementById('rating2').innerHTML = `<span class="rating">⭐ ${(this.tool2.averageRating || 0).toFixed(1)}/5</span>`;
+                document.getElementById('rating1').innerHTML = `<span class="rating">${(this.tool1.averageRating || 0).toFixed(1)}/5</span>`;
+                document.getElementById('rating2').innerHTML = `<span class="rating">${(this.tool2.averageRating || 0).toFixed(1)}/5</span>`;
 
                 document.getElementById('reviews1').textContent = `${this.tool1.totalReviews || 0} reviews`;
                 document.getElementById('reviews2').textContent = `${this.tool2.totalReviews || 0} reviews`;
 
-                document.getElementById('website1').innerHTML = `<a href="${this.tool1.website || '#'}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
-                document.getElementById('website2').innerHTML = `<a href="${this.tool2.website || '#'}" target="_blank" style="color: var(--color-primary);">Visit →</a>`;
+                document.getElementById('website1').innerHTML = `<a href="${this.tool1.website || '#'}" target="_blank" style="color: #64c8ff;">Visit Website</a>`;
+                document.getElementById('website2').innerHTML = `<a href="${this.tool2.website || '#'}" target="_blank" style="color: #64c8ff;">Visit Website</a>`;
 
                 document.getElementById('features1').innerHTML = this.getFeaturesHTML(this.tool1.features);
                 document.getElementById('features2').innerHTML = this.getFeaturesHTML(this.tool2.features);
@@ -771,7 +771,7 @@
                 const priceType = typeof pricing === 'string' ? pricing : (pricing.type || 'Paid');
                 
                 if (priceType && priceType.toLowerCase().includes('free')) {
-                    return '<span class="price-free">✓ ' + priceType + '</span>';
+                    return '<span class="price-free">' + priceType + '</span>';
                 }
                 
                 return '<span class="price-paid">' + (priceType || 'Paid') + '</span>';
@@ -816,14 +816,14 @@
                 a.click();
                 
                 if (typeof showToast === 'function') {
-                    showToast('✅ Comparison exported!', 'success');
+                    showToast('Comparison exported!', 'success');
                 }
             },
 
             shareComparison() {
                 if (!this.tool1 || !this.tool2) return;
 
-                const text = 'Check out this comparison: ' + this.tool1.name + ' vs ' + this.tool2.name + ' on NexusAI!';
+                const text = 'Compare: ' + this.tool1.name + ' vs ' + this.tool2.name + ' on NexusAI';
                 
                 if (navigator.share) {
                     navigator.share({
@@ -834,9 +834,7 @@
                 } else {
                     navigator.clipboard.writeText(text + '\n' + window.location.href);
                     if (typeof showToast === 'function') {
-                        showToast('✅ Link copied to clipboard!', 'success');
-                    } else {
-                        alert('Link copied to clipboard!');
+                        showToast('Link copied to clipboard!', 'success');
                     }
                 }
             },
@@ -849,7 +847,7 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Compare page loaded');
+            console.log('Compare page loaded');
             compareTools.init();
         });
     </script>

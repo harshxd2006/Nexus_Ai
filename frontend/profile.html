@@ -12,25 +12,22 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             line-height: 1.6;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* NAVBAR STYLES */
+        /* PROFESSIONAL NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
-            padding: 1.2rem 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .navbar-container {
@@ -43,27 +40,57 @@
         }
 
         .navbar-brand {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .navbar-brand::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            border-radius: 50%;
+            display: inline-block;
         }
 
         .navbar-menu {
             display: flex;
-            gap: 3rem;
+            gap: 2.5rem;
         }
 
-        .navbar-menu a {
-            color: #b0b0b0;
+        .navbar-link {
+            color: #94a3b8;
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 0.5rem 0;
         }
 
-        .navbar-menu a:hover {
+        .navbar-link:hover {
             color: #64c8ff;
+        }
+
+        .navbar-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-link:hover::after {
+            width: 100%;
         }
 
         #nav-auth {
@@ -72,30 +99,6 @@
             align-items: center;
         }
 
-        /* LOADING SPINNER */
-        .loading-spinner {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(100, 200, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #64c8ff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* MAIN CONTAINER */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -103,7 +106,6 @@
             min-height: 80vh;
         }
 
-        /* TABS */
         .profile-tabs {
             display: flex;
             gap: 1rem;
@@ -115,7 +117,7 @@
             padding: 1rem 2rem;
             background: none;
             border: none;
-            color: #a0a0a0;
+            color: #94a3b8;
             cursor: pointer;
             font-weight: 600;
             font-size: 1rem;
@@ -138,10 +140,9 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
         }
 
-        /* TAB CONTENT */
         .tab-content {
             display: none;
         }
@@ -150,17 +151,15 @@
             display: block;
         }
 
-        /* PROFILE SECTION */
         .profile-header {
             display: grid;
             grid-template-columns: 200px 1fr;
             gap: 3rem;
             margin-bottom: 3rem;
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
-            border: 1px solid rgba(100, 200, 255, 0.2);
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 2rem;
-            backdrop-filter: blur(10px);
             min-height: 250px;
         }
 
@@ -168,7 +167,7 @@
             width: 180px;
             height: 180px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -179,15 +178,15 @@
 
         .profile-info h1 {
             font-size: 2rem;
-            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             margin-bottom: 0.5rem;
+            font-weight: 700;
         }
 
         .profile-info p {
-            color: #a0a0a0;
+            color: #94a3b8;
             margin-bottom: 1.5rem;
         }
 
@@ -214,13 +213,13 @@
         }
 
         .stat-label {
-            color: #a0a0a0;
+            color: #94a3b8;
             font-size: 0.9rem;
         }
 
         .edit-btn {
             padding: 0.8rem 1.5rem;
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             border: none;
             border-radius: 8px;
             color: white;
@@ -234,94 +233,6 @@
             box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
         }
 
-        /* EDIT PROFILE FORM */
-        .edit-profile-form {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
-            border: 1px solid rgba(100, 200, 255, 0.15);
-            border-radius: 12px;
-            padding: 2rem;
-            display: none;
-        }
-
-        .edit-profile-form.show {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.7rem;
-            color: #b0b0b0;
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.8rem;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 6px;
-            color: #e0e0e0;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #64c8ff;
-            background: rgba(100, 200, 255, 0.1);
-        }
-
-        .form-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(100, 200, 255, 0.1);
-            color: #64c8ff;
-            border: 1px solid rgba(100, 200, 255, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(100, 200, 255, 0.2);
-        }
-
-        /* FAVORITES SECTION */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.5rem;
-            color: #64c8ff;
-        }
-
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -330,20 +241,19 @@
         }
 
         .tool-card {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
-            border: 1px solid rgba(100, 200, 255, 0.2);
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
         }
 
         .tool-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(100, 200, 255, 0.5);
-            box-shadow: 0 8px 30px rgba(100, 200, 255, 0.2);
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
         .tool-header {
@@ -368,7 +278,7 @@
 
         .tool-info h3 {
             font-size: 1.2rem;
-            color: #e0e0e0;
+            color: #e2e8f0;
             margin-bottom: 0.3rem;
         }
 
@@ -380,7 +290,7 @@
         }
 
         .tool-description {
-            color: #a0a0a0;
+            color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 1rem;
             flex-grow: 1;
@@ -396,12 +306,12 @@
         }
 
         .rating {
-            color: #ffd700;
+            color: #fbbf24;
             font-weight: 600;
         }
 
         .reviews {
-            color: #a0a0a0;
+            color: #94a3b8;
         }
 
         .tool-buttons {
@@ -426,13 +336,13 @@
         }
 
         .btn-primary-small {
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
         }
 
         .btn-primary-small:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
         }
 
         .btn-danger-small {
@@ -445,9 +355,8 @@
             background: rgba(244, 67, 54, 0.25);
         }
 
-        /* REVIEWS SECTION */
         .review-card {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.15), rgba(30, 30, 50, 0.15));
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 8px;
             padding: 1.5rem;
@@ -467,11 +376,11 @@
         }
 
         .review-rating {
-            color: #ffd700;
+            color: #fbbf24;
         }
 
         .review-text {
-            color: #a0a0a0;
+            color: #94a3b8;
             margin-bottom: 1rem;
             line-height: 1.8;
         }
@@ -481,103 +390,44 @@
             font-size: 0.8rem;
         }
 
-        .review-actions {
-            display: flex;
-            gap: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(100, 200, 255, 0.1);
-        }
-
-        .review-btn {
-            background: none;
-            border: none;
-            color: #64c8ff;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .review-btn:hover {
-            color: #ff1493;
-        }
-
-        /* NO RESULTS */
         .no-results {
             text-align: center;
             padding: 3rem;
-            color: #a0a0a0;
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.15), rgba(30, 30, 50, 0.15));
+            color: #94a3b8;
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 8px;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .navbar-menu {
-                display: none;
-            }
-
-            .container {
-                padding: 20px 15px;
-            }
-
+            .navbar-menu { display: none; }
             .profile-header {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
-
-            .profile-avatar {
-                margin: 0 auto;
-            }
-
-            .profile-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-info h1 {
-                font-size: 1.5rem;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tab-btn {
-                padding: 0.8rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .profile-tabs {
-                gap: 0;
-            }
+            .profile-avatar { margin: 0 auto; }
+            .profile-stats { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- LOADING SPINNER -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-container">
-            <div class="navbar-brand">🚀 NexusAI</div>
+            <a href="index.html" class="navbar-brand">NexusAI</a>
             <div class="navbar-menu">
-                <a href="/index.html">Home</a>
-                <a href="/tools_listing.html">Tools</a>
-                <a href="/trending.html">Trending</a>
+                <a href="index.html" class="navbar-link">Home</a>
+                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="trending.html" class="navbar-link">Trending</a>
+                <a href="compare.html" class="navbar-link">Compare</a>
             </div>
             <div id="nav-auth"></div>
         </div>
     </nav>
 
-    <!-- MAIN CONTAINER -->
     <div class="container">
-        <!-- PROFILE HEADER -->
         <div class="profile-header" id="profileHeader">
-            <div class="profile-avatar" id="profileAvatar">👤</div>
+            <div class="profile-avatar" id="profileAvatar">U</div>
             <div class="profile-info">
                 <h1 id="profileName">Loading...</h1>
                 <p id="profileEmail">Loading...</p>
@@ -595,298 +445,95 @@
                         <div class="stat-label">Joined</div>
                     </div>
                 </div>
-                <button class="edit-btn" onclick="toggleEditForm()">✏️ Edit Profile</button>
+                <button class="edit-btn" onclick="alert('Edit profile feature coming soon')">Edit Profile</button>
             </div>
         </div>
 
-        <!-- EDIT PROFILE FORM -->
-        <div class="edit-profile-form" id="editProfileForm">
-            <h2 style="color: #64c8ff; margin-bottom: 1.5rem;">Edit Profile</h2>
-            <form id="profileForm">
-                <div class="form-group">
-                    <label class="form-label" for="editName">Full Name</label>
-                    <input type="text" id="editName" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="editEmail">Email</label>
-                    <input type="email" id="editEmail" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="editBio">Bio</label>
-                    <input type="text" id="editBio" class="form-input" placeholder="Tell us about yourself">
-                </div>
-
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">💾 Save Changes</button>
-                    <button type="button" class="btn btn-secondary" onclick="toggleEditForm()">✕ Cancel</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- TABS -->
         <div class="profile-tabs">
-            <button class="tab-btn active" onclick="switchTab('favorites')">❤️ Favorites</button>
-            <button class="tab-btn" onclick="switchTab('reviews')">⭐ My Reviews</button>
-            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+            <button class="tab-btn active" onclick="switchTab('favorites')">Favorites</button>
+            <button class="tab-btn" onclick="switchTab('reviews')">My Reviews</button>
+            <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
         </div>
 
-        <!-- FAVORITES TAB -->
         <div class="tab-content active" id="favoritesTab">
-            <div class="section-header">
-                <h2>💖 Your Favorite Tools</h2>
-                <span id="favCount" style="color: #64c8ff;">0 tools</span>
-            </div>
+            <h2 style="color: #64c8ff; margin-bottom: 2rem;">Your Favorite Tools</h2>
             <div class="tools-grid" id="favoritesContainer">
                 <div class="no-results">Loading your favorites...</div>
             </div>
         </div>
 
-        <!-- REVIEWS TAB -->
         <div class="tab-content" id="reviewsTab">
-            <div class="section-header">
-                <h2>⭐ Your Reviews</h2>
-                <span id="reviewCount" style="color: #64c8ff;">0 reviews</span>
-            </div>
+            <h2 style="color: #64c8ff; margin-bottom: 2rem;">Your Reviews</h2>
             <div id="reviewsContainer">
                 <div class="no-results">Loading your reviews...</div>
             </div>
         </div>
 
-        <!-- SETTINGS TAB -->
         <div class="tab-content" id="settingsTab">
-            <h2 style="color: #64c8ff; margin-bottom: 2rem;">⚙️ Account Settings</h2>
-            
-            <div style="background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2)); border: 1px solid rgba(100, 200, 255, 0.15); border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
-                <h3 style="color: #e0e0e0; margin-bottom: 1rem;">🔐 Change Password</h3>
-                <form id="passwordForm">
-                    <div class="form-group">
-                        <label class="form-label" for="currentPassword">Current Password</label>
-                        <input type="password" id="currentPassword" class="form-input" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="newPassword">New Password</label>
-                        <input type="password" id="newPassword" class="form-input" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" class="form-input" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Update Password</button>
-                </form>
-            </div>
-
-            <div style="background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05)); border: 1px solid rgba(244, 67, 54, 0.2); border-radius: 12px; padding: 2rem;">
-                <h3 style="color: #f44336; margin-bottom: 1rem;">⚠️ Danger Zone</h3>
-                <p style="color: #a0a0a0; margin-bottom: 1rem;">Delete your account permanently. This action cannot be undone.</p>
-                <button class="btn btn-danger-small" style="background: #f44336; padding: 0.8rem 1.5rem;" onclick="deleteAccount()">🗑️ Delete Account</button>
-            </div>
+            <h2 style="color: #64c8ff; margin-bottom: 2rem;">Account Settings</h2>
+            <div class="no-results">Settings feature coming soon</div>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script src="/js/api.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
     
-    <!-- FIX: Add missing API function if not defined -->
     <script>
-        // Ensure userAPI.getReviews exists
-        if (!userAPI.getReviews) {
-            console.log('⚠️ Adding missing userAPI.getReviews function');
-            userAPI.getReviews = async (page = 1, limit = 10) => {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    return { success: false, message: 'No token' };
-                }
-                
-                try {
-                    const response = await fetch(`http://localhost:5000/api/users/reviews?page=${page}&limit=${limit}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    
-                    const data = await response.json();
-                    console.log('🔍 Raw API response:', data);
-                    return data;
-                } catch (error) {
-                    console.error('API Error:', error);
-                    return { success: false, message: error.message };
-                }
-            };
-        }
-        
-        // Ensure userAPI.removeFavorite exists
-        if (!userAPI.removeFavorite) {
-            console.log('⚠️ Adding missing userAPI.removeFavorite function');
-            userAPI.removeFavorite = async (toolId) => {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    return { success: false, message: 'No token' };
-                }
-                
-                try {
-                    const response = await fetch(`http://localhost:5000/api/tools/${toolId}/favorite`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    
-                    return await response.json();
-                } catch (error) {
-                    console.error('API Error:', error);
-                    return { success: false, message: error.message };
-                }
-            };
-        }
-        
-        // Ensure userAPI.updateUserProfile exists
-        if (!userAPI.updateUserProfile) {
-            console.log('⚠️ Adding missing userAPI.updateUserProfile function');
-            userAPI.updateUserProfile = async (userData) => {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    return { success: false, message: 'No token' };
-                }
-                
-                try {
-                    const response = await fetch('http://localhost:5000/api/users/me/profile', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(userData)
-                    });
-                    
-                    return await response.json();
-                } catch (error) {
-                    console.error('API Error:', error);
-                    return { success: false, message: error.message };
-                }
-            };
-        }
-        
-        // Ensure userAPI.deleteAccount exists
-        if (!userAPI.deleteAccount) {
-            console.log('⚠️ Adding missing userAPI.deleteAccount function');
-            userAPI.deleteAccount = async () => {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    return { success: false, message: 'No token' };
-                }
-                
-                try {
-                    const response = await fetch('http://localhost:5000/api/users/me/account', {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    
-                    return await response.json();
-                } catch (error) {
-                    console.error('API Error:', error);
-                    return { success: false, message: error.message };
-                }
-            };
-        }
-    </script>
-    
-    <!-- PAGE-SPECIFIC LOGIC -->
-    <script>
-        // UTILITY FUNCTIONS
-        function showLoading() {
-            const spinner = document.getElementById('loadingSpinner');
-            if (spinner) spinner.style.display = 'block';
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
         }
 
-        function hideLoading() {
-            const spinner = document.getElementById('loadingSpinner');
-            if (spinner) spinner.style.display = 'none';
-        }
-
-        function showToast(message, type = 'info') {
-            if (window.showToast) {
-                window.showToast(message, type);
-            } else {
-                alert(message);
-            }
-        }
-
-        function timeAgo(dateString) {
-            if (!dateString) return 'recently';
-            const date = new Date(dateString);
-            const now = new Date();
-            const seconds = Math.floor((now - date) / 1000);
-            
-            if (seconds < 60) return 'just now';
-            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
-            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
-            if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-
-        // CHECK AUTHENTICATION
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('Profile page loading...');
             
-            // First update navbar
             updateNavbar();
             
-            // Check authentication
             const token = localStorage.getItem('token');
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             
             if (!token) {
                 console.log('No token found, redirecting to login');
-                showToast('❌ Please login to access your profile', 'warning');
+                showToast('Please login to access your profile', 'warning');
                 setTimeout(() => {
                     window.location.href = '/login.html';
                 }, 1500);
                 return;
             }
             
-            // Show user data from localStorage immediately
             if (user.name || user.email) {
                 console.log('Using cached user data:', user);
                 updateProfileUI(user);
             }
             
-            // Load fresh data from API
             try {
                 await loadUserProfile();
                 await loadUserFavorites();
                 await loadUserReviews();
             } catch (error) {
                 console.error('Error loading profile data:', error);
-                showToast('⚠️ Using cached data. Some features may be limited.', 'warning');
+                showToast('Using cached data. Some features may be limited.', 'warning');
             }
         });
 
-        // UPDATE PROFILE UI
         function updateProfileUI(user) {
             console.log('Updating UI with user:', user);
             
-            // Update avatar with first letter of name
             const initial = (user.name || 'U').charAt(0).toUpperCase();
             document.getElementById('profileAvatar').textContent = initial;
             
-            // Update name and email
             document.getElementById('profileName').textContent = user.name || 'User';
             document.getElementById('profileEmail').textContent = user.email || 'user@example.com';
             
-            // Update join date if available
             if (user.createdAt) {
                 const joinDate = new Date(user.createdAt);
                 const monthYear = joinDate.toLocaleDateString('en-US', { 
@@ -896,12 +543,6 @@
                 document.getElementById('statsJoinDate').textContent = monthYear;
             }
             
-            // Update form fields
-            document.getElementById('editName').value = user.name || '';
-            document.getElementById('editEmail').value = user.email || '';
-            document.getElementById('editBio').value = user.bio || '';
-            
-            // Update stats from localStorage cache
             const cachedReviews = JSON.parse(localStorage.getItem('user_reviews') || '[]');
             const cachedFavorites = JSON.parse(localStorage.getItem('user_favorites') || '[]');
             
@@ -909,13 +550,10 @@
             document.getElementById('statsFavorites').textContent = cachedFavorites.length;
         }
 
-        // LOAD USER PROFILE FROM API
         async function loadUserProfile() {
-            showLoading();
             try {
                 console.log('Loading user profile from API...');
                 
-                // Try to get profile from API
                 const response = await userAPI.getProfile();
                 console.log('Profile API response:', response);
                 
@@ -923,37 +561,30 @@
                     const user = response.data.user || response.data;
                     console.log('User data received:', user);
                     
-                    // Update UI with fresh data
                     updateProfileUI(user);
                     
-                    // Cache the user data
                     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
                     const updatedUser = { ...currentUser, ...user };
                     localStorage.setItem('user', JSON.stringify(updatedUser));
                     
-                    hideLoading();
                     return user;
                 } else {
                     throw new Error(response.message || 'Failed to load profile');
                 }
             } catch (error) {
-                hideLoading();
                 console.warn('Could not load profile from API:', error.message);
                 
-                // Fallback to localStorage data
                 const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
                 if (storedUser.name) {
                     updateProfileUI(storedUser);
-                    showToast('⚠️ Using cached profile data', 'info');
+                    showToast('Using cached profile data', 'info');
                 }
                 
                 return null;
             }
         }
 
-        // LOAD USER FAVORITES
         async function loadUserFavorites() {
-            showLoading();
             try {
                 console.log('Loading favorites from API...');
                 const response = await userAPI.getFavorites();
@@ -963,15 +594,11 @@
                     const tools = response.data?.tools || response.data || [];
                     const totalFavorites = response.pagination?.total || tools.length;
                     
-                    // Update stats
                     document.getElementById('statsFavorites').textContent = totalFavorites;
-                    document.getElementById('favCount').textContent = `${totalFavorites} tool${totalFavorites !== 1 ? 's' : ''}`;
                     
-                    // Cache favorites
                     localStorage.setItem('user_favorites', JSON.stringify(tools));
                     
                     if (tools.length > 0) {
-                        // Render favorites grid
                         const toolsHTML = tools.map(tool => `
                             <div class="tool-card">
                                 <div class="tool-header">
@@ -988,12 +615,12 @@
                                 <p class="tool-description">${(tool.description || '').substring(0, 120)}...</p>
 
                                 <div class="tool-stats">
-                                    <span class="rating">⭐ ${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'}</span>
+                                    <span class="rating">${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'} Rating</span>
                                     <span class="reviews">${tool.totalReviews || 0} reviews</span>
                                 </div>
 
                                 <div class="tool-buttons">
-                                    <a href="/tools_detail.html?id=${tool._id || tool.id}" class="btn-small btn-primary-small">View Details</a>
+                                    <a href="/tool_detail.html?id=${tool._id || tool.id}" class="btn-small btn-primary-small">View Details</a>
                                     <button onclick="removeFavorite('${tool._id || tool.id}')" class="btn-small btn-danger-small">Remove</button>
                                 </div>
                             </div>
@@ -1004,29 +631,15 @@
                         document.getElementById('favoritesContainer').innerHTML = 
                             '<div class="no-results">No favorite tools yet. <a href="/tools_listing.html" style="color: #64c8ff;">Explore tools</a></div>';
                     }
-                } else {
-                    throw new Error(response.message || 'Failed to load favorites');
                 }
             } catch (error) {
                 console.error('Error loading favorites:', error);
-                
-                // Fallback to cached favorites
-                const cachedFavorites = JSON.parse(localStorage.getItem('user_favorites') || '[]');
-                if (cachedFavorites.length > 0) {
-                    document.getElementById('favCount').textContent = `${cachedFavorites.length} tools (cached)`;
-                    showToast('⚠️ Showing cached favorites', 'info');
-                } else {
-                    document.getElementById('favoritesContainer').innerHTML = 
-                        '<div class="no-results">Error loading favorites. Please try again later.</div>';
-                }
-            } finally {
-                hideLoading();
+                document.getElementById('favoritesContainer').innerHTML = 
+                    '<div class="no-results">Error loading favorites. Please try again later.</div>';
             }
         }
 
-        // LOAD USER REVIEWS
         async function loadUserReviews() {
-            showLoading();
             try {
                 console.log('Loading reviews from API...');
                 const response = await userAPI.getReviews();
@@ -1035,24 +648,16 @@
                 if (response.success) {
                     let reviews = [];
                     
-                    // Handle different response structures
                     if (response.data && Array.isArray(response.data.reviews)) {
                         reviews = response.data.reviews;
                     } else if (Array.isArray(response.data)) {
-                        reviews = response.data;
-                    } else if (response.reviews) {
-                        reviews = response.reviews;
-                    } else if (response.data && response.data.length) {
                         reviews = response.data;
                     }
                     
                     const totalReviews = response.pagination?.total || reviews.length;
                     
-                    // Update stats
                     document.getElementById('statsReviews').textContent = totalReviews;
-                    document.getElementById('reviewCount').textContent = `${totalReviews} review${totalReviews !== 1 ? 's' : ''}`;
                     
-                    // Cache reviews
                     localStorage.setItem('user_reviews', JSON.stringify(reviews));
                     
                     if (reviews.length > 0) {
@@ -1061,24 +666,17 @@
                             const reviewTitle = review.title || 'No title';
                             const reviewContent = review.content || review.review || 'No content';
                             const reviewRating = review.rating || 5;
-                            const reviewId = review._id || review.id;
-                            const createdAt = review.createdAt || review.date;
                             
                             return `
                                 <div class="review-card">
                                     <div class="review-header">
                                         <div>
-                                            <div class="review-tool">📝 ${toolName}</div>
-                                            <div class="review-time">${timeAgo(createdAt)}</div>
+                                            <div class="review-tool">${toolName}</div>
                                         </div>
-                                        <div class="review-rating">${'⭐'.repeat(reviewRating)}</div>
+                                        <div class="review-rating">${'★'.repeat(reviewRating)}</div>
                                     </div>
                                     <h4 style="color: #e0e0e0; margin-bottom: 0.5rem;">${reviewTitle}</h4>
                                     <p class="review-text">${reviewContent}</p>
-                                    <div class="review-actions">
-                                        <button class="review-btn" onclick="editReview('${reviewId}')">✏️ Edit</button>
-                                        <button class="review-btn" onclick="deleteReview('${reviewId}')">🗑️ Delete</button>
-                                    </div>
                                 </div>
                             `;
                         }).join('');
@@ -1088,215 +686,29 @@
                         document.getElementById('reviewsContainer').innerHTML = 
                             '<div class="no-results">No reviews yet. <a href="/tools_listing.html" style="color: #64c8ff;">Write your first review</a></div>';
                     }
-                } else {
-                    throw new Error(response.message || 'Failed to load reviews');
                 }
             } catch (error) {
                 console.error('Error loading reviews:', error);
-                
-                // Fallback to cached reviews
-                const cachedReviews = JSON.parse(localStorage.getItem('user_reviews') || '[]');
-                if (cachedReviews.length > 0) {
-                    document.getElementById('reviewCount').textContent = `${cachedReviews.length} reviews (cached)`;
-                    showToast('⚠️ Showing cached reviews', 'info');
-                } else {
-                    document.getElementById('reviewsContainer').innerHTML = 
-                        '<div class="no-results">Error loading reviews. Please try again later.</div>';
-                }
-            } finally {
-                hideLoading();
+                document.getElementById('reviewsContainer').innerHTML = 
+                    '<div class="no-results">Error loading reviews. Please try again later.</div>';
             }
         }
 
-        // REMOVE FAVORITE
         async function removeFavorite(toolId) {
             if (confirm('Remove this tool from favorites?')) {
-                showLoading();
                 try {
                     const response = await userAPI.removeFavorite(toolId);
                     
                     if (response.success) {
-                        showToast('✅ Removed from favorites', 'success');
-                        // Reload favorites
+                        showToast('Removed from favorites', 'success');
                         await loadUserFavorites();
-                        // Update profile stats
                         await loadUserProfile();
                     } else {
-                        showToast('❌ Failed to remove favorite', 'error');
+                        showToast('Failed to remove favorite', 'error');
                     }
                 } catch (error) {
                     console.error('Error removing favorite:', error);
-                    showToast('❌ Error removing favorite', 'error');
-                } finally {
-                    hideLoading();
-                }
-            }
-        }
-
-        // DELETE REVIEW
-        async function deleteReview(reviewId) {
-            if (confirm('Delete this review? This action cannot be undone.')) {
-                showLoading();
-                try {
-                    const response = await userAPI.deleteReview(reviewId);
-                    
-                    if (response.success) {
-                        showToast('✅ Review deleted', 'success');
-                        // Reload reviews
-                        await loadUserReviews();
-                        // Update profile stats
-                        await loadUserProfile();
-                    } else {
-                        showToast('❌ Failed to delete review', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error deleting review:', error);
-                    showToast('❌ Error deleting review', 'error');
-                } finally {
-                    hideLoading();
-                }
-            }
-        }
-
-        // EDIT REVIEW
-        function editReview(reviewId) {
-            showToast('Edit functionality coming soon', 'info');
-        }
-
-        // TAB SWITCHING
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // TOGGLE EDIT FORM
-        function toggleEditForm() {
-            document.getElementById('editProfileForm').classList.toggle('show');
-        }
-
-        // UPDATE PROFILE FORM SUBMIT
-        document.getElementById('profileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('editName').value.trim();
-            const email = document.getElementById('editEmail').value.trim();
-            const bio = document.getElementById('editBio').value.trim();
-
-            if (!name || !email) {
-                showToast('Please fill in all required fields', 'warning');
-                return;
-            }
-
-            showLoading();
-            try {
-                const response = await userAPI.updateProfile({ name, email, bio });
-                
-                if (response.success) {
-                    showToast('✅ Profile updated successfully!', 'success');
-                    
-                    // Update localStorage
-                    const user = JSON.parse(localStorage.getItem('user') || '{}');
-                    user.name = name;
-                    user.email = email;
-                    user.bio = bio;
-                    localStorage.setItem('user', JSON.stringify(user));
-                    
-                    // Update UI
-                    updateProfileUI(user);
-                    updateNavbar();
-                    toggleEditForm();
-                } else {
-                    showToast('❌ ' + (response.message || 'Failed to update profile'), 'error');
-                }
-            } catch (error) {
-                console.error('Error updating profile:', error);
-                showToast('❌ Error updating profile', 'error');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        // CHANGE PASSWORD FORM
-        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (newPassword !== confirmPassword) {
-                showToast('Passwords do not match', 'warning');
-                return;
-            }
-
-            if (newPassword.length < 6) {
-                showToast('New password must be at least 6 characters', 'warning');
-                return;
-            }
-
-            showLoading();
-            try {
-                const response = await userAPI.changePassword(currentPassword, newPassword, confirmPassword);
-                
-                if (response.success) {
-                    showToast('✅ Password changed successfully!', 'success');
-                    document.getElementById('passwordForm').reset();
-                } else {
-                    showToast('❌ ' + (response.message || 'Failed to change password'), 'error');
-                }
-            } catch (error) {
-                console.error('Error changing password:', error);
-                showToast('❌ Error changing password', 'error');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        // DELETE ACCOUNT
-        async function deleteAccount() {
-            if (confirm('⚠️ Are you sure? This action cannot be undone!')) {
-                const confirmDelete = prompt('Type "DELETE" to confirm account deletion:');
-                
-                if (confirmDelete === 'DELETE') {
-                    const password = prompt('Enter your password to confirm:');
-                    
-                    if (password) {
-                        showLoading();
-                        try {
-                            const response = await userAPI.deleteAccount(password);
-                            
-                            if (response.success) {
-                                showToast('✅ Account deleted successfully', 'success');
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('user');
-                                localStorage.removeItem('user_favorites');
-                                localStorage.removeItem('user_reviews');
-                                
-                                setTimeout(() => {
-                                    window.location.href = '/index.html';
-                                }, 2000);
-                            } else {
-                                showToast('❌ ' + (response.message || 'Failed to delete account'), 'error');
-                            }
-                        } catch (error) {
-                            console.error('Error deleting account:', error);
-                            showToast('❌ Error deleting account', 'error');
-                        } finally {
-                            hideLoading();
-                        }
-                    } else {
-                        showToast('Password required', 'warning');
-                    }
-                } else if (confirmDelete !== null) {
-                    showToast('Confirmation text incorrect', 'warning');
+                    showToast('Error removing favorite', 'error');
                 }
             }
         }

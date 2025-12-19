@@ -12,27 +12,22 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             line-height: 1.6;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* ========================================
-           NAVBAR STYLES
-           ======================================== */
+        /* PROFESSIONAL NAVBAR - CONSISTENT ACROSS ALL PAGES */
         .navbar {
-            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
-            padding: 1.2rem 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .navbar-container {
@@ -45,136 +40,181 @@
         }
 
         .navbar-brand {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .navbar-brand::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            border-radius: 50%;
+            display: inline-block;
         }
 
         .navbar-menu {
             display: flex;
-            gap: 3rem;
+            gap: 2.5rem;
+            align-items: center;
         }
 
-        .navbar-menu a {
-            color: #b0b0b0;
+        .navbar-link {
+            color: #94a3b8;
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.95rem;
             position: relative;
+            padding: 0.5rem 0;
         }
 
-        .navbar-menu a:hover {
+        .navbar-link:hover {
             color: #64c8ff;
         }
 
-        .navbar-menu a::after {
+        .navbar-link::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: 0;
             left: 0;
             width: 0;
             height: 2px;
-            background: #64c8ff;
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
             transition: width 0.3s ease;
         }
 
-        .navbar-menu a:hover::after {
+        .navbar-link:hover::after {
             width: 100%;
         }
 
         #nav-auth {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             align-items: center;
         }
 
-        /* ========================================
-           MAIN CONTAINER
-           ======================================== */
+        .nav-auth-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            color: #64c8ff;
+        }
+
+        .nav-link.signup {
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 6px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link.signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 30px;
         }
 
-        /* ========================================
-           HEADER
-           ======================================== */
         .page-header {
             text-align: center;
             margin-bottom: 3rem;
         }
-
+        
         .page-header h1 {
             font-size: 2.5rem;
-            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             margin-bottom: 1rem;
+            font-weight: 700;
         }
-
+        
         .page-header p {
-            color: #a0a0a0;
+            color: #94a3b8;
             font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
-        /* ========================================
-           FILTERS
-           ======================================== */
         .trending-filters {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 12px;
         }
 
         .filter-btn {
-            padding: 0.8rem 1.5rem;
-            background: rgba(100, 200, 255, 0.1);
+            padding: 0.7rem 1.3rem;
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 8px;
-            color: #b0b0b0;
+            border-radius: 6px;
+            color: #94a3b8;
             cursor: pointer;
-            font-weight: 500;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
-        .filter-btn:hover,
+        .filter-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: #64c8ff;
+            border-color: #64c8ff;
+        }
+
         .filter-btn.active {
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
             border-color: transparent;
         }
 
-        /* ========================================
-           TRENDING GRID
-           ======================================== */
-        .trending-grid {
+        .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
+            margin-bottom: 3rem;
         }
 
-        .trending-card {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
-            border: 1px solid rgba(100, 200, 255, 0.2);
+        .tool-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
             position: relative;
-            overflow: hidden;
         }
 
-        .trending-card:hover {
+        .tool-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(100, 200, 255, 0.5);
-            box-shadow: 0 8px 30px rgba(100, 200, 255, 0.2);
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
         .trending-badge {
@@ -185,20 +225,22 @@
             color: white;
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .trending-rank {
             position: absolute;
             top: 1rem;
             left: 1rem;
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #64c8ff;
         }
 
-        .trending-card-header {
+        .tool-header {
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
@@ -206,35 +248,35 @@
             padding-top: 2rem;
         }
 
-        .trending-logo {
-            width: 60px;
-            height: 60px;
+        .tool-logo {
+            width: 70px;
+            height: 70px;
             border-radius: 8px;
             object-fit: cover;
             background: rgba(100, 200, 255, 0.1);
-            border: 1px solid rgba(100, 200, 255, 0.2);
         }
 
-        .trending-info h3 {
+        .tool-info h3 {
             font-size: 1.2rem;
-            color: #e0e0e0;
+            color: #e2e8f0;
             margin-bottom: 0.3rem;
+            font-weight: 600;
         }
 
-        .trending-category {
+        .tool-category {
             color: #64c8ff;
             font-size: 0.85rem;
             font-weight: 600;
         }
 
-        .trending-description {
-            color: #a0a0a0;
+        .tool-description {
+            color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 1rem;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        .trending-stats {
+        .tool-stats {
             display: flex;
             justify-content: space-between;
             margin-bottom: 1.5rem;
@@ -243,31 +285,30 @@
             font-size: 0.9rem;
         }
 
-        .trending-rating {
-            color: #ffd700;
+        .rating {
+            color: #fbbf24;
             font-weight: 600;
         }
 
-        .trending-growth {
+        .growth {
             color: #4CAF50;
             font-weight: 600;
         }
 
-        .trending-actions {
+        .tool-buttons {
             display: flex;
             gap: 0.5rem;
         }
 
-        .btn-view {
+        .btn {
             flex: 1;
             padding: 0.7rem;
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
             border: none;
             border-radius: 6px;
-            color: white;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
             text-align: center;
             text-decoration: none;
             display: inline-flex;
@@ -275,81 +316,75 @@
             justify-content: center;
         }
 
-        .btn-view:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
         }
 
-        /* ========================================
-           LOADING STATE
-           ======================================== */
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 200, 255, 0.1);
+            color: #64c8ff;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 200, 255, 0.15);
+            border-color: rgba(100, 200, 255, 0.5);
+        }
+
         .loading {
             text-align: center;
             padding: 3rem;
-            color: #a0a0a0;
+            color: #94a3b8;
         }
 
-        /* ========================================
-           NO RESULTS
-           ======================================== */
         .no-results {
             text-align: center;
             padding: 3rem;
-            color: #a0a0a0;
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.15), rgba(30, 30, 50, 0.15));
+            color: #94a3b8;
+            font-size: 1.1rem;
+            background: rgba(30, 41, 59, 0.3);
             border: 1px solid rgba(100, 200, 255, 0.1);
-            border-radius: 8px;
-            grid-column: 1 / -1;
+            border-radius: 12px;
         }
 
-        /* ========================================
-           RESPONSIVE
-           ======================================== */
         @media (max-width: 768px) {
-            .navbar-menu {
-                display: none;
-            }
-
-            .container {
-                padding: 20px 15px;
-            }
-
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
-
-            .trending-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .trending-filters {
-                justify-content: center;
-            }
+            .navbar-menu { display: none; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .page-header h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-container">
-            <div class="navbar-brand">🚀 NexusAI</div>
+            <a href="index.html" class="navbar-brand">NexusAI</a>
             <div class="navbar-menu">
-                <a href="../index.html">Home</a>
-                <a href="tools_listing.html">Tools</a>
-                <a href="trending.html" style="color: #64c8ff;">Trending</a>
+                <a href="index.html" class="navbar-link">Home</a>
+                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="trending.html" class="navbar-link">Trending</a>
+                <a href="compare.html" class="navbar-link">Compare</a>
             </div>
-            <div id="nav-auth"></div>
+            <div id="nav-auth">
+                <div class="nav-auth-links">
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="signup.html" class="nav-link signup">Sign Up</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <div class="container">
         <div class="page-header">
-            <h1>🔥 Trending AI Tools</h1>
+            <h1>Trending AI Tools</h1>
             <p>Discover the most popular and fastest-growing AI tools this week</p>
         </div>
 
-        <!-- FILTERS -->
         <div class="trending-filters">
             <button class="filter-btn active" onclick="filterTools('all')">All</button>
             <button class="filter-btn" onclick="filterTools('week')">This Week</button>
@@ -358,64 +393,36 @@
             <button class="filter-btn" onclick="filterTools('top')">Top Rated</button>
         </div>
 
-        <!-- TRENDING GRID -->
-        <div class="trending-grid" id="trendingContainer">
+        <div class="tools-grid" id="trendingContainer">
             <div class="loading">Loading trending tools...</div>
         </div>
     </div>
 
-    <!-- FIXED: CORRECT SCRIPT PATHS -->
-    <script src="../js/api.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
 
-    <!-- PAGE-SPECIFIC LOGIC -->
     <script>
-        // ============================================
-        // INITIALIZE PAGE
-        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Trending Page Loaded');
             
-            // Initialize navbar
             if (typeof updateNavbar === 'function') {
                 updateNavbar();
-            } else {
-                console.error('updateNavbar function not found');
-                // Fallback: create a basic navbar
-                const navAuth = document.getElementById('nav-auth');
-                if (navAuth) {
-                    navAuth.innerHTML = `
-                        <div style="display: flex; gap: 1rem;">
-                            <a href="login.html" style="color: #64c8ff;">Login</a>
-                            <a href="signup.html" style="background: #64c8ff; color: white; padding: 0.5rem 1rem; border-radius: 6px;">Sign Up</a>
-                        </div>
-                    `;
-                }
             }
             
-            // Load trending tools
             loadTrendingTools();
-            
-            // Setup filter buttons
             setupFilters();
         });
 
-        // ============================================
-        // LOAD TRENDING TOOLS
-        // ============================================
         async function loadTrendingTools() {
             const container = document.getElementById('trendingContainer');
             if (!container) return;
             
             try {
-                // Show loading
                 container.innerHTML = '<div class="loading">Loading trending tools...</div>';
                 
-                // Try to get tools from API
                 let tools = [];
                 
-                // First try: Check if toolsAPI exists
                 if (typeof toolsAPI !== 'undefined' && typeof toolsAPI.getTrending === 'function') {
                     const response = await toolsAPI.getTrending();
                     if (response.success) {
@@ -423,19 +430,17 @@
                     }
                 }
                 
-                // Fallback: Mock data if API fails
                 if (tools.length === 0) {
                     tools = getMockTrendingTools();
                 }
                 
-                // Display tools
                 if (tools.length > 0) {
                     renderTrendingTools(tools);
                 } else {
                     container.innerHTML = `
                         <div class="no-results">
                             <h3>No trending tools found</h3>
-                            <p>Check back later for the latest AI tools!</p>
+                            <p>Check back later for the latest AI tools</p>
                         </div>
                     `;
                 }
@@ -445,59 +450,49 @@
                     <div class="no-results">
                         <h3>Error loading trending tools</h3>
                         <p>Please try again later</p>
-                        <button onclick="loadTrendingTools()" style="
-                            margin-top: 1rem;
-                            padding: 0.5rem 1rem;
-                            background: #64c8ff;
-                            color: white;
-                            border: none;
-                            border-radius: 6px;
-                            cursor: pointer;
-                        ">Retry</button>
+                        <button onclick="loadTrendingTools()" class="btn btn-primary" style="margin-top: 1rem;">
+                            Retry
+                        </button>
                     </div>
                 `;
             }
         }
 
-        // ============================================
-        // RENDER TRENDING TOOLS
-        // ============================================
         function renderTrendingTools(tools) {
             const container = document.getElementById('trendingContainer');
             if (!container) return;
             
             const toolsHTML = tools.map((tool, index) => `
-                <div class="trending-card">
+                <div class="tool-card">
                     <div class="trending-rank">#${index + 1}</div>
                     ${tool.isNew ? '<div class="trending-badge">NEW</div>' : ''}
                     ${tool.isHot ? '<div class="trending-badge" style="background: linear-gradient(135deg, #ff6b00, #ff9e00);">HOT</div>' : ''}
                     
-                    <div class="trending-card-header">
-                        <img src="${tool.logo || 'https://via.placeholder.com/60x60?text=AI'}" 
+                    <div class="tool-header">
+                        <img src="${tool.logo || 'https://via.placeholder.com/70?text=AI'}" 
                              alt="${tool.name}" 
-                             class="trending-logo"
-                             onerror="this.src='https://via.placeholder.com/60x60?text=AI'">
-                        <div class="trending-info">
+                             class="tool-logo"
+                             onerror="this.src='https://via.placeholder.com/70?text=AI'">
+                        <div class="tool-info">
                             <h3>${tool.name}</h3>
-                            <p class="trending-category">${tool.category || 'AI Tool'}</p>
+                            <p class="tool-category">${tool.category || 'AI Tool'}</p>
                         </div>
                     </div>
                     
-                    <p class="trending-description">
-                        ${tool.description || 'No description available'}
+                    <p class="tool-description">
+                        ${(tool.description || 'No description available').substring(0, 120)}...
                     </p>
                     
-                    <div class="trending-stats">
-                        <span class="trending-rating">⭐ ${tool.rating || 'New'}</span>
-                        <span class="trending-growth">📈 ${tool.growth || '+0%'}</span>
-                        <span style="color: #a0a0a0;">${tool.reviews || 0} reviews</span>
+                    <div class="tool-stats">
+                        <span class="rating">${tool.rating || 'New'} Rating</span>
+                        <span class="growth">${tool.growth || '+0%'} Growth</span>
+                        <span style="color: #94a3b8;">${tool.reviews || 0} reviews</span>
                     </div>
                     
-                    <div class="trending-actions">
-                        <a href="tools_detail.html?id=${tool.id || '1'}" class="btn-view">View Details</a>
-                        <button class="btn-view" style="background: rgba(100, 200, 255, 0.1); color: #64c8ff;" 
-                                onclick="addToFavorites('${tool.id || '1'}')">
-                            ❤️ Save
+                    <div class="tool-buttons">
+                        <a href="tool_detail.html?id=${tool.id || tool._id || '1'}" class="btn btn-primary">View Details</a>
+                        <button class="btn btn-secondary" onclick="addToFavorites('${tool.id || tool._id || '1'}')">
+                            Save
                         </button>
                     </div>
                 </div>
@@ -506,9 +501,6 @@
             container.innerHTML = toolsHTML;
         }
 
-        // ============================================
-        // MOCK DATA (Fallback)
-        // ============================================
         function getMockTrendingTools() {
             return [
                 {
@@ -516,78 +508,73 @@
                     name: "ChatGPT Pro",
                     category: "Chat Assistant",
                     description: "Advanced AI conversation with multimodal capabilities",
-                    rating: 4.8,
+                    rating: "4.8",
                     growth: "+45%",
                     reviews: 12500,
                     isHot: true,
-                    logo: "https://via.placeholder.com/60x60/64c8ff/fff?text=CP"
+                    logo: "https://via.placeholder.com/70/64c8ff/fff?text=CP"
                 },
                 {
                     id: 2,
                     name: "Midjourney V6",
                     category: "Image Generation",
                     description: "State-of-the-art AI image generator with enhanced realism",
-                    rating: 4.7,
+                    rating: "4.7",
                     growth: "+32%",
                     reviews: 8900,
                     isNew: true,
-                    logo: "https://via.placeholder.com/60x60/ff1493/fff?text=MJ"
+                    logo: "https://via.placeholder.com/70/ff1493/fff?text=MJ"
                 },
                 {
                     id: 3,
                     name: "GitHub Copilot",
                     category: "Code Assistant",
                     description: "AI pair programmer that suggests code completions",
-                    rating: 4.6,
+                    rating: "4.6",
                     growth: "+28%",
                     reviews: 15600,
-                    logo: "https://via.placeholder.com/60x60/4CAF50/fff?text=GC"
+                    logo: "https://via.placeholder.com/70/4CAF50/fff?text=GC"
                 },
                 {
                     id: 4,
                     name: "DALL-E 3",
                     category: "Image Generation",
                     description: "Create realistic images and art from text descriptions",
-                    rating: 4.5,
+                    rating: "4.5",
                     growth: "+38%",
                     reviews: 7600,
                     isHot: true,
-                    logo: "https://via.placeholder.com/60x60/FF9800/fff?text=DE"
+                    logo: "https://via.placeholder.com/70/FF9800/fff?text=DE"
                 },
                 {
                     id: 5,
                     name: "Claude AI",
                     category: "Chat Assistant",
                     description: "Constitutional AI with strong safety features",
-                    rating: 4.4,
+                    rating: "4.4",
                     growth: "+52%",
                     reviews: 5400,
-                    logo: "https://via.placeholder.com/60x60/9C27B0/fff?text=CA"
+                    logo: "https://via.placeholder.com/70/9C27B0/fff?text=CA"
                 },
                 {
                     id: 6,
                     name: "Runway ML",
                     category: "Video Editing",
                     description: "AI-powered video editing and generation tools",
-                    rating: 4.3,
+                    rating: "4.3",
                     growth: "+41%",
                     reviews: 3200,
                     isNew: true,
-                    logo: "https://via.placeholder.com/60x60/2196F3/fff?text=RM"
+                    logo: "https://via.placeholder.com/70/2196F3/fff?text=RM"
                 }
             ];
         }
 
-        // ============================================
-        // FILTER FUNCTIONS
-        // ============================================
         function setupFilters() {
             const filterButtons = document.querySelectorAll('.filter-btn');
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Remove active class from all buttons
                     filterButtons.forEach(btn => btn.classList.remove('active'));
-                    // Add active class to clicked button
                     this.classList.add('active');
                 });
             });
@@ -595,8 +582,6 @@
 
         function filterTools(filter) {
             console.log('Filtering by:', filter);
-            // In a real app, this would filter the data
-            // For now, just reload with a message
             const container = document.getElementById('trendingContainer');
             container.innerHTML = '<div class="loading">Filtering tools...</div>';
             
@@ -605,66 +590,27 @@
             }, 500);
         }
 
-        // ============================================
-        // ADD TO FAVORITES
-        // ============================================
         function addToFavorites(toolId) {
             if (!auth || !auth.isAuthenticated || !auth.isAuthenticated()) {
-                alert('Please login to save favorites');
-                window.location.href = 'login.html';
+                showToast('Please login to save favorites', 'warning');
+                setTimeout(() => window.location.href = 'login.html', 1000);
                 return;
             }
             
-            // Check if usersAPI exists
-            if (typeof usersAPI !== 'undefined' && typeof usersAPI.addFavorite === 'function') {
-                usersAPI.addFavorite(toolId)
+            if (typeof toolsAPI !== 'undefined' && typeof toolsAPI.addToFavorites === 'function') {
+                toolsAPI.addToFavorites(toolId)
                     .then(response => {
                         if (response.success) {
-                            alert('Added to favorites!');
+                            showToast('Added to favorites!', 'success');
                         } else {
-                            alert('Failed to add to favorites');
+                            showToast('Failed to add to favorites', 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Error saving favorite');
+                        showToast('Error saving favorite', 'error');
                     });
-            } else {
-                alert('Added to favorites! (demo)');
             }
-        }
-
-        // ============================================
-        // FALLBACK FUNCTIONS
-        // ============================================
-        // In case JavaScript files don't load
-        if (typeof updateNavbar === 'undefined') {
-            console.warn('updateNavbar not found, using fallback');
-            // Simple fallback navbar
-            document.addEventListener('DOMContentLoaded', function() {
-                const navAuth = document.getElementById('nav-auth');
-                if (navAuth) {
-                    const token = localStorage.getItem('token');
-                    if (token) {
-                        navAuth.innerHTML = `
-                            <div style="display: flex; gap: 1rem; align-items: center;">
-                                <a href="profile.html" style="color: #64c8ff;">Profile</a>
-                                <button onclick="localStorage.removeItem('token'); window.location.reload();" 
-                                        style="background: #f44336; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px;">
-                                    Logout
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        navAuth.innerHTML = `
-                            <div style="display: flex; gap: 1rem;">
-                                <a href="login.html" style="color: #64c8ff;">Login</a>
-                                <a href="signup.html" style="background: #64c8ff; color: white; padding: 0.5rem 1rem; border-radius: 6px;">Sign Up</a>
-                            </div>
-                        `;
-                    }
-                }
-            });
         }
     </script>
 </body>

@@ -12,27 +12,22 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             line-height: 1.6;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* ========================================
-           NAVBAR STYLES
-           ======================================== */
+        /* PROFESSIONAL NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 100%);
-            padding: 1.2rem 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .navbar-container {
@@ -45,38 +40,66 @@
         }
 
         .navbar-brand {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .navbar-brand::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            border-radius: 50%;
+            display: inline-block;
         }
 
         .navbar-menu {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
+            align-items: center;
         }
 
-        .navbar-menu a {
-            color: #b0b0b0;
+        .navbar-link {
+            color: #94a3b8;
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 0.5rem 0;
         }
 
-        .navbar-menu a:hover {
+        .navbar-link:hover {
             color: #64c8ff;
+        }
+
+        .navbar-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-link:hover::after {
+            width: 100%;
         }
 
         #nav-auth {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             align-items: center;
         }
 
-        /* ========================================
-           MAIN CONTAINER
-           ======================================== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -92,15 +115,66 @@
 
         .page-header h1 {
             font-size: 2rem;
-            background: linear-gradient(135deg, #64c8ff, #ff1493);
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 700;
         }
 
-        /* ========================================
-           TABS
-           ======================================== */
+        .btn-primary {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            color: #64c8ff;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
         .admin-tabs {
             display: flex;
             gap: 1rem;
@@ -113,7 +187,7 @@
             padding: 1rem 1.5rem;
             background: none;
             border: none;
-            color: #a0a0a0;
+            color: #94a3b8;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.95rem;
@@ -137,12 +211,9 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #4a9fd8);
+            background: linear-gradient(90deg, #64c8ff, #3b82f6);
         }
 
-        /* ========================================
-           TAB CONTENT
-           ======================================== */
         .tab-content {
             display: none;
         }
@@ -151,50 +222,11 @@
             display: block;
         }
 
-        /* ========================================
-           STATS GRID
-           ======================================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.3), rgba(30, 30, 50, 0.3));
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 12px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            color: #64c8ff;
-            font-weight: bold;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            color: #a0a0a0;
-            font-size: 0.9rem;
-        }
-
-        /* ========================================
-           TABLE STYLES
-           ======================================== */
         .table-section {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
-            border: 1px solid rgba(100, 200, 255, 0.15);
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 2rem;
-            backdrop-filter: blur(10px);
             margin-bottom: 2rem;
         }
 
@@ -208,6 +240,7 @@
         .section-header h2 {
             font-size: 1.3rem;
             color: #64c8ff;
+            font-weight: 600;
         }
 
         .table-wrapper {
@@ -231,16 +264,13 @@
         td {
             padding: 1rem;
             border-bottom: 1px solid rgba(100, 200, 255, 0.1);
-            color: #a0a0a0;
+            color: #94a3b8;
         }
 
         tr:hover {
             background: rgba(100, 200, 255, 0.05);
         }
 
-        /* ========================================
-           ACTION BUTTONS
-           ======================================== */
         .action-btns {
             display: flex;
             gap: 0.5rem;
@@ -296,31 +326,11 @@
             background: rgba(244, 67, 54, 0.3);
         }
 
-        .btn-primary {
-            padding: 0.8rem 1.5rem;
-            background: linear-gradient(135deg, #64c8ff, #4a9fd8);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
-        }
-
-        /* ========================================
-           FORM STYLES
-           ======================================== */
         .form-section {
-            background: linear-gradient(135deg, rgba(20, 50, 80, 0.2), rgba(30, 30, 50, 0.2));
-            border: 1px solid rgba(100, 200, 255, 0.15);
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 2rem;
-            backdrop-filter: blur(10px);
             max-width: 600px;
         }
 
@@ -345,7 +355,7 @@
             color: #e0e0e0;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-textarea {
@@ -360,9 +370,6 @@
             background: rgba(100, 200, 255, 0.1);
         }
 
-        /* ========================================
-           STATUS BADGES
-           ======================================== */
         .badge {
             display: inline-block;
             padding: 0.4rem 0.8rem;
@@ -401,18 +408,12 @@
             border: 1px solid rgba(158, 158, 158, 0.3);
         }
 
-        /* ========================================
-           NO DATA
-           ======================================== */
         .no-data {
             text-align: center;
             padding: 3rem;
-            color: #a0a0a0;
+            color: #94a3b8;
         }
 
-        /* ========================================
-           RESPONSIVE
-           ======================================== */
         @media (max-width: 768px) {
             .navbar-menu {
                 display: none;
@@ -428,10 +429,6 @@
                 gap: 1rem;
             }
 
-            .admin-tabs {
-                overflow-x: auto;
-            }
-
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -443,69 +440,59 @@
             th, td {
                 padding: 0.7rem;
             }
-
-            .action-btns {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-container">
-            <div class="navbar-brand">🚀 NexusAI Admin</div>
+            <a href="index.html" class="navbar-brand">NexusAI Admin</a>
             <div class="navbar-menu">
-                <a href="/index.html">Home</a>
-                <a href="/tools-listing.html">Tools</a>
-                <a href="/admin-dashboard.html">Dashboard</a>
+                <a href="index.html" class="navbar-link">Home</a>
+                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="admin_dashboard.html" class="navbar-link">Dashboard</a>
             </div>
             <div id="nav-auth"></div>
         </div>
     </nav>
 
-    <!-- MAIN CONTAINER -->
     <div class="container">
-        <!-- PAGE HEADER -->
         <div class="page-header">
-            <h1>👨‍💼 Admin Dashboard</h1>
-            <button class="btn-primary" onclick="refreshData()">🔄 Refresh</button>
+            <h1>Admin Dashboard</h1>
+            <button class="btn-primary" onclick="refreshData()">Refresh</button>
         </div>
 
-        <!-- STATS -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">🛠️</div>
+                <div class="stat-icon">Tools</div>
                 <div class="stat-value" id="statTotalTools">0</div>
                 <div class="stat-label">Total Tools</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">👥</div>
+                <div class="stat-icon">Users</div>
                 <div class="stat-value" id="statTotalUsers">0</div>
                 <div class="stat-label">Total Users</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⭐</div>
+                <div class="stat-icon">Reviews</div>
                 <div class="stat-value" id="statTotalReviews">0</div>
                 <div class="stat-label">Total Reviews</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⏳</div>
+                <div class="stat-icon">Pending</div>
                 <div class="stat-value" id="statPendingTools">0</div>
                 <div class="stat-label">Pending Tools</div>
             </div>
         </div>
 
-        <!-- TABS -->
         <div class="admin-tabs">
-            <button class="tab-btn active" onclick="switchTab('tools')">🛠️ Tools</button>
-            <button class="tab-btn" onclick="switchTab('pending')">⏳ Pending</button>
-            <button class="tab-btn" onclick="switchTab('users')">👥 Users</button>
-            <button class="tab-btn" onclick="switchTab('reports')">🚩 Reports</button>
-            <button class="tab-btn" onclick="switchTab('addTool')">➕ Add Tool</button>
+            <button class="tab-btn active" onclick="switchTab('tools')">Tools</button>
+            <button class="tab-btn" onclick="switchTab('pending')">Pending</button>
+            <button class="tab-btn" onclick="switchTab('users')">Users</button>
+            <button class="tab-btn" onclick="switchTab('reports')">Reports</button>
+            <button class="tab-btn" onclick="switchTab('addTool')">Add Tool</button>
         </div>
 
-        <!-- TOOLS TAB -->
         <div class="tab-content active" id="toolsTab">
             <div class="table-section">
                 <div class="section-header">
@@ -532,7 +519,6 @@
             </div>
         </div>
 
-        <!-- PENDING TOOLS TAB -->
         <div class="tab-content" id="pendingTab">
             <div class="table-section">
                 <div class="section-header">
@@ -559,7 +545,6 @@
             </div>
         </div>
 
-        <!-- USERS TAB -->
         <div class="tab-content" id="usersTab">
             <div class="table-section">
                 <div class="section-header">
@@ -586,7 +571,6 @@
             </div>
         </div>
 
-        <!-- REPORTS TAB -->
         <div class="tab-content" id="reportsTab">
             <div class="table-section">
                 <div class="section-header">
@@ -613,10 +597,9 @@
             </div>
         </div>
 
-        <!-- ADD TOOL TAB -->
         <div class="tab-content" id="addToolTab">
             <div class="form-section">
-                <h2 style="color: #64c8ff; margin-bottom: 2rem;">➕ Add New Tool</h2>
+                <h2 style="color: #64c8ff; margin-bottom: 2rem;">Add New Tool</h2>
                 <form id="addToolForm">
                     <div class="form-group">
                         <label class="form-label" for="toolName">Tool Name</label>
@@ -643,34 +626,29 @@
                         <input type="url" id="toolLogo" class="form-input">
                     </div>
 
-                    <button type="submit" class="btn-primary">✅ Add Tool</button>
+                    <button type="submit" class="btn-primary">Add Tool</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
 
-    <!-- ADMIN LOGIC -->
     <script>
-        // ============================================
-        // CHECK ADMIN ACCESS
-        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             updateNavbar();
 
             if (!auth.isAuthenticated()) {
-                showToast('❌ Please login', 'warning');
+                showToast('Please login', 'warning');
                 setTimeout(() => window.location.href = '/login.html', 1500);
                 return;
             }
 
             const user = JSON.parse(localStorage.getItem('user'));
             if (user.role !== 'admin') {
-                showToast('❌ Admin access required', 'error');
+                showToast('Admin access required', 'error');
                 setTimeout(() => window.location.href = '/index.html', 1500);
                 return;
             }
@@ -678,9 +656,6 @@
             loadAdminData();
         });
 
-        // ============================================
-        // LOAD ALL ADMIN DATA
-        // ============================================
         async function loadAdminData() {
             showLoading();
             try {
@@ -694,13 +669,10 @@
             } catch (error) {
                 hideLoading();
                 console.error('Error loading admin data:', error);
-                showToast('❌ Error loading data', 'error');
+                showToast('Error loading data', 'error');
             }
         }
 
-        // ============================================
-        // LOAD TOOLS
-        // ============================================
         async function loadTools() {
             try {
                 const response = await adminAPI.getTools();
@@ -719,7 +691,7 @@
                         <tr>
                             <td><strong>${tool.name}</strong></td>
                             <td>${tool.category || '-'}</td>
-                            <td>⭐ ${tool.averageRating ? tool.averageRating.toFixed(1) : 'N/A'}</td>
+                            <td>${tool.averageRating ? tool.averageRating.toFixed(1) : 'N/A'}</td>
                             <td>${tool.reviewCount || 0}</td>
                             <td><span class="badge badge-active">Active</span></td>
                             <td>
@@ -736,9 +708,6 @@
             }
         }
 
-        // ============================================
-        // LOAD PENDING TOOLS
-        // ============================================
         async function loadPendingTools() {
             try {
                 const response = await adminAPI.getPendingTools();
@@ -774,9 +743,6 @@
             }
         }
 
-        // ============================================
-        // LOAD USERS
-        // ============================================
         async function loadUsers() {
             try {
                 const response = await adminAPI.getUsers();
@@ -812,9 +778,6 @@
             }
         }
 
-        // ============================================
-        // LOAD REPORTS
-        // ============================================
         async function loadReports() {
             try {
                 const response = await adminAPI.getReports();
@@ -850,9 +813,6 @@
             }
         }
 
-        // ============================================
-        // TAB SWITCHING
-        // ============================================
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -861,9 +821,6 @@
             event.target.classList.add('active');
         }
 
-        // ============================================
-        // APPROVE TOOL
-        // ============================================
         async function approveTool(toolId) {
             if (confirm('Approve this tool?')) {
                 showLoading();
@@ -871,20 +828,17 @@
                     const response = await adminAPI.approveTool(toolId);
                     hideLoading();
                     if (response.success) {
-                        showToast('✅ Tool approved!', 'success');
+                        showToast('Tool approved!', 'success');
                         loadPendingTools();
                         loadTools();
                     }
                 } catch (error) {
                     hideLoading();
-                    showToast('❌ Error approving tool', 'error');
+                    showToast('Error approving tool', 'error');
                 }
             }
         }
 
-        // ============================================
-        // REJECT TOOL
-        // ============================================
         async function rejectTool(toolId) {
             const reason = prompt('Enter rejection reason:');
             if (!reason) return;
@@ -894,18 +848,15 @@
                 const response = await adminAPI.rejectTool(toolId, reason);
                 hideLoading();
                 if (response.success) {
-                    showToast('✅ Tool rejected', 'success');
+                    showToast('Tool rejected', 'success');
                     loadPendingTools();
                 }
             } catch (error) {
                 hideLoading();
-                showToast('❌ Error rejecting tool', 'error');
+                showToast('Error rejecting tool', 'error');
             }
         }
 
-        // ============================================
-        // DELETE TOOL
-        // ============================================
         async function deleteTool(toolId) {
             if (confirm('Delete this tool? This cannot be undone.')) {
                 showLoading();
@@ -913,19 +864,16 @@
                     const response = await adminAPI.deleteTool(toolId);
                     hideLoading();
                     if (response.success) {
-                        showToast('✅ Tool deleted', 'success');
+                        showToast('Tool deleted', 'success');
                         loadTools();
                     }
                 } catch (error) {
                     hideLoading();
-                    showToast('❌ Error deleting tool', 'error');
+                    showToast('Error deleting tool', 'error');
                 }
             }
         }
 
-        // ============================================
-        // DELETE USER
-        // ============================================
         async function deleteUser(userId) {
             if (confirm('Ban this user? Their account will be deactivated.')) {
                 showLoading();
@@ -933,19 +881,16 @@
                     const response = await adminAPI.banUser(userId);
                     hideLoading();
                     if (response.success) {
-                        showToast('✅ User banned', 'success');
+                        showToast('User banned', 'success');
                         loadUsers();
                     }
                 } catch (error) {
                     hideLoading();
-                    showToast('❌ Error banning user', 'error');
+                    showToast('Error banning user', 'error');
                 }
             }
         }
 
-        // ============================================
-        // RESOLVE REPORT
-        // ============================================
         async function resolveReport(reportId) {
             if (confirm('Delete the flagged review?')) {
                 showLoading();
@@ -953,19 +898,16 @@
                     const response = await adminAPI.resolveReport(reportId);
                     hideLoading();
                     if (response.success) {
-                        showToast('✅ Report resolved', 'success');
+                        showToast('Report resolved', 'success');
                         loadReports();
                     }
                 } catch (error) {
                     hideLoading();
-                    showToast('❌ Error resolving report', 'error');
+                    showToast('Error resolving report', 'error');
                 }
             }
         }
 
-        // ============================================
-        // DISMISS REPORT
-        // ============================================
         async function dismissReport(reportId) {
             if (confirm('Dismiss this report?')) {
                 showLoading();
@@ -973,19 +915,16 @@
                     const response = await adminAPI.dismissReport(reportId);
                     hideLoading();
                     if (response.success) {
-                        showToast('✅ Report dismissed', 'success');
+                        showToast('Report dismissed', 'success');
                         loadReports();
                     }
                 } catch (error) {
                     hideLoading();
-                    showToast('❌ Error dismissing report', 'error');
+                    showToast('Error dismissing report', 'error');
                 }
             }
         }
 
-        // ============================================
-        // ADD NEW TOOL
-        // ============================================
         document.getElementById('addToolForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1003,37 +942,31 @@
                 hideLoading();
 
                 if (response.success) {
-                    showToast('✅ Tool added successfully!', 'success');
+                    showToast('Tool added successfully!', 'success');
                     document.getElementById('addToolForm').reset();
                     switchTab('tools');
                     loadTools();
                 } else {
-                    showToast('❌ ' + (response.message || 'Error adding tool'), 'error');
+                    showToast((response.message || 'Error adding tool'), 'error');
                 }
             } catch (error) {
                 hideLoading();
                 console.error('Error adding tool:', error);
-                showToast('❌ Error adding tool', 'error');
+                showToast('Error adding tool', 'error');
             }
         });
 
-        // ============================================
-        // REFRESH DATA
-        // ============================================
         function refreshData() {
-            showToast('🔄 Refreshing data...', 'info');
+            showToast('Refreshing data...', 'info');
             loadAdminData();
         }
 
-        // ============================================
-        // VIEW TOOL/USER (PLACEHOLDER)
-        // ============================================
         function viewTool(toolId) {
-            window.location.href = `/tool-detail.html?id=${toolId}`;
+            window.location.href = `/tool_detail.html?id=${toolId}`;
         }
 
         function viewUser(userId) {
-            showToast('👤 User details modal would open here', 'info');
+            showToast('User details feature coming soon', 'info');
         }
     </script>
 </body>
