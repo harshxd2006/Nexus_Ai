@@ -25,12 +25,22 @@ if (!process.env.MONGODB_URI) {
     process.exit(1);
 }
 
+// Helper function to generate slug from name
+function generateSlug(name) {
+    return name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-')          // Replace spaces with hyphens
+        .replace(/-+/g, '-')           // Replace multiple hyphens with single hyphen
+        .trim();
+}
+
 const tools = [
     {
         name: "ChatGPT",
         description: "Advanced conversational AI that can understand and respond to natural language queries, help with writing, coding, analysis, and creative tasks.",
         website: "https://chat.openai.com",
-        logo: "https://via.placeholder.com/100/00A67E/fff?text=ChatGPT",
+        logo: "https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.59f2e898.png",
         category: "AI Chatbot",
         tags: ["chatbot", "conversation", "writing", "coding"],
         features: ["Natural conversations", "Code generation", "Creative writing", "Question answering", "Task assistance"],
@@ -40,7 +50,7 @@ const tools = [
         name: "Midjourney",
         description: "AI art generator that creates stunning, high-quality images from text descriptions. Perfect for artists, designers, and creative professionals.",
         website: "https://midjourney.com",
-        logo: "https://via.placeholder.com/100/000000/fff?text=MJ",
+        logo: "https://cdn.midjourney.com/b42b1f28-cf06-4c0b-b940-f44bc0bfbf44/0_0.png",
         category: "AI Image Generation",
         tags: ["art", "images", "creative", "design"],
         features: ["Text-to-image", "High resolution", "Various styles", "Community gallery", "Custom parameters"],
@@ -50,7 +60,7 @@ const tools = [
         name: "GitHub Copilot",
         description: "AI pair programmer that suggests code and entire functions in real-time from your editor. Trained on billions of lines of code.",
         website: "https://github.com/features/copilot",
-        logo: "https://via.placeholder.com/100/0366D6/fff?text=Copilot",
+        logo: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png",
         category: "AI Coding",
         tags: ["coding", "programming", "development", "autocomplete"],
         features: ["Code suggestions", "Multi-language support", "Context-aware", "Function generation", "Documentation"],
@@ -60,7 +70,7 @@ const tools = [
         name: "DALL-E 3",
         description: "Create realistic images and art from text descriptions. Latest version with improved accuracy and understanding of prompts.",
         website: "https://openai.com/dall-e-3",
-        logo: "https://via.placeholder.com/100/FF6B6B/fff?text=DALLE",
+        logo: "https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.59f2e898.png",
         category: "AI Image Generation",
         tags: ["images", "art", "creative", "generation"],
         features: ["High quality images", "Prompt understanding", "Style variations", "Safe content", "Commercial use"],
@@ -70,7 +80,7 @@ const tools = [
         name: "Grammarly",
         description: "AI writing assistant that helps you write clear, mistake-free content. Checks grammar, spelling, punctuation, and style.",
         website: "https://grammarly.com",
-        logo: "https://via.placeholder.com/100/15C39A/fff?text=G",
+        logo: "https://static.grammarly.com/assets/files/efe57d016fc1f4cf53707cf072f5791c/app_icon_ios.png",
         category: "AI Writing",
         tags: ["writing", "grammar", "editing", "proofreading"],
         features: ["Grammar checking", "Style suggestions", "Plagiarism detection", "Tone analysis", "Browser extension"],
@@ -80,7 +90,7 @@ const tools = [
         name: "Jasper AI",
         description: "AI content platform for creating blog posts, social media content, marketing copy, and more. Used by thousands of marketers.",
         website: "https://jasper.ai",
-        logo: "https://via.placeholder.com/100/8B5CF6/fff?text=Jasper",
+        logo: "https://assets-global.website-files.com/61a34c6c6b5ce4f38d0f1666/61a3a2a4e969bf6a8e2e0c49_jasper-ai-logo-2020.png",
         category: "AI Writing",
         tags: ["content", "marketing", "copywriting", "seo"],
         features: ["Content templates", "SEO optimization", "Brand voice", "Multi-language", "Team collaboration"],
@@ -90,7 +100,7 @@ const tools = [
         name: "Runway ML",
         description: "AI-powered video editing suite with tools for motion tracking, green screen, and generating video from text prompts.",
         website: "https://runwayml.com",
-        logo: "https://via.placeholder.com/100/3B82F6/fff?text=Runway",
+        logo: "https://app.runwayml.com/favicon.png",
         category: "AI Video",
         tags: ["video", "editing", "effects", "generation"],
         features: ["Text-to-video", "Video editing", "Green screen", "Motion tracking", "AI effects"],
@@ -100,7 +110,7 @@ const tools = [
         name: "ElevenLabs",
         description: "AI voice generator with the most realistic and versatile voices. Create natural-sounding speech in multiple languages.",
         website: "https://elevenlabs.io",
-        logo: "https://via.placeholder.com/100/EC4899/fff?text=11Labs",
+        logo: "https://elevenlabs.io/favicon.ico",
         category: "AI Voice",
         tags: ["voice", "speech", "audio", "tts"],
         features: ["Voice cloning", "Multi-language", "Emotion control", "High quality", "API access"],
@@ -110,7 +120,7 @@ const tools = [
         name: "Copy.ai",
         description: "AI-powered copywriting tool that helps you create marketing copy, product descriptions, and social media posts in seconds.",
         website: "https://copy.ai",
-        logo: "https://via.placeholder.com/100/F59E0B/fff?text=Copy",
+        logo: "https://assets-global.website-files.com/628288c5cd3e8411b90a36a4/6283afd54a8cf863f54b4d48_Copy.ai%20-%20App%20Icon%20-%20256%20-%20Light.png",
         category: "AI Writing",
         tags: ["copywriting", "marketing", "content", "social"],
         features: ["90+ tools", "Templates", "Multi-language", "Tone control", "Team workspace"],
@@ -120,7 +130,7 @@ const tools = [
         name: "Stable Diffusion",
         description: "Open-source AI image generation model. Create detailed images from text descriptions with full control over the process.",
         website: "https://stability.ai",
-        logo: "https://via.placeholder.com/100/10B981/fff?text=SD",
+        logo: "https://stability.ai/favicon-32x32.png",
         category: "AI Image Generation",
         tags: ["open-source", "images", "generation", "free"],
         features: ["Open source", "Self-hostable", "High quality", "Custom models", "Full control"],
@@ -130,7 +140,7 @@ const tools = [
         name: "Notion AI",
         description: "AI writing assistant built into Notion. Helps you write, brainstorm, edit, and summarize content directly in your workspace.",
         website: "https://notion.so/product/ai",
-        logo: "https://via.placeholder.com/100/000000/fff?text=Notion",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
         category: "AI Writing",
         tags: ["productivity", "writing", "notes", "workspace"],
         features: ["In-app AI", "Content generation", "Summarization", "Translation", "Editing"],
@@ -140,7 +150,7 @@ const tools = [
         name: "Claude AI",
         description: "Constitutional AI assistant by Anthropic. Helpful, harmless, and honest AI for conversations, analysis, and content creation.",
         website: "https://claude.ai",
-        logo: "https://via.placeholder.com/100/D97706/fff?text=Claude",
+        logo: "https://claude.ai/images/claude_app_icon.png",
         category: "AI Chatbot",
         tags: ["chatbot", "assistant", "safe", "analysis"],
         features: ["Long conversations", "Document analysis", "Safe responses", "Coding help", "Research"],
@@ -150,7 +160,7 @@ const tools = [
         name: "Synthesia",
         description: "AI video generation platform. Create professional videos with AI avatars from text scripts without filming or editing.",
         website: "https://synthesia.io",
-        logo: "https://via.placeholder.com/100/6366F1/fff?text=Syn",
+        logo: "https://www.synthesia.io/favicon.png",
         category: "AI Video",
         tags: ["video", "avatar", "presentation", "training"],
         features: ["AI avatars", "140+ languages", "Templates", "Screen recording", "Brand kit"],
@@ -160,7 +170,7 @@ const tools = [
         name: "Canva AI",
         description: "Design platform with AI tools for image generation, background removal, and design suggestions. Perfect for non-designers.",
         website: "https://canva.com",
-        logo: "https://via.placeholder.com/100/00C4CC/fff?text=Canva",
+        logo: "https://static.canva.com/web/images/12487a1e0770d29351bd4ce4f87ec8fe.svg",
         category: "AI Design",
         tags: ["design", "graphics", "templates", "creative"],
         features: ["Magic design", "Background removal", "Text-to-image", "Templates", "Collaboration"],
@@ -170,7 +180,7 @@ const tools = [
         name: "Perplexity AI",
         description: "AI-powered search engine that provides accurate answers with citations. Combines search with conversational AI.",
         website: "https://perplexity.ai",
-        logo: "https://via.placeholder.com/100/1E40AF/fff?text=Perp",
+        logo: "https://www.perplexity.ai/favicon.svg",
         category: "AI Analytics",
         tags: ["search", "research", "answers", "citations"],
         features: ["Real-time search", "Citations", "Follow-up questions", "Source links", "Mobile app"],
@@ -180,7 +190,7 @@ const tools = [
         name: "Midjourney V6",
         description: "Latest version of Midjourney with enhanced realism, better prompt understanding, and improved text rendering.",
         website: "https://midjourney.com",
-        logo: "https://via.placeholder.com/100/DC2626/fff?text=MJv6",
+        logo: "https://cdn.midjourney.com/b42b1f28-cf06-4c0b-b940-f44bc0bfbf44/0_0.png",
         category: "AI Image Generation",
         tags: ["art", "realistic", "advanced", "creative"],
         features: ["Photorealistic", "Text rendering", "Improved prompts", "Higher resolution", "Better anatomy"],
@@ -190,7 +200,7 @@ const tools = [
         name: "Descript",
         description: "All-in-one video and podcast editing with AI transcription, voice cloning, and filler word removal.",
         website: "https://descript.com",
-        logo: "https://via.placeholder.com/100/7C3AED/fff?text=Desc",
+        logo: "https://www.descript.com/favicon.png",
         category: "AI Video",
         tags: ["video", "podcast", "editing", "transcription"],
         features: ["Text-based editing", "Overdub", "Screen recording", "Transcription", "Collaboration"],
@@ -200,7 +210,7 @@ const tools = [
         name: "Otter.ai",
         description: "AI meeting assistant that records audio, writes notes, and generates summaries automatically.",
         website: "https://otter.ai",
-        logo: "https://via.placeholder.com/100/0EA5E9/fff?text=Otter",
+        logo: "https://otter.ai/favicon.png",
         category: "AI Analytics",
         tags: ["transcription", "meetings", "notes", "productivity"],
         features: ["Real-time transcription", "Meeting summaries", "Action items", "Speaker ID", "Integration"],
@@ -210,7 +220,7 @@ const tools = [
         name: "Murf AI",
         description: "AI voice generator for creating studio-quality voiceovers. Perfect for presentations, videos, and audiobooks.",
         website: "https://murf.ai",
-        logo: "https://via.placeholder.com/100/F97316/fff?text=Murf",
+        logo: "https://murf.ai/favicon.png",
         category: "AI Voice",
         tags: ["voice", "voiceover", "audio", "tts"],
         features: ["120+ voices", "20+ languages", "Pitch control", "Emphasis", "Commercial use"],
@@ -220,7 +230,7 @@ const tools = [
         name: "Writesonic",
         description: "AI writing platform for creating SEO-optimized content, blog posts, ads, and landing pages quickly.",
         website: "https://writesonic.com",
-        logo: "https://via.placeholder.com/100/8B5CF6/fff?text=WS",
+        logo: "https://writesonic.com/static/images/ws-logo.svg",
         category: "AI Writing",
         tags: ["content", "seo", "blog", "marketing"],
         features: ["Article writer", "SEO optimizer", "Paraphraser", "AI templates", "Bulk generation"],
@@ -261,13 +271,14 @@ async function seedTools() {
         }
 
         // Clear existing tools (optional)
-        console.log('🗑️  Clearing existing tools...');
+        console.log('🗑️ Clearing existing tools...');
         await Tool.deleteMany({});
         console.log('✅ Cleared existing tools');
 
-        // Add createdBy field to all tools
+        // Add createdBy field and slug to all tools
         const toolsWithCreator = tools.map(tool => ({
             ...tool,
+            slug: generateSlug(tool.name),
             createdBy: adminUser._id,
             isActive: true,
             isVerified: true,
