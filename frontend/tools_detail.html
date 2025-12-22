@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Tool Details - NexusAI</title>
     <style>
         * {
@@ -34,7 +34,7 @@
         .navbar-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 30px;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -45,64 +45,46 @@
             font-weight: 700;
             color: #64c8ff;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .navbar-brand::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-            border-radius: 50%;
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #64c8ff;
+            margin: 3px 0;
+            transition: all 0.3s;
+            border-radius: 3px;
         }
 
         .navbar-menu {
             display: flex;
-            gap: 2.5rem;
-            align-items: center;
+            gap: 2rem;
         }
 
         .navbar-link {
             color: #94a3b8;
             text-decoration: none;
-            transition: all 0.3s ease;
             font-weight: 500;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        .navbar-link:hover {
-            color: #64c8ff;
-        }
-
-        .navbar-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #3b82f6);
-            transition: width 0.3s ease;
-        }
-
-        .navbar-link:hover::after {
-            width: 100%;
+            transition: color 0.3s;
         }
 
         #nav-auth {
             display: flex;
             gap: 1rem;
-            align-items: center;
         }
 
         /* CONTAINER */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 30px;
+            padding: 30px 20px;
         }
 
         /* TOOL DETAIL CARD */
@@ -110,7 +92,7 @@
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 16px;
-            padding: 3rem;
+            padding: 2rem;
             margin-bottom: 2rem;
         }
 
@@ -121,6 +103,7 @@
             margin-bottom: 2rem;
             padding-bottom: 2rem;
             border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            flex-wrap: wrap;
         }
 
         .tool-logo {
@@ -130,10 +113,12 @@
             object-fit: cover;
             background: rgba(100, 200, 255, 0.1);
             border: 2px solid rgba(100, 200, 255, 0.2);
+            flex-shrink: 0;
         }
 
         .tool-header-info {
             flex: 1;
+            min-width: 250px;
         }
 
         .tool-header-info h1 {
@@ -160,6 +145,7 @@
             display: flex;
             gap: 2rem;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .stat {
@@ -170,7 +156,6 @@
         .stat-label {
             color: #94a3b8;
             font-size: 0.9rem;
-            margin-bottom: 0.3rem;
         }
 
         .stat-value {
@@ -216,12 +201,7 @@
             border: 2px solid rgba(100, 200, 255, 0.3);
         }
 
-        .btn-secondary:hover {
-            background: rgba(100, 200, 255, 0.15);
-            border-color: rgba(100, 200, 255, 0.5);
-        }
-
-        /* TOOL SECTIONS */
+        /* SECTIONS */
         .tool-section {
             margin-bottom: 2.5rem;
         }
@@ -239,54 +219,12 @@
             font-size: 1.05rem;
         }
 
-        /* FEATURES LIST */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .feature-item {
-            background: rgba(100, 200, 255, 0.05);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(100, 200, 255, 0.1);
-        }
-
-        .feature-item h3 {
-            color: #64c8ff;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .feature-item p {
-            color: #94a3b8;
-            font-size: 0.95rem;
-        }
-
-        /* PRICING */
-        .pricing-tag {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-top: 1rem;
-        }
-
-        .pricing-tag.free {
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-        }
-
         /* REVIEWS SECTION */
         .reviews-section {
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 16px;
-            padding: 2.5rem;
+            padding: 2rem;
             margin-top: 2rem;
         }
 
@@ -295,6 +233,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .reviews-header h2 {
@@ -314,6 +254,8 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .reviewer-name {
@@ -336,39 +278,7 @@
             margin-top: 0.5rem;
         }
 
-        /* LOADING STATE */
-        .loading {
-            text-align: center;
-            padding: 4rem;
-            color: #94a3b8;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(100, 200, 255, 0.2);
-            border-top: 4px solid #64c8ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* ERROR STATE */
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        /* REVIEW FORM MODAL */
+        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -380,6 +290,7 @@
             z-index: 2000;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .modal.active {
@@ -390,9 +301,9 @@
             background: rgba(30, 41, 59, 0.95);
             border: 1px solid rgba(100, 200, 255, 0.2);
             border-radius: 16px;
-            padding: 2.5rem;
+            padding: 2rem;
             max-width: 500px;
-            width: 90%;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -416,6 +327,7 @@
             font-size: 1.5rem;
             cursor: pointer;
             transition: color 0.3s ease;
+            padding: 0.5rem;
         }
 
         .close-modal:hover {
@@ -433,9 +345,7 @@
             font-weight: 500;
         }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 0.8rem;
             background: rgba(100, 200, 255, 0.05);
@@ -444,16 +354,11 @@
             color: #e2e8f0;
             font-size: 1rem;
             font-family: inherit;
-        }
-
-        .form-group textarea {
             min-height: 120px;
             resize: vertical;
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             outline: none;
             border-color: #64c8ff;
         }
@@ -475,14 +380,95 @@
             color: #fbbf24;
         }
 
-        /* RESPONSIVE */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #94a3b8;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(100, 200, 255, 0.2);
+            border-top: 4px solid #64c8ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
-            .navbar-menu { display: none; }
-            .tool-header { flex-direction: column; }
-            .tool-logo { width: 80px; height: 80px; }
-            .tool-header-info h1 { font-size: 2rem; }
-            .tool-stats { flex-direction: column; gap: 1rem; }
-            .features-grid { grid-template-columns: 1fr; }
+            .hamburger {
+                display: flex;
+            }
+
+            .navbar-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 75%;
+                max-width: 300px;
+                background: rgba(15, 23, 42, 0.98);
+                flex-direction: column;
+                padding: 80px 30px 30px;
+                gap: 2rem;
+                transition: right 0.3s;
+                border-left: 1px solid rgba(100, 200, 255, 0.2);
+            }
+
+            .navbar-menu.active {
+                right: 0;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .tool-header {
+                flex-direction: column;
+            }
+
+            .tool-logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .tool-header-info h1 {
+                font-size: 1.8rem;
+            }
+
+            .tool-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -490,12 +476,20 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="index.html" class="navbar-brand">NexusAI</a>
-            <div class="navbar-menu">
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="navbar-menu" id="navbarMenu">
                 <a href="index.html" class="navbar-link">Home</a>
                 <a href="tools_listing.html" class="navbar-link">Tools</a>
                 <a href="trending.html" class="navbar-link">Trending</a>
                 <a href="compare.html" class="navbar-link">Compare</a>
             </div>
+            
             <div id="nav-auth"></div>
         </div>
     </nav>
@@ -516,7 +510,7 @@
             </div>
             <form id="reviewForm" onsubmit="submitReview(event)">
                 <div class="form-group">
-                    <label>Rating</label>
+                    <label>Rating *</label>
                     <div class="rating-input" id="ratingInput">
                         <span data-rating="1">★</span>
                         <span data-rating="2">★</span>
@@ -527,10 +521,10 @@
                     <input type="hidden" id="ratingValue" name="rating" required>
                 </div>
                 <div class="form-group">
-                    <label for="reviewComment">Your Review</label>
-                    <textarea id="reviewComment" name="comment" required placeholder="Share your experience with this tool..."></textarea>
+                    <label for="reviewComment">Your Review *</label>
+                    <textarea id="reviewComment" name="comment" required minlength="10" placeholder="Share your experience with this tool... (minimum 10 characters)"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Review</button>
+                <button type="submit" class="btn btn-primary" id="submitReviewBtn" style="width: 100%;">Submit Review</button>
             </form>
         </div>
     </div>
@@ -542,8 +536,19 @@
         let currentTool = null;
         let selectedRating = 0;
 
+        // Hamburger menu
+        const hamburger = document.getElementById('hamburger');
+        const navbarMenu = document.getElementById('navbarMenu');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navbarMenu.classList.toggle('active');
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('Tool Detail Page Loaded');
+            console.log('=== TOOL DETAIL PAGE LOADED ===');
             
             if (typeof updateNavbar === 'function') {
                 updateNavbar();
@@ -551,6 +556,8 @@
             
             const urlParams = new URLSearchParams(window.location.search);
             const toolId = urlParams.get('id');
+            
+            console.log('Tool ID from URL:', toolId);
             
             if (!toolId) {
                 showError('No tool ID provided');
@@ -568,6 +575,7 @@
                     selectedRating = parseInt(this.getAttribute('data-rating'));
                     document.getElementById('ratingValue').value = selectedRating;
                     updateStars(selectedRating);
+                    console.log('Rating selected:', selectedRating);
                 });
 
                 star.addEventListener('mouseenter', function() {
@@ -594,7 +602,8 @@
 
         async function loadToolDetails(toolId) {
             try {
-                console.log('Fetching tool details for ID:', toolId);
+                console.log('=== LOADING TOOL DETAILS ===');
+                console.log('Fetching tool ID:', toolId);
                 
                 if (typeof toolsAPI === 'undefined') {
                     showError('API not loaded. Please refresh the page.');
@@ -602,10 +611,11 @@
                 }
 
                 const response = await toolsAPI.getById(toolId);
-                console.log('API Response:', response);
+                console.log('Tool API Response:', response);
                 
                 if (response.success && response.data) {
                     currentTool = response.data.tool || response.data;
+                    console.log('Current tool set to:', currentTool);
                     displayToolDetails(currentTool);
                 } else {
                     showError(response.message || 'Failed to load tool details');
@@ -617,23 +627,15 @@
         }
 
         function displayToolDetails(tool) {
-            const container = document.getElementById('tool-content');
+            console.log('=== DISPLAYING TOOL ===', tool);
             
-            const features = tool.features || [];
-            let pricing = 'Contact for pricing';
-            if (tool.pricing) {
-                if (typeof tool.pricing === 'string') {
-                    pricing = tool.pricing;
-                } else if (typeof tool.pricing === 'object' && tool.pricing.type) {
-                    pricing = tool.pricing.type;
-                }
-            }
-            const website = tool.website || tool.url || '#';
+            const container = document.getElementById('tool-content');
+            const website = tool.website || tool.websiteUrl || tool.url || '#';
             
             container.innerHTML = `
                 <div class="tool-detail">
                     <div class="tool-header">
-                        <img src="${tool.logo || 'https://via.placeholder.com/120?text=' + encodeURIComponent(tool.name)}" 
+                        <img src="${tool.logo || 'https://via.placeholder.com/120?text=AI'}" 
                              alt="${tool.name}" 
                              class="tool-logo"
                              onerror="this.src='https://via.placeholder.com/120?text=AI'">
@@ -649,10 +651,6 @@
                                     <span class="stat-label">Reviews</span>
                                     <span class="stat-value">${tool.totalReviews || tool.reviewCount || 0}</span>
                                 </div>
-                                <div class="stat">
-                                    <span class="stat-label">Status</span>
-                                    <span class="stat-value">${tool.status || 'Active'}</span>
-                                </div>
                             </div>
                             <div class="action-buttons">
                                 <a href="${website}" target="_blank" rel="noopener" class="btn btn-primary">Visit Website</a>
@@ -664,28 +662,6 @@
                     <div class="tool-section">
                         <h2>About</h2>
                         <p>${tool.description || 'No description available.'}</p>
-                    </div>
-
-                    ${features.length > 0 ? `
-                    <div class="tool-section">
-                        <h2>Key Features</h2>
-                        <div class="features-grid">
-                            ${features.map(feature => `
-                                <div class="feature-item">
-                                    <h3>${feature.title || feature.name || 'Feature'}</h3>
-                                    <p>${feature.description || feature}</p>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-
-                    <div class="tool-section">
-                        <h2>Pricing</h2>
-                        <p>${tool.pricingDescription || 'Check the website for pricing details.'}</p>
-                        <div class="pricing-tag ${(typeof pricing === 'string' && pricing.toLowerCase().includes('free')) ? 'free' : ''}">
-                            ${pricing}
-                        </div>
                     </div>
                 </div>
 
@@ -704,6 +680,8 @@
         }
 
         async function loadReviews(toolId) {
+            console.log('=== LOADING REVIEWS FOR TOOL:', toolId, '===');
+            
             const container = document.getElementById('reviews-container');
             
             try {
@@ -713,7 +691,7 @@
                 }
 
                 const response = await reviewsAPI.getAll(toolId, 1, 10);
-                console.log('Reviews response:', response);
+                console.log('Reviews API Response:', response);
                 
                 if (response.success && response.data && response.data.reviews && response.data.reviews.length > 0) {
                     container.innerHTML = response.data.reviews.map(review => `
@@ -754,9 +732,16 @@
         }
 
         function handleWriteReview() {
-            if (!localStorage.getItem('token')) {
+            console.log('=== HANDLE WRITE REVIEW CLICKED ===');
+            
+            const token = localStorage.getItem('token');
+            console.log('Token exists:', !!token);
+            
+            if (!token) {
                 if (typeof showToast === 'function') {
                     showToast('Please login to write a review', 'warning');
+                } else {
+                    alert('Please login to write a review');
                 }
                 setTimeout(() => {
                     window.location.href = 'login.html';
@@ -768,6 +753,7 @@
         }
 
         function openReviewModal() {
+            console.log('=== OPENING REVIEW MODAL ===');
             document.getElementById('reviewModal').classList.add('active');
             document.getElementById('reviewForm').reset();
             selectedRating = 0;
@@ -775,56 +761,153 @@
         }
 
         function closeReviewModal() {
+            console.log('=== CLOSING REVIEW MODAL ===');
             document.getElementById('reviewModal').classList.remove('active');
         }
 
         async function submitReview(event) {
             event.preventDefault();
             
-            if (!selectedRating) {
+            console.log('=== SUBMIT REVIEW STARTED ===');
+            console.log('Current tool:', currentTool);
+            console.log('Selected rating:', selectedRating);
+            
+            // Get the submit button
+            const submitBtn = document.getElementById('submitReviewBtn');
+            
+            // Validate rating
+            if (!selectedRating || selectedRating < 1 || selectedRating > 5) {
+                console.error('Invalid rating:', selectedRating);
                 if (typeof showToast === 'function') {
-                    showToast('Please select a rating', 'warning');
+                    showToast('Please select a rating (1-5 stars)', 'warning');
+                } else {
+                    alert('Please select a rating');
                 }
                 return;
             }
 
+            // Validate comment
             const comment = document.getElementById('reviewComment').value.trim();
+            console.log('Comment:', comment);
+            console.log('Comment length:', comment.length);
             
             if (!comment) {
+                console.error('Comment is empty');
                 if (typeof showToast === 'function') {
                     showToast('Please write a review', 'warning');
+                } else {
+                    alert('Please write a review');
+                }
+                return;
+            }
+            
+            if (comment.length < 10) {
+                console.error('Comment too short:', comment.length);
+                if (typeof showToast === 'function') {
+                    showToast('Review must be at least 10 characters long', 'warning');
+                } else {
+                    alert('Review must be at least 10 characters');
+                }
+                return;
+            }
+            
+            // Validate tool ID
+            const toolId = currentTool._id || currentTool.id;
+            console.log('Tool ID:', toolId);
+            
+            if (!toolId) {
+                console.error('No tool ID available');
+                if (typeof showToast === 'function') {
+                    showToast('Error: Tool ID not found', 'error');
+                } else {
+                    alert('Error: Tool ID not found');
                 }
                 return;
             }
 
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No authentication token');
+                if (typeof showToast === 'function') {
+                    showToast('Please login to submit a review', 'warning');
+                } else {
+                    alert('Please login to submit a review');
+                }
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                return;
+            }
+
+            // Show loading
             if (typeof showLoading === 'function') showLoading();
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
             try {
-                const response = await reviewsAPI.create({
-                    toolId: currentTool._id || currentTool.id,
+                console.log('=== CALLING REVIEW API ===');
+                console.log('Review data:', {
+                    toolId: toolId,
                     rating: selectedRating,
                     comment: comment
                 });
                 
+                const response = await reviewsAPI.create({
+                    toolId: toolId,
+                    rating: selectedRating,
+                    comment: comment
+                });
+                
+                console.log('=== REVIEW SUBMISSION RESPONSE ===', response);
+                
                 if (typeof hideLoading === 'function') hideLoading();
                 
                 if (response.success) {
+                    console.log('✅ Review submitted successfully!');
+                    
                     if (typeof showToast === 'function') {
-                        showToast('Review submitted successfully!', 'success');
+                        showToast('✅ Review submitted successfully!', 'success');
+                    } else {
+                        alert('Review submitted successfully!');
                     }
+                    
                     closeReviewModal();
-                    loadReviews(currentTool._id || currentTool.id);
+                    
+                    // Reload reviews after a short delay
+                    setTimeout(() => {
+                        console.log('Reloading reviews...');
+                        loadReviews(toolId);
+                    }, 500);
                 } else {
+                    console.error('❌ Review submission failed:', response.message);
+                    
                     if (typeof showToast === 'function') {
-                        showToast(response.message || 'Failed to submit review', 'error');
+                        showToast('❌ ' + (response.message || 'Failed to submit review'), 'error');
+                    } else {
+                        alert('Failed to submit review: ' + (response.message || 'Unknown error'));
                     }
+                    
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Review';
                 }
             } catch (error) {
                 if (typeof hideLoading === 'function') hideLoading();
-                console.error('Error submitting review:', error);
+                console.error('❌ Error submitting review:', error);
+                console.error('Error stack:', error.stack);
+                
                 if (typeof showToast === 'function') {
-                    showToast('An error occurred while submitting review', 'error');
+                    showToast('❌ Network error: ' + error.message, 'error');
+                } else {
+                    alert('Error submitting review: ' + error.message);
                 }
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
             }
         }
 
