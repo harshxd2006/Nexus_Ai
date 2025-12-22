@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>All AI Tools - NexusAI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,7 +14,7 @@
             line-height: 1.6;
         }
         
-        /* PROFESSIONAL NAVBAR - SAME AS INDEX */
+        /* NAVBAR */
         .navbar {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
@@ -29,7 +29,7 @@
         .navbar-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 30px;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,61 +39,43 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
-            letter-spacing: 0.5px;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .navbar-brand::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-            border-radius: 50%;
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #64c8ff;
+            margin: 3px 0;
+            transition: all 0.3s;
+            border-radius: 3px;
         }
 
         .navbar-menu {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem;
         }
 
-        .navbar-menu a {
+        .navbar-link {
             color: #94a3b8;
             text-decoration: none;
-            transition: all 0.3s ease;
             font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            padding: 0.5rem 0;
+            transition: color 0.3s;
         }
 
-        .navbar-menu a:hover {
-            color: #64c8ff;
-        }
-
-        .navbar-menu a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #3b82f6);
-            transition: width 0.3s ease;
-        }
-
-        .navbar-menu a:hover::after {
-            width: 100%;
-        }
-
-        #nav-auth { display: flex; gap: 1.5rem; align-items: center; }
+        #nav-auth { display: flex; gap: 1rem; }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 30px;
+            padding: 40px 20px;
         }
 
         .page-header {
@@ -113,6 +95,40 @@
         .page-header p {
             color: #94a3b8;
             font-size: 1.1rem;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 12px;
+        }
+        
+        .category-btn {
+            padding: 0.7rem 1.3rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .category-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: #64c8ff;
+            border-color: #64c8ff;
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-color: transparent;
         }
 
         .tools-controls {
@@ -162,40 +178,6 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
-        .category-filters {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(30, 41, 59, 0.3);
-            border-radius: 12px;
-        }
-        
-        .category-btn {
-            padding: 0.7rem 1.3rem;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 6px;
-            color: #94a3b8;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .category-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-            color: #64c8ff;
-            border-color: #64c8ff;
-        }
-        
-        .category-btn.active {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            border-color: transparent;
-        }
-
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -229,6 +211,7 @@
             border-radius: 8px;
             object-fit: cover;
             background: rgba(100, 200, 255, 0.1);
+            flex-shrink: 0;
         }
         
         .tool-info h3 {
@@ -299,7 +282,7 @@
             border: 1px solid rgba(100, 200, 255, 0.3);
         }
 
-        .no-results {
+        .no-results, .loading {
             text-align: center;
             padding: 3rem;
             color: #94a3b8;
@@ -309,15 +292,37 @@
             border-radius: 12px;
         }
 
-        .loading {
-            text-align: center;
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
             padding: 2rem;
-            color: #94a3b8;
+            border-radius: 12px;
+            text-align: center;
         }
 
+        /* MOBILE */
         @media (max-width: 768px) {
-            .navbar-menu { display: none; }
+            .hamburger { display: flex; }
+            
+            .navbar-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 75%;
+                max-width: 300px;
+                background: rgba(15, 23, 42, 0.98);
+                flex-direction: column;
+                padding: 80px 30px 30px;
+                gap: 2rem;
+                transition: right 0.3s;
+                border-left: 1px solid rgba(100, 200, 255, 0.2);
+            }
+            
+            .navbar-menu.active { right: 0; }
             .tools-grid { grid-template-columns: 1fr; }
+            .page-header h1 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -325,12 +330,20 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="index.html" class="navbar-brand">NexusAI</a>
-            <div class="navbar-menu">
-                <a href="index.html">Home</a>
-                <a href="tools_listing.html">Tools</a>
-                <a href="trending.html">Trending</a>
-                <a href="compare.html">Compare</a>
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
+            
+            <div class="navbar-menu" id="navbarMenu">
+                <a href="index.html" class="navbar-link">Home</a>
+                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="trending.html" class="navbar-link">Trending</a>
+                <a href="compare.html" class="navbar-link">Compare</a>
+            </div>
+            
             <div id="nav-auth"></div>
         </div>
     </nav>
@@ -349,7 +362,6 @@
             <button class="category-btn" onclick="filterByCategory('AI Video', event)">Video</button>
             <button class="category-btn" onclick="filterByCategory('AI Voice', event)">Voice</button>
             <button class="category-btn" onclick="filterByCategory('AI Chatbot', event)">Chatbot</button>
-            <button class="category-btn" onclick="filterByCategory('AI Analytics', event)">Analytics</button>
         </div>
 
         <div class="tools-controls">
@@ -369,15 +381,69 @@
     <script src="js/app.js"></script>
     
     <script>
+        console.log('=== TOOLS LISTING PAGE LOADED ===');
+        
         let currentPage = 1;
         let currentCategory = null;
 
+        // Hamburger menu
+        const hamburger = document.getElementById('hamburger');
+        const navbarMenu = document.getElementById('navbarMenu');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navbarMenu.classList.toggle('active');
+            });
+        }
+
+        // Wait for APIs to load
+        function waitForAPIs() {
+            return new Promise((resolve) => {
+                let attempts = 0;
+                const maxAttempts = 50;
+                
+                const checkAPIs = setInterval(() => {
+                    attempts++;
+                    console.log(`Checking for APIs... Attempt ${attempts}`);
+                    
+                    if (typeof toolsAPI !== 'undefined' && typeof auth !== 'undefined') {
+                        console.log('✅ All APIs loaded!');
+                        clearInterval(checkAPIs);
+                        resolve(true);
+                    } else {
+                        console.log('APIs status:', {
+                            toolsAPI: typeof toolsAPI,
+                            auth: typeof auth,
+                            updateNavbar: typeof updateNavbar
+                        });
+                    }
+                    
+                    if (attempts >= maxAttempts) {
+                        console.error('❌ Timeout waiting for APIs');
+                        clearInterval(checkAPIs);
+                        resolve(false);
+                    }
+                }, 100);
+            });
+        }
+
         async function loadAllTools(page = 1, category = null) {
+            console.log('=== LOADING TOOLS ===', {page, category});
+            
             const container = document.getElementById('tools-container');
             container.innerHTML = '<div class="loading">Loading tools...</div>';
 
+            // Check if toolsAPI exists
+            if (typeof toolsAPI === 'undefined') {
+                console.error('❌ toolsAPI is not defined');
+                container.innerHTML = '<div class="error-box">Error: toolsAPI not loaded. Please refresh the page.</div>';
+                return;
+            }
+
             try {
                 const response = await toolsAPI.getAll(page, 12, category);
+                console.log('Tools API response:', response);
 
                 if (response.success) {
                     let tools = [];
@@ -390,6 +456,7 @@
                         tools = response.data;
                     }
                     
+                    console.log('Tools loaded:', tools.length);
                     currentPage = page;
                     
                     if (tools.length === 0) {
@@ -398,14 +465,22 @@
                     }
 
                     renderTools(tools);
-                    showToast(`Loaded ${tools.length} tools`, 'success');
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(`Loaded ${tools.length} tools`, 'success');
+                    }
                 } else {
-                    container.innerHTML = `<div class="no-results">Failed to load tools: ${response.message || 'Unknown error'}</div>`;
-                    showToast(response.message || 'Failed to load tools', 'error');
+                    console.error('Failed to load tools:', response.message);
+                    container.innerHTML = `<div class="error-box">Failed to load tools: ${response.message || 'Unknown error'}</div>`;
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(response.message || 'Failed to load tools', 'error');
+                    }
                 }
             } catch (error) {
+                console.error('Error loading tools:', error);
                 container.innerHTML = `
-                    <div class="no-results">
+                    <div class="error-box">
                         <p>Error loading tools</p>
                         <p style="font-size: 0.9rem; margin-top: 10px;">${error.message}</p>
                         <button onclick="loadAllTools()" style="margin-top: 20px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
@@ -413,7 +488,10 @@
                         </button>
                     </div>
                 `;
-                showToast('Error: ' + error.message, 'error');
+                
+                if (typeof showToast === 'function') {
+                    showToast('Error: ' + error.message, 'error');
+                }
             }
         }
 
@@ -451,6 +529,8 @@
         }
 
         async function filterByCategory(category, event) {
+            console.log('=== FILTER BY CATEGORY ===', category);
+            
             currentCategory = category;
             
             document.querySelectorAll('.category-btn').forEach(btn => {
@@ -464,9 +544,22 @@
         }
 
         async function handleSearch() {
+            console.log('=== HANDLE SEARCH ===');
+            
             const query = document.getElementById('searchInput').value.trim();
             if (query.length < 2) {
-                showToast('Please enter at least 2 characters', 'warning');
+                if (typeof showToast === 'function') {
+                    showToast('Please enter at least 2 characters', 'warning');
+                }
+                return;
+            }
+
+            // Check if toolsAPI exists
+            if (typeof toolsAPI === 'undefined') {
+                console.error('❌ toolsAPI is not defined');
+                if (typeof showToast === 'function') {
+                    showToast('Error: toolsAPI not loaded', 'error');
+                }
                 return;
             }
 
@@ -475,6 +568,7 @@
 
             try {
                 const response = await toolsAPI.search(query, 1, 12);
+                console.log('Search response:', response);
                 
                 if (response.success) {
                     let tools = [];
@@ -491,36 +585,78 @@
                         container.innerHTML = '<div class="no-results">No tools found for your search</div>';
                         return;
                     }
+                    
                     renderTools(tools);
-                    showToast(`Found ${tools.length} tools`, 'success');
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(`Found ${tools.length} tools`, 'success');
+                    }
                 }
             } catch (error) {
-                container.innerHTML = '<div class="no-results">Search failed</div>';
+                console.error('Search error:', error);
+                container.innerHTML = '<div class="error-box">Search failed: ' + error.message + '</div>';
             }
         }
 
         function addToFavorites(toolId) {
-            if (!auth.isAuthenticated()) {
-                showToast('Please login to add favorites', 'warning');
+            console.log('=== ADD TO FAVORITES ===', toolId);
+            
+            if (!auth || !auth.isAuthenticated || !auth.isAuthenticated()) {
+                if (typeof showToast === 'function') {
+                    showToast('Please login to add favorites', 'warning');
+                }
                 setTimeout(() => window.location.href = 'login.html', 1000);
+                return;
+            }
+
+            if (typeof toolsAPI === 'undefined') {
+                console.error('toolsAPI is not defined');
+                if (typeof showToast === 'function') {
+                    showToast('Error: API not loaded', 'error');
+                }
                 return;
             }
 
             toolsAPI.addToFavorites(toolId)
                 .then(response => {
+                    console.log('Add to favorites response:', response);
                     if (response.success) {
-                        showToast('Added to favorites!', 'success');
+                        if (typeof showToast === 'function') {
+                            showToast('Added to favorites!', 'success');
+                        }
                     }
                 })
                 .catch(error => {
-                    showToast('Error adding favorite', 'error');
+                    console.error('Error adding favorite:', error);
+                    if (typeof showToast === 'function') {
+                        showToast('Error adding favorite', 'error');
+                    }
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateNavbar();
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('=== DOM LOADED ===');
+            
+            // Wait for APIs to load
+            const apisLoaded = await waitForAPIs();
+            
+            if (!apisLoaded) {
+                console.error('APIs failed to load');
+                document.getElementById('tools-container').innerHTML = 
+                    '<div class="error-box">Error: APIs not loaded. Please refresh the page.</div>';
+                return;
+            }
+
+            // Update navbar
+            if (typeof updateNavbar === 'function') {
+                updateNavbar();
+            }
+            
+            // Load tools
             loadAllTools(1);
 
+            // Setup search on Enter key
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     handleSearch();

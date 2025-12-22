@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>My Profile - NexusAI</title>
     <style>
         * {
@@ -18,7 +18,7 @@
             line-height: 1.6;
         }
 
-        /* PROFESSIONAL NAVBAR */
+        /* NAVBAR */
         .navbar {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
@@ -27,13 +27,12 @@
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid rgba(100, 200, 255, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .navbar-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 30px;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -43,90 +42,158 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             text-decoration: none;
+            z-index: 1001;
         }
 
-        .navbar-brand::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-            border-radius: 50%;
-            display: inline-block;
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #64c8ff;
+            margin: 3px 0;
+            transition: all 0.3s;
+            border-radius: 3px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
         }
 
         .navbar-menu {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem;
         }
 
         .navbar-link {
             color: #94a3b8;
             text-decoration: none;
-            transition: all 0.3s ease;
             font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        .navbar-link:hover {
-            color: #64c8ff;
-        }
-
-        .navbar-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #3b82f6);
-            transition: width 0.3s ease;
-        }
-
-        .navbar-link:hover::after {
-            width: 100%;
+            transition: color 0.3s;
         }
 
         #nav-auth {
             display: flex;
-            gap: 1.5rem;
-            align-items: center;
+            gap: 1rem;
         }
 
+        /* CONTAINER */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 30px;
-            min-height: 80vh;
+            padding: 30px 20px;
         }
 
+        /* PROFILE HEADER */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .profile-info h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            width: 100%;
+            margin: 1.5rem 0;
+        }
+
+        .stat-item {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            color: #64c8ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .edit-btn {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* TABS */
         .profile-tabs {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             margin-bottom: 2rem;
             border-bottom: 2px solid rgba(100, 200, 255, 0.1);
+            overflow-x: auto;
         }
 
         .tab-btn {
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.2rem;
             background: none;
             border: none;
             color: #94a3b8;
             cursor: pointer;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             position: relative;
-            transition: color 0.3s ease;
-        }
-
-        .tab-btn:hover {
-            color: #64c8ff;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -140,7 +207,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #3b82f6);
+            background: #64c8ff;
         }
 
         .tab-content {
@@ -151,93 +218,11 @@
             display: block;
         }
 
-        .profile-header {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(100, 200, 255, 0.1);
-            border-radius: 12px;
-            padding: 2rem;
-            min-height: 250px;
-        }
-
-        .profile-avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: white;
-            font-weight: bold;
-        }
-
-        .profile-info h1 {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        .profile-info p {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-item {
-            background: rgba(100, 200, 255, 0.1);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.8rem;
-            color: #64c8ff;
-            font-weight: bold;
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            color: #94a3b8;
-            font-size: 0.9rem;
-        }
-
-        .edit-btn {
-            padding: 0.8rem 1.5rem;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .edit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
-        }
-
+        /* TOOLS GRID */
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 1.5rem;
         }
 
         .tool-card {
@@ -245,104 +230,71 @@
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
             padding: 1.5rem;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(100, 200, 255, 0.3);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
         .tool-header {
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
-            align-items: flex-start;
         }
 
         .tool-logo {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             border-radius: 8px;
-            object-fit: cover;
             background: rgba(100, 200, 255, 0.1);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-        }
-
-        .tool-info {
-            flex: 1;
+            flex-shrink: 0;
         }
 
         .tool-info h3 {
-            font-size: 1.2rem;
             color: #e2e8f0;
+            font-size: 1.1rem;
             margin-bottom: 0.3rem;
         }
 
         .tool-category {
             color: #64c8ff;
             font-size: 0.85rem;
-            font-weight: 600;
-            margin: 0;
         }
 
         .tool-description {
             color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 1rem;
-            flex-grow: 1;
         }
 
         .tool-stats {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid rgba(100, 200, 255, 0.1);
             font-size: 0.9rem;
-        }
-
-        .rating {
-            color: #fbbf24;
-            font-weight: 600;
-        }
-
-        .reviews {
-            color: #94a3b8;
+            flex-wrap: wrap;
         }
 
         .tool-buttons {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .btn-small {
             flex: 1;
+            min-width: 120px;
             padding: 0.7rem;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
             font-size: 0.9rem;
             text-align: center;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .btn-primary-small {
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
-        }
-
-        .btn-primary-small:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
         }
 
         .btn-danger-small {
@@ -351,63 +303,60 @@
             border: 1px solid rgba(244, 67, 54, 0.3);
         }
 
-        .btn-danger-small:hover {
-            background: rgba(244, 67, 54, 0.25);
-        }
-
-        .review-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(100, 200, 255, 0.1);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.8rem;
-        }
-
-        .review-tool {
-            color: #64c8ff;
-            font-weight: 600;
-        }
-
-        .review-rating {
-            color: #fbbf24;
-        }
-
-        .review-text {
-            color: #94a3b8;
-            margin-bottom: 1rem;
-            line-height: 1.8;
-        }
-
-        .review-time {
-            color: #707070;
-            font-size: 0.8rem;
-        }
-
         .no-results {
             text-align: center;
-            padding: 3rem;
+            padding: 2rem;
             color: #94a3b8;
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 8px;
         }
 
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        /* MOBILE STYLES */
         @media (max-width: 768px) {
-            .navbar-menu { display: none; }
-            .profile-header {
-                grid-template-columns: 1fr;
-                text-align: center;
+            .hamburger {
+                display: flex;
             }
-            .profile-avatar { margin: 0 auto; }
-            .profile-stats { grid-template-columns: 1fr; }
-            .tools-grid { grid-template-columns: 1fr; }
+
+            .navbar-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 75%;
+                max-width: 300px;
+                background: rgba(15, 23, 42, 0.98);
+                flex-direction: column;
+                padding: 80px 30px 30px;
+                gap: 2rem;
+                transition: right 0.3s;
+                border-left: 1px solid rgba(100, 200, 255, 0.2);
+            }
+
+            .navbar-menu.active {
+                right: 0;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-buttons {
+                flex-direction: column;
+            }
+
+            .btn-small {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -415,18 +364,26 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="index.html" class="navbar-brand">NexusAI</a>
-            <div class="navbar-menu">
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="navbar-menu" id="navbarMenu">
                 <a href="index.html" class="navbar-link">Home</a>
                 <a href="tools_listing.html" class="navbar-link">Tools</a>
                 <a href="trending.html" class="navbar-link">Trending</a>
                 <a href="compare.html" class="navbar-link">Compare</a>
             </div>
+            
             <div id="nav-auth"></div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="profile-header" id="profileHeader">
+        <div class="profile-header">
             <div class="profile-avatar" id="profileAvatar">U</div>
             <div class="profile-info">
                 <h1 id="profileName">Loading...</h1>
@@ -445,7 +402,7 @@
                         <div class="stat-label">Joined</div>
                     </div>
                 </div>
-                <button class="edit-btn" onclick="alert('Edit profile feature coming soon')">Edit Profile</button>
+                <button class="edit-btn" onclick="alert('Edit profile coming soon')">Edit Profile</button>
             </div>
         </div>
 
@@ -456,22 +413,22 @@
         </div>
 
         <div class="tab-content active" id="favoritesTab">
-            <h2 style="color: #64c8ff; margin-bottom: 2rem;">Your Favorite Tools</h2>
+            <h2 style="color: #64c8ff; margin-bottom: 1.5rem;">Your Favorite Tools</h2>
             <div class="tools-grid" id="favoritesContainer">
-                <div class="no-results">Loading your favorites...</div>
+                <div class="no-results">Loading...</div>
             </div>
         </div>
 
         <div class="tab-content" id="reviewsTab">
-            <h2 style="color: #64c8ff; margin-bottom: 2rem;">Your Reviews</h2>
+            <h2 style="color: #64c8ff; margin-bottom: 1.5rem;">Your Reviews</h2>
             <div id="reviewsContainer">
-                <div class="no-results">Loading your reviews...</div>
+                <div class="no-results">Loading...</div>
             </div>
         </div>
 
         <div class="tab-content" id="settingsTab">
-            <h2 style="color: #64c8ff; margin-bottom: 2rem;">Account Settings</h2>
-            <div class="no-results">Settings feature coming soon</div>
+            <h2 style="color: #64c8ff; margin-bottom: 1.5rem;">Account Settings</h2>
+            <div class="no-results">Settings coming soon</div>
         </div>
     </div>
 
@@ -480,36 +437,93 @@
     <script src="js/app.js"></script>
     
     <script>
+        console.log('=== PROFILE PAGE LOADING ===');
+
+        const hamburger = document.getElementById('hamburger');
+        const navbarMenu = document.getElementById('navbarMenu');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navbarMenu.classList.toggle('active');
+            });
+        }
+
         function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName + 'Tab').classList.add('active');
             event.target.classList.add('active');
         }
 
+        // Wait for all scripts to load
+        function waitForAPIs() {
+            return new Promise((resolve) => {
+                let attempts = 0;
+                const maxAttempts = 50; // 5 seconds max wait
+                
+                const checkAPIs = setInterval(() => {
+                    attempts++;
+                    console.log(`Checking for APIs... Attempt ${attempts}`);
+                    
+                    if (typeof userAPI !== 'undefined' && typeof auth !== 'undefined') {
+                        console.log('✅ All APIs loaded!');
+                        clearInterval(checkAPIs);
+                        resolve(true);
+                    } else {
+                        console.log('APIs status:', {
+                            userAPI: typeof userAPI,
+                            auth: typeof auth,
+                            toolsAPI: typeof toolsAPI,
+                            reviewsAPI: typeof reviewsAPI
+                        });
+                    }
+                    
+                    if (attempts >= maxAttempts) {
+                        console.error('❌ Timeout waiting for APIs');
+                        clearInterval(checkAPIs);
+                        resolve(false);
+                    }
+                }, 100);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('Profile page loading...');
+            console.log('=== DOM LOADED ===');
             
-            updateNavbar();
+            // Wait for APIs to load
+            const apisLoaded = await waitForAPIs();
             
+            if (!apisLoaded) {
+                console.error('APIs failed to load');
+                document.getElementById('favoritesContainer').innerHTML = 
+                    '<div class="error-box">Error: APIs not loaded. Please refresh the page.</div>';
+                document.getElementById('reviewsContainer').innerHTML = 
+                    '<div class="error-box">Error: APIs not loaded. Please refresh the page.</div>';
+                return;
+            }
+
+            // Update navbar
+            if (typeof updateNavbar === 'function') {
+                updateNavbar();
+            }
+            
+            // Check authentication
             const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            console.log('Token exists:', !!token);
             
             if (!token) {
                 console.log('No token found, redirecting to login');
-                showToast('Please login to access your profile', 'warning');
+                if (typeof showToast === 'function') {
+                    showToast('Please login to access your profile', 'warning');
+                }
                 setTimeout(() => {
-                    window.location.href = '/login.html';
+                    window.location.href = 'login.html';
                 }, 1500);
                 return;
             }
             
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
             if (user.name || user.email) {
                 console.log('Using cached user data:', user);
                 updateProfileUI(user);
@@ -521,194 +535,192 @@
                 await loadUserReviews();
             } catch (error) {
                 console.error('Error loading profile data:', error);
-                showToast('Using cached data. Some features may be limited.', 'warning');
+                if (typeof showToast === 'function') {
+                    showToast('Some features may be limited', 'warning');
+                }
             }
         });
 
         function updateProfileUI(user) {
-            console.log('Updating UI with user:', user);
+            console.log('=== UPDATING PROFILE UI ===', user);
             
             const initial = (user.name || 'U').charAt(0).toUpperCase();
             document.getElementById('profileAvatar').textContent = initial;
             
             document.getElementById('profileName').textContent = user.name || 'User';
-            document.getElementById('profileEmail').textContent = user.email || 'user@example.com';
+            document.getElementById('profileEmail').textContent = user.email || '';
             
             if (user.createdAt) {
-                const joinDate = new Date(user.createdAt);
-                const monthYear = joinDate.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    year: 'numeric' 
-                });
-                document.getElementById('statsJoinDate').textContent = monthYear;
+                const date = new Date(user.createdAt);
+                document.getElementById('statsJoinDate').textContent = 
+                    date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
             }
-            
-            const cachedReviews = JSON.parse(localStorage.getItem('user_reviews') || '[]');
-            const cachedFavorites = JSON.parse(localStorage.getItem('user_favorites') || '[]');
-            
-            document.getElementById('statsReviews').textContent = cachedReviews.length;
-            document.getElementById('statsFavorites').textContent = cachedFavorites.length;
         }
 
         async function loadUserProfile() {
+            console.log('=== LOADING USER PROFILE ===');
+            
+            if (typeof userAPI === 'undefined') {
+                console.error('userAPI is not defined');
+                return;
+            }
+            
             try {
-                console.log('Loading user profile from API...');
-                
                 const response = await userAPI.getProfile();
-                console.log('Profile API response:', response);
+                console.log('Profile response:', response);
                 
                 if (response.success && response.data) {
                     const user = response.data.user || response.data;
                     console.log('User data received:', user);
-                    
                     updateProfileUI(user);
-                    
-                    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-                    const updatedUser = { ...currentUser, ...user };
-                    localStorage.setItem('user', JSON.stringify(updatedUser));
-                    
+                    localStorage.setItem('user', JSON.stringify(user));
                     return user;
-                } else {
-                    throw new Error(response.message || 'Failed to load profile');
                 }
             } catch (error) {
-                console.warn('Could not load profile from API:', error.message);
-                
-                const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-                if (storedUser.name) {
-                    updateProfileUI(storedUser);
-                    showToast('Using cached profile data', 'info');
-                }
-                
-                return null;
+                console.error('Error loading profile:', error);
             }
         }
 
         async function loadUserFavorites() {
+            console.log('=== LOADING FAVORITES ===');
+            
+            if (typeof userAPI === 'undefined') {
+                console.error('userAPI is not defined');
+                document.getElementById('favoritesContainer').innerHTML = 
+                    '<div class="error-box">Error: userAPI not loaded. Please refresh the page.</div>';
+                return;
+            }
+            
             try {
-                console.log('Loading favorites from API...');
                 const response = await userAPI.getFavorites();
                 console.log('Favorites response:', response);
                 
                 if (response.success) {
                     const tools = response.data?.tools || response.data || [];
-                    const totalFavorites = response.pagination?.total || tools.length;
+                    console.log('Favorites tools:', tools);
                     
-                    document.getElementById('statsFavorites').textContent = totalFavorites;
+                    document.getElementById('statsFavorites').textContent = tools.length;
                     
-                    localStorage.setItem('user_favorites', JSON.stringify(tools));
-                    
+                    const container = document.getElementById('favoritesContainer');
                     if (tools.length > 0) {
-                        const toolsHTML = tools.map(tool => `
+                        container.innerHTML = tools.map(tool => `
                             <div class="tool-card">
                                 <div class="tool-header">
-                                    <img src="${tool.logo || tool.image || 'https://via.placeholder.com/70?text=AI'}" 
-                                         alt="${tool.name}" 
-                                         class="tool-logo"
-                                         onerror="this.src='https://via.placeholder.com/70?text=AI'">
+                                    <img src="${tool.logo || 'https://via.placeholder.com/60?text=AI'}" 
+                                         alt="${tool.name}" class="tool-logo"
+                                         onerror="this.src='https://via.placeholder.com/60?text=AI'">
                                     <div class="tool-info">
                                         <h3>${tool.name}</h3>
                                         <p class="tool-category">${tool.category || 'AI Tool'}</p>
                                     </div>
                                 </div>
-
-                                <p class="tool-description">${(tool.description || '').substring(0, 120)}...</p>
-
+                                <p class="tool-description">${(tool.description || '').substring(0, 100)}...</p>
                                 <div class="tool-stats">
-                                    <span class="rating">${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'} Rating</span>
-                                    <span class="reviews">${tool.totalReviews || 0} reviews</span>
+                                    <span style="color: #fbbf24;">${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'} ★</span>
+                                    <span style="color: #94a3b8;">${tool.totalReviews || 0} reviews</span>
                                 </div>
-
                                 <div class="tool-buttons">
-                                    <a href="/tool_detail.html?id=${tool._id || tool.id}" class="btn-small btn-primary-small">View Details</a>
+                                    <a href="tools_detail.html?id=${tool._id || tool.id}" class="btn-small btn-primary-small">View Details</a>
                                     <button onclick="removeFavorite('${tool._id || tool.id}')" class="btn-small btn-danger-small">Remove</button>
                                 </div>
                             </div>
                         `).join('');
-
-                        document.getElementById('favoritesContainer').innerHTML = toolsHTML;
                     } else {
-                        document.getElementById('favoritesContainer').innerHTML = 
-                            '<div class="no-results">No favorite tools yet. <a href="/tools_listing.html" style="color: #64c8ff;">Explore tools</a></div>';
+                        container.innerHTML = '<div class="no-results">No favorite tools yet. <a href="tools_listing.html" style="color: #64c8ff;">Explore tools</a></div>';
                     }
+                } else {
+                    document.getElementById('favoritesContainer').innerHTML = 
+                        '<div class="error-box">Failed to load favorites: ' + (response.message || 'Unknown error') + '</div>';
                 }
             } catch (error) {
                 console.error('Error loading favorites:', error);
                 document.getElementById('favoritesContainer').innerHTML = 
-                    '<div class="no-results">Error loading favorites. Please try again later.</div>';
+                    '<div class="error-box">Error loading favorites: ' + error.message + '</div>';
             }
         }
 
         async function loadUserReviews() {
+            console.log('=== LOADING REVIEWS ===');
+            
+            if (typeof userAPI === 'undefined') {
+                console.error('userAPI is not defined');
+                document.getElementById('reviewsContainer').innerHTML = 
+                    '<div class="error-box">Error: userAPI not loaded. Please refresh the page.</div>';
+                return;
+            }
+            
             try {
-                console.log('Loading reviews from API...');
                 const response = await userAPI.getReviews();
                 console.log('Reviews response:', response);
                 
                 if (response.success) {
                     let reviews = [];
-                    
                     if (response.data && Array.isArray(response.data.reviews)) {
                         reviews = response.data.reviews;
                     } else if (Array.isArray(response.data)) {
                         reviews = response.data;
                     }
                     
-                    const totalReviews = response.pagination?.total || reviews.length;
+                    console.log('Reviews:', reviews);
+                    document.getElementById('statsReviews').textContent = reviews.length;
                     
-                    document.getElementById('statsReviews').textContent = totalReviews;
-                    
-                    localStorage.setItem('user_reviews', JSON.stringify(reviews));
-                    
+                    const container = document.getElementById('reviewsContainer');
                     if (reviews.length > 0) {
-                        const reviewsHTML = reviews.map(review => {
-                            const toolName = review.tool?.name || review.toolId?.name || 'Unknown Tool';
-                            const reviewTitle = review.title || 'No title';
-                            const reviewContent = review.content || review.review || 'No content';
-                            const reviewRating = review.rating || 5;
-                            
-                            return `
-                                <div class="review-card">
-                                    <div class="review-header">
-                                        <div>
-                                            <div class="review-tool">${toolName}</div>
-                                        </div>
-                                        <div class="review-rating">${'★'.repeat(reviewRating)}</div>
-                                    </div>
-                                    <h4 style="color: #e0e0e0; margin-bottom: 0.5rem;">${reviewTitle}</h4>
-                                    <p class="review-text">${reviewContent}</p>
+                        container.innerHTML = reviews.map(review => `
+                            <div class="tool-card" style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                                    <div style="color: #64c8ff; font-weight: 600;">${review.tool?.name || review.toolId?.name || 'Unknown Tool'}</div>
+                                    <div style="color: #fbbf24;">${'★'.repeat(review.rating || 5)}</div>
                                 </div>
-                            `;
-                        }).join('');
-
-                        document.getElementById('reviewsContainer').innerHTML = reviewsHTML;
+                                <p style="color: #94a3b8; line-height: 1.6;">${review.comment || review.content || review.review || 'No content'}</p>
+                            </div>
+                        `).join('');
                     } else {
-                        document.getElementById('reviewsContainer').innerHTML = 
-                            '<div class="no-results">No reviews yet. <a href="/tools_listing.html" style="color: #64c8ff;">Write your first review</a></div>';
+                        container.innerHTML = '<div class="no-results">No reviews yet. <a href="tools_listing.html" style="color: #64c8ff;">Write your first review</a></div>';
                     }
+                } else {
+                    document.getElementById('reviewsContainer').innerHTML = 
+                        '<div class="error-box">Failed to load reviews: ' + (response.message || 'Unknown error') + '</div>';
                 }
             } catch (error) {
                 console.error('Error loading reviews:', error);
                 document.getElementById('reviewsContainer').innerHTML = 
-                    '<div class="no-results">Error loading reviews. Please try again later.</div>';
+                    '<div class="error-box">Error loading reviews: ' + error.message + '</div>';
             }
         }
 
         async function removeFavorite(toolId) {
-            if (confirm('Remove this tool from favorites?')) {
-                try {
-                    const response = await userAPI.removeFavorite(toolId);
-                    
-                    if (response.success) {
+            console.log('=== REMOVING FAVORITE ===', toolId);
+            
+            if (!confirm('Remove this tool from favorites?')) return;
+            
+            if (typeof userAPI === 'undefined') {
+                console.error('userAPI is not defined');
+                if (typeof showToast === 'function') {
+                    showToast('Error: API not loaded', 'error');
+                }
+                return;
+            }
+            
+            try {
+                const response = await userAPI.removeFavorite(toolId);
+                console.log('Remove favorite response:', response);
+                
+                if (response.success) {
+                    if (typeof showToast === 'function') {
                         showToast('Removed from favorites', 'success');
-                        await loadUserFavorites();
-                        await loadUserProfile();
-                    } else {
+                    }
+                    await loadUserFavorites();
+                    await loadUserProfile();
+                } else {
+                    if (typeof showToast === 'function') {
                         showToast('Failed to remove favorite', 'error');
                     }
-                } catch (error) {
-                    console.error('Error removing favorite:', error);
-                    showToast('Error removing favorite', 'error');
+                }
+            } catch (error) {
+                console.error('Error removing favorite:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Error: ' + error.message, 'error');
                 }
             }
         }
