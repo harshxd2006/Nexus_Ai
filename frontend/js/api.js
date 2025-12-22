@@ -1,4 +1,8 @@
-// API CONFIGURATION - ENHANCED DEBUG VERSION
+// ============================================
+// API CONFIGURATION - FINAL FIX
+// Matches backend requirements exactly
+// ============================================
+
 const isLocalhost = window.location.hostname === 'localhost' || 
                     window.location.hostname === '127.0.0.1' ||
                     window.location.hostname === '';
@@ -15,10 +19,6 @@ console.log('========================================');
 
 function getToken() {
     const token = localStorage.getItem('token');
-    console.log('Token exists:', !!token);
-    if (token) {
-        console.log('Token preview:', token.substring(0, 20) + '...');
-    }
     return token;
 }
 
@@ -28,7 +28,6 @@ function getAuthHeaders() {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
     };
-    console.log('Request headers:', Object.keys(headers));
     return headers;
 }
 
@@ -50,7 +49,6 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         console.log(`📡 API Request: ${method} ${url}`);
 
         const response = await fetch(url, options);
-        
         console.log(`📨 Response Status: ${response.status} ${response.statusText}`);
 
         if (response.status === 401) {
@@ -65,7 +63,6 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-            console.error('❌ Response is not JSON:', contentType);
             const text = await response.text();
             console.error('Response text:', text.substring(0, 200));
             return { 
@@ -81,27 +78,25 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 
     } catch (error) {
         console.error('❌ API Error:', error);
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
         
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
             return { 
                 success: false, 
-                message: 'Cannot connect to server. Please check your internet connection.',
-                details: 'The backend server may be sleeping (free tier) or not responding. Try refreshing in 30 seconds.',
+                message: 'Cannot connect to server. The backend may be sleeping (free tier). Try refreshing in 30 seconds.',
                 networkError: true
             };
         }
         
         return { 
             success: false, 
-            message: error.message || 'Network error occurred',
-            details: error.stack
+            message: error.message || 'Network error occurred'
         };
     }
 }
 
+// ============================================
 // AUTHENTICATION API
+// ============================================
 const authAPI = {
     register: async (name, email, password, confirmPassword) => {
         console.log('=== AUTH: Register ===');
@@ -126,21 +121,19 @@ const authAPI = {
     }
 };
 
+// ============================================
 // TOOLS API
+// ============================================
 const toolsAPI = {
     getAll: async (page = 1, limit = 10, category = null) => {
         let endpoint = `/tools?page=${page}&limit=${limit}`;
         if (category) endpoint += `&category=${encodeURIComponent(category)}`;
-        
         console.log('=== TOOLS: Get All ===');
-        console.log('Params:', { page, limit, category });
-        
         return await apiRequest(endpoint, 'GET');
     },
 
     getById: async (toolId) => {
-        console.log('=== TOOLS: Get By ID ===');
-        console.log('Tool ID:', toolId);
+        console.log('=== TOOLS: Get By ID ===', toolId);
         return await apiRequest(`/tools/${toolId}`, 'GET');
     },
 
@@ -151,8 +144,7 @@ const toolsAPI = {
 
     search: async (query, page = 1, limit = 12) => {
         const endpoint = `/tools/search/${encodeURIComponent(query)}?page=${page}&limit=${limit}`;
-        console.log('=== TOOLS: Search ===');
-        console.log('Query:', query);
+        console.log('=== TOOLS: Search ===', query);
         return await apiRequest(endpoint, 'GET');
     },
 
@@ -162,86 +154,102 @@ const toolsAPI = {
     },
 
     getByCategory: async (category, page = 1, limit = 10) => {
-        console.log('=== TOOLS: Get By Category ===');
-        console.log('Category:', category);
+        console.log('=== TOOLS: Get By Category ===', category);
         return await apiRequest(`/tools/category/${encodeURIComponent(category)}?page=${page}&limit=${limit}`, 'GET');
     },
 
     addToFavorites: async (toolId) => {
-        console.log('=== TOOLS: Add to Favorites ===');
-        console.log('Tool ID:', toolId);
+        console.log('=== TOOLS: Add to Favorites ===', toolId);
         return await apiRequest(`/tools/${toolId}/favorite`, 'POST');
     },
 
     removeFromFavorites: async (toolId) => {
-        console.log('=== TOOLS: Remove from Favorites ===');
-        console.log('Tool ID:', toolId);
+        console.log('=== TOOLS: Remove from Favorites ===', toolId);
         return await apiRequest(`/tools/${toolId}/favorite`, 'DELETE');
     }
 };
 
-// REVIEWS API - ENHANCED WITH BETTER ERROR HANDLING
+// ============================================
+// REVIEWS API - FIXED TO MATCH BACKEND
+// ============================================
 const reviewsAPI = {
     getAll: async (toolId, page = 1, limit = 10) => {
         console.log('=== REVIEWS: Get All ===');
-        console.log('Tool ID:', toolId);
-        console.log('Page:', page, 'Limit:', limit);
+        console.log('Tool ID:', toolId, 'Page:', page, 'Limit:', limit);
         
         const endpoint = `/reviews?toolId=${toolId}&page=${page}&limit=${limit}`;
-        console.log('Full endpoint:', API_BASE_URL + endpoint);
-        
         const result = await apiRequest(endpoint, 'GET');
         console.log('Reviews result:', result);
         return result;
     },
 
     create: async (reviewData) => {
-        console.log('=== REVIEWS: Create ===');
-        console.log('Review data:', reviewData);
-        console.log('Tool ID:', reviewData.toolId);
-        console.log('Rating:', reviewData.rating);
-        console.log('Comment length:', reviewData.comment?.length);
+        console.log('=== REVIEWS: Create (FIXED) ===');
+        console.log('Input data:', reviewData);
         
-        // Validate review data before sending
+        // ✅ CRITICAL VALIDATION - Backend requires ALL 4 fields
         if (!reviewData.toolId) {
-            console.error('Missing toolId');
+            console.error('❌ Missing toolId');
             return { success: false, message: 'Tool ID is required' };
         }
         
         if (!reviewData.rating || reviewData.rating < 1 || reviewData.rating > 5) {
-            console.error('Invalid rating:', reviewData.rating);
+            console.error('❌ Invalid rating:', reviewData.rating);
             return { success: false, message: 'Please select a rating between 1 and 5' };
         }
         
-        if (!reviewData.comment || reviewData.comment.trim().length === 0) {
-            console.error('Missing comment');
+        // Check for comment/content
+        const comment = reviewData.comment || reviewData.content || '';
+        if (!comment || comment.trim().length === 0) {
+            console.error('❌ Missing comment/content');
             return { success: false, message: 'Please write a review' };
         }
         
-        if (reviewData.comment.trim().length < 10) {
-            console.error('Comment too short');
+        if (comment.trim().length < 10) {
+            console.error('❌ Comment too short:', comment.length);
             return { success: false, message: 'Review must be at least 10 characters long' };
         }
         
-        const result = await apiRequest('/reviews', 'POST', reviewData);
+        // ✅ FIX: Backend expects these EXACT 4 fields:
+        // - toolId (String, required)
+        // - rating (Number 1-5, required)
+        // - title (String 3-100 chars, required)
+        // - content (String min 10 chars, required)
+        
+        const requestBody = {
+            toolId: reviewData.toolId,
+            rating: parseInt(reviewData.rating),
+            title: reviewData.title || 'Review',  // ✅ ADDED: Backend requires this!
+            content: comment.trim(),              // ✅ FIXED: Backend expects 'content' not 'comment'
+            aspects: reviewData.aspects || {}     // Optional
+        };
+        
+        console.log('✅ Sending request body:', requestBody);
+        console.log('Fields check:');
+        console.log('  - toolId:', requestBody.toolId);
+        console.log('  - rating:', requestBody.rating);
+        console.log('  - title:', requestBody.title);
+        console.log('  - content:', requestBody.content);
+        
+        const result = await apiRequest('/reviews', 'POST', requestBody);
         console.log('Create review result:', result);
         return result;
     },
 
     update: async (reviewId, reviewData) => {
-        console.log('=== REVIEWS: Update ===');
-        console.log('Review ID:', reviewId);
+        console.log('=== REVIEWS: Update ===', reviewId);
         return await apiRequest(`/reviews/${reviewId}`, 'PUT', reviewData);
     },
 
     delete: async (reviewId) => {
-        console.log('=== REVIEWS: Delete ===');
-        console.log('Review ID:', reviewId);
+        console.log('=== REVIEWS: Delete ===', reviewId);
         return await apiRequest(`/reviews/${reviewId}`, 'DELETE');
     }
 };
 
+// ============================================
 // USER API
+// ============================================
 const userAPI = {
     getProfile: async () => {
         console.log('=== USER: Get Profile ===');
@@ -264,8 +272,7 @@ const userAPI = {
     },
 
     getReviews: async (page = 1, limit = 10) => {
-        console.log('=== USER: Get Reviews ===');
-        console.log('Page:', page, 'Limit:', limit);
+        console.log('=== USER: Get Reviews ===', page, limit);
         const result = await apiRequest(`/users/reviews?page=${page}&limit=${limit}`, 'GET');
         console.log('User reviews result:', result);
         return result;
@@ -284,97 +291,67 @@ const userAPI = {
     },
 
     removeFavorite: async (toolId) => {
-        console.log('=== USER: Remove Favorite ===');
-        console.log('Tool ID:', toolId);
+        console.log('=== USER: Remove Favorite ===', toolId);
         return await apiRequest(`/tools/${toolId}/favorite`, 'DELETE');
     },
 
     deleteReview: async (reviewId) => {
-        console.log('=== USER: Delete Review ===');
-        console.log('Review ID:', reviewId);
+        console.log('=== USER: Delete Review ===', reviewId);
         return await apiRequest(`/reviews/${reviewId}`, 'DELETE');
     }
 };
 
+// ============================================
 // ADMIN API
+// ============================================
 const adminAPI = {
     getStats: async () => {
-        console.log('=== ADMIN: Get Stats ===');
         return await apiRequest('/admin/dashboard/stats', 'GET');
     },
-
     getDashboardStats: async () => {
-        console.log('=== ADMIN: Get Dashboard Stats ===');
         return await apiRequest('/admin/dashboard/stats', 'GET');
     },
-
     getUsers: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get Users ===');
         return await apiRequest(`/admin/users?page=${page}&limit=${limit}`, 'GET');
     },
-
     getAllUsers: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get All Users ===');
         return await apiRequest(`/admin/users?page=${page}&limit=${limit}`, 'GET');
     },
-
     getTools: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get Tools ===');
         return await apiRequest(`/admin/tools?page=${page}&limit=${limit}`, 'GET');
     },
-
     getAllTools: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get All Tools ===');
         return await apiRequest(`/admin/tools?page=${page}&limit=${limit}`, 'GET');
     },
-
     getPendingTools: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get Pending Tools ===');
         return await apiRequest(`/admin/tools/pending?page=${page}&limit=${limit}`, 'GET');
     },
-
     approveTool: async (toolId) => {
-        console.log('=== ADMIN: Approve Tool ===');
-        console.log('Tool ID:', toolId);
         return await apiRequest(`/admin/tools/${toolId}/approve`, 'POST');
     },
-
     rejectTool: async (toolId, reason) => {
-        console.log('=== ADMIN: Reject Tool ===');
-        console.log('Tool ID:', toolId);
         return await apiRequest(`/admin/tools/${toolId}/reject`, 'POST', { reason });
     },
-
     deleteTool: async (toolId) => {
-        console.log('=== ADMIN: Delete Tool ===');
-        console.log('Tool ID:', toolId);
         return await apiRequest(`/admin/tools/${toolId}`, 'DELETE');
     },
-
     banUser: async (userId, reason = '') => {
-        console.log('=== ADMIN: Ban User ===');
-        console.log('User ID:', userId);
         return await apiRequest(`/admin/users/${userId}/ban`, 'POST', { reason });
     },
-
     getReports: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get Reports ===');
         return await apiRequest(`/admin/reviews/flagged?page=${page}&limit=${limit}`, 'GET');
     },
-
     getFlaggedReviews: async (page = 1, limit = 20) => {
-        console.log('=== ADMIN: Get Flagged Reviews ===');
         return await apiRequest(`/admin/reviews/flagged?page=${page}&limit=${limit}`, 'GET');
     },
-
     deleteReview: async (reviewId) => {
-        console.log('=== ADMIN: Delete Review ===');
-        console.log('Review ID:', reviewId);
         return await apiRequest(`/admin/reviews/${reviewId}`, 'DELETE');
     }
 };
 
-// EXPORT
+// ============================================
+// EXPORT TO GLOBAL SCOPE
+// ============================================
 window.authAPI = authAPI;
 window.userAPI = userAPI;
 window.toolsAPI = toolsAPI;
@@ -385,19 +362,3 @@ window.API_BASE_URL = API_BASE_URL;
 console.log('✅ API module loaded successfully');
 console.log('📍 Running in:', isLocalhost ? 'DEVELOPMENT' : 'PRODUCTION', 'mode');
 console.log('========================================');
-
-// Test the API connection on load
-console.log('🧪 Testing API connection...');
-fetch(`${API_BASE_URL.replace('/api', '')}/api/health`)
-    .then(r => r.json())
-    .then(data => {
-        console.log('✅ API Connection Test:', data);
-        console.log('🎉 Backend is responding!');
-        console.log('========================================');
-    })
-    .catch(err => {
-        console.error('❌ API Connection Test Failed:', err.message);
-        console.error('⚠️ The backend may be sleeping or not responding.');
-        console.error('💡 Try refreshing in 30-60 seconds if on free tier.');
-        console.log('========================================');
-    });
