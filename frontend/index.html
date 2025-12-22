@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>NexusAI - Find the Perfect AI Tool</title>
+    <title>NexusAI - Find the Best AI Tools</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -20,7 +19,9 @@
             overflow-x: hidden;
         }
 
-        /* NAVBAR */
+        /* ============================================
+           NAVBAR - WORKS ON ALL DEVICES
+           ============================================ */
         .navbar {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
@@ -29,7 +30,7 @@
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid rgba(100, 200, 255, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .navbar-container {
@@ -45,28 +46,17 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #64c8ff;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 1001;
             text-decoration: none;
+            z-index: 1002;
         }
 
-        .navbar-brand::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-            border-radius: 50%;
-        }
-
-        /* HAMBURGER MENU */
+        /* Hamburger - Hidden on desktop, visible on mobile */
         .hamburger {
             display: none;
             flex-direction: column;
             cursor: pointer;
-            padding: 5px;
-            z-index: 1001;
+            z-index: 1002;
+            padding: 10px;
         }
 
         .hamburger span {
@@ -90,98 +80,88 @@
             transform: rotate(-45deg) translate(7px, -7px);
         }
 
+        /* Desktop Navigation - Horizontal, always visible */
         .navbar-menu {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem;
             align-items: center;
         }
 
         .navbar-link {
             color: #94a3b8;
             text-decoration: none;
-            transition: all 0.3s ease;
             font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            padding: 0.5rem 0;
-            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+            font-size: 1rem;
         }
 
         .navbar-link:hover {
             color: #64c8ff;
+            transform: translateY(-2px);
         }
 
-        .navbar-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #3b82f6);
-            transition: width 0.3s ease;
-        }
-
-        .navbar-link:hover::after {
-            width: 100%;
-        }
-
-        #nav-auth {
+        .nav-buttons {
             display: flex;
             gap: 1rem;
             align-items: center;
         }
 
-        .nav-auth-links {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: #94a3b8;
+        .btn-login, .btn-signup {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.3s;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
         }
 
-        .nav-link.signup {
+        .btn-login {
+            color: #64c8ff;
+            background: transparent;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+
+        .btn-login:hover {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
+        }
+
+        .btn-signup {
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border-radius: 6px;
             color: white;
+            border: none;
         }
 
-        /* HERO */
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        /* ============================================
+           HERO SECTION - RESPONSIVE
+           ============================================ */
         .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 80px 20px 60px;
             text-align: center;
+            padding: 100px 20px 80px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .hero h1 {
             font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #64c8ff 0%, #3b82f6 50%, #6366f1 100%);
+            font-weight: 700;
+            background: linear-gradient(135deg, #64c8ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            margin-bottom: 1.5rem;
             line-height: 1.2;
         }
 
         .hero p {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             color: #94a3b8;
             margin-bottom: 2.5rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            line-height: 1.6;
         }
 
         .hero-buttons {
@@ -191,91 +171,207 @@
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .btn-primary, .btn-secondary {
+            padding: 1.2rem 2.5rem;
+            border-radius: 10px;
             font-weight: 600;
-            transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
-            font-size: 1rem;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            min-width: 180px;
+            text-align: center;
+            cursor: pointer;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border: none;
         }
 
         .btn-secondary {
             background: rgba(100, 200, 255, 0.1);
             color: #64c8ff;
-            border: 2px solid rgba(100, 200, 255, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.3);
         }
 
-        /* SECTIONS */
-        .features, .about, .popular-section {
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 200, 255, 0.15);
+            border-color: #64c8ff;
+            transform: translateY(-3px);
+        }
+
+        /* ============================================
+           FEATURES SECTION - GRID LAYOUT
+           ============================================ */
+        .features {
+            padding: 80px 20px;
             max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
+            margin: 0 auto;
         }
 
-        .features h2, .section-header h2, .about h2 {
-            font-size: 2.5rem;
+        .section-title {
             text-align: center;
-            margin-bottom: 3rem;
-            color: #e2e8f0;
+            font-size: 2.5rem;
             font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 3.5rem;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
         }
 
-        .feature-card, .tool-card {
+        .feature-card {
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
-            padding: 2rem;
-            transition: all 0.3s ease;
+            padding: 2.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================
+           POPULAR TOOLS - CARD GRID
+           ============================================ */
+        .popular-tools {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+        }
+
+        .tool-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
         .tool-header {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
         }
 
         .tool-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            flex-shrink: 0;
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
             background: rgba(100, 200, 255, 0.1);
+            flex-shrink: 0;
+            object-fit: cover;
         }
 
-        /* FOOTER */
-        footer {
-            background: rgba(15, 23, 42, 0.95);
-            border-top: 1px solid rgba(100, 200, 255, 0.1);
-            padding: 3rem 20px;
-            margin-top: 5rem;
-            text-align: center;
+        .tool-info h3 {
+            font-size: 1.2rem;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-category {
+            color: #64c8ff;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .tool-description {
             color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
-        /* MOBILE STYLES */
-        @media (max-width: 768px) {
+        .loading, .no-tools {
+            text-align: center;
+            padding: 4rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Overlay for mobile menu */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ============================================
+           TABLET RESPONSIVE (768px - 1024px)
+           ============================================ */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ============================================
+           TABLET RESPONSIVE (481px - 768px)
+           ============================================ */
+        @media (max-width: 768px) and (min-width: 481px) {
             .hamburger {
                 display: flex;
             }
@@ -285,15 +381,16 @@
                 top: 0;
                 right: -100%;
                 height: 100vh;
-                width: 75%;
-                max-width: 300px;
+                width: 70%;
+                max-width: 350px;
                 background: rgba(15, 23, 42, 0.98);
                 flex-direction: column;
-                padding: 80px 30px 30px;
+                justify-content: flex-start;
+                padding: 100px 30px 30px;
                 gap: 2rem;
                 transition: right 0.3s ease;
                 border-left: 1px solid rgba(100, 200, 255, 0.2);
-                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+                box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
             }
 
             .navbar-menu.active {
@@ -302,26 +399,102 @@
 
             .navbar-link {
                 font-size: 1.1rem;
-                padding: 0.8rem 0;
                 width: 100%;
+                padding: 0.5rem 0;
             }
 
-            .navbar-link::after {
-                display: none;
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
             }
 
-            #nav-auth {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-                padding: 0.7rem 1.3rem;
+            .btn-login, .btn-signup {
+                width: 100%;
+                text-align: center;
+                padding: 0.8rem 1.5rem;
             }
 
             .hero {
-                padding: 60px 15px 40px;
+                padding: 70px 20px 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* ============================================
+           MOBILE RESPONSIVE (≤ 480px)
+           ============================================ */
+        @media (max-width: 480px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .navbar-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 80%;
+                max-width: 300px;
+                background: rgba(15, 23, 42, 0.98);
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 100px 25px 30px;
+                gap: 2rem;
+                transition: right 0.3s ease;
+                border-left: 1px solid rgba(100, 200, 255, 0.2);
+                box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+            }
+
+            .navbar-menu.active {
+                right: 0;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .navbar-link {
+                font-size: 1.1rem;
+                width: 100%;
+                padding: 0.5rem 0;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
+            }
+
+            .btn-login, .btn-signup {
+                width: 100%;
+                text-align: center;
+                padding: 0.8rem 1.5rem;
+            }
+
+            .hero {
+                padding: 50px 20px 40px;
             }
 
             .hero h1 {
@@ -337,73 +510,80 @@
                 gap: 1rem;
             }
 
-            .btn {
+            .btn-primary, .btn-secondary {
                 width: 100%;
-                max-width: 300px;
+                padding: 1rem 2rem;
             }
 
-            .features h2, .section-header h2, .about h2 {
+            .features, .popular-tools {
+                padding: 50px 20px;
+            }
+
+            .section-title {
                 font-size: 1.8rem;
+                margin-bottom: 2rem;
             }
 
-            .features-grid, .tools-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .navbar-brand {
-                font-size: 1.2rem;
+                gap: 1.5rem;
             }
 
-            .hero h1 {
-                font-size: 1.6rem;
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
-            .features h2, .section-header h2, .about h2 {
-                font-size: 1.5rem;
+            .feature-card, .tool-card {
+                padding: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Menu Overlay (Mobile only) -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-container">
-            <a href="index.html" class="navbar-brand">NexusAI</a>
+            <a href="index.html" class="navbar-brand">• NexusAI</a>
             
+            <!-- Hamburger (Mobile/Tablet only) -->
             <div class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
 
+            <!-- Navigation Menu -->
             <div class="navbar-menu" id="navbarMenu">
                 <a href="index.html" class="navbar-link">Home</a>
-                <a class="navbar-link" onclick="checkAuthAndRedirect('tools_listing.html')">Tools</a>
-                <a class="navbar-link" onclick="checkAuthAndRedirect('trending.html')">Trending</a>
-                <a class="navbar-link" onclick="checkAuthAndRedirect('compare.html')">Compare</a>
-            </div>
-            
-            <div id="nav-auth">
-                <div class="nav-auth-links">
-                    <a href="login.html" class="nav-link">Login</a>
-                    <a href="signup.html" class="nav-link signup">Sign Up</a>
+                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="trending.html" class="navbar-link">Trending</a>
+                <a href="compare.html" class="navbar-link">Compare</a>
+                
+                <div class="nav-buttons" id="navAuth">
+                    <a href="login.html" class="btn-login">Login</a>
+                    <a href="signup.html" class="btn-signup">Sign Up</a>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- HERO SECTION -->
     <section class="hero">
         <h1>Find the Right AI Tool for Your Needs</h1>
         <p>Discover and compare the best AI solutions to boost your productivity and creativity</p>
         <div class="hero-buttons">
-            <a href="javascript:void(0)" onclick="checkAuthAndRedirect('tools_listing.html')" class="btn btn-primary">Explore Tools</a>
-            <a href="javascript:void(0)" onclick="checkAuthAndRedirect('trending.html')" class="btn btn-secondary">View Trending</a>
+            <a href="tools_listing.html" class="btn-primary">Explore Tools</a>
+            <a href="trending.html" class="btn-secondary">View Trending</a>
         </div>
     </section>
 
+    <!-- FEATURES SECTION -->
     <section class="features">
-        <h2>Why Choose NexusAI?</h2>
+        <h2 class="section-title">Why Choose NexusAI?</h2>
         <div class="features-grid">
             <div class="feature-card">
                 <h3>500+ AI Tools</h3>
@@ -420,98 +600,176 @@
         </div>
     </section>
 
-    <section class="popular-section">
-        <div class="section-header">
-            <h2>Most Popular Tools</h2>
-        </div>
-        <div class="tools-grid" id="popular-tools">
-            <div style="text-align: center; padding: 2rem; color: #94a3b8;">Loading...</div>
+    <!-- POPULAR TOOLS -->
+    <section class="popular-tools">
+        <h2 class="section-title">Most Popular Tools</h2>
+        <div class="tools-grid" id="popularToolsContainer">
+            <div class="loading">Loading popular tools...</div>
         </div>
     </section>
-
-    <footer>
-        <p>&copy; 2025 NexusAI. All rights reserved.</p>
-    </footer>
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
+    
     <script>
+        console.log('=== INDEX PAGE LOADED ===');
+
+        // Mobile menu functionality
         const hamburger = document.getElementById('hamburger');
         const navbarMenu = document.getElementById('navbarMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
 
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navbarMenu.classList.toggle('active');
-        });
+        function closeMenu() {
+            if (hamburger) hamburger.classList.remove('active');
+            if (navbarMenu) navbarMenu.classList.remove('active');
+            if (menuOverlay) menuOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
-        document.querySelectorAll('.navbar-link').forEach(link => {
+        function openMenu() {
+            if (hamburger) hamburger.classList.add('active');
+            if (navbarMenu) navbarMenu.classList.add('active');
+            if (menuOverlay) menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        if (hamburger) {
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (hamburger.classList.contains('active')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            });
+        }
+
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
+
+        // Close menu when clicking links
+        document.querySelectorAll('.navbar-link, .nav-buttons a').forEach(link => {
             link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navbarMenu.classList.remove('active');
+                if (window.innerWidth <= 768) {
+                    closeMenu();
+                }
             });
         });
 
-        document.addEventListener('click', (e) => {
-            if (!hamburger.contains(e.target) && !navbarMenu.contains(e.target)) {
-                hamburger.classList.remove('active');
-                navbarMenu.classList.remove('active');
-            }
-        });
-
-        function checkAuthAndRedirect(page) {
+        // Update navbar based on auth status
+        function updateNavbar() {
             const token = localStorage.getItem('token');
-            if (!token) {
-                if (typeof showToast === 'function') showToast('Please login to access this feature', 'warning');
-                setTimeout(() => window.location.href = 'login.html', 1000);
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const navAuth = document.getElementById('navAuth');
+            
+            if (token && user.name) {
+                navAuth.innerHTML = `
+                    <a href="profile.html" class="navbar-link">Profile</a>
+                    <a href="#" class="btn-login" onclick="handleLogout(); return false;">Logout</a>
+                `;
             } else {
-                window.location.href = page;
+                navAuth.innerHTML = `
+                    <a href="login.html" class="btn-login">Login</a>
+                    <a href="signup.html" class="btn-signup">Sign Up</a>
+                `;
             }
         }
 
-        function checkAuthAndViewTool(toolId) {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                if (typeof showToast === 'function') showToast('Please login to view tool details', 'warning');
-                setTimeout(() => window.location.href = 'login.html', 1000);
-            } else {
-                window.location.href = `tools_detail.html?id=${toolId}`;
-            }
+        function handleLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (typeof updateNavbar === 'function') updateNavbar();
-            loadPopularTools();
-        });
+        // Wait for APIs to load
+        function waitForAPIs() {
+            return new Promise((resolve) => {
+                let attempts = 0;
+                const checkAPIs = setInterval(() => {
+                    if (typeof toolsAPI !== 'undefined') {
+                        console.log('✅ APIs loaded');
+                        clearInterval(checkAPIs);
+                        resolve(true);
+                    }
+                    if (++attempts > 50) {
+                        clearInterval(checkAPIs);
+                        resolve(false);
+                    }
+                }, 100);
+            });
+        }
 
+        // Load popular tools
         async function loadPopularTools() {
-            const container = document.getElementById('popular-tools');
+            console.log('=== LOADING POPULAR TOOLS ===');
+            
+            const container = document.getElementById('popularToolsContainer');
+            
+            if (typeof toolsAPI === 'undefined') {
+                container.innerHTML = '<div class="loading">Loading tools...</div>';
+                return;
+            }
+
             try {
-                if (typeof toolsAPI === 'undefined') return;
-                const response = await toolsAPI.getAll(1, 6);
-                if (response.success && response.data && response.data.tools) {
-                    const tools = response.data.tools;
+                const response = await toolsAPI.getTrending(6);
+                console.log('Popular tools response:', response);
+                
+                if (response.success) {
+                    let tools = response.data?.tools || response.tools || response.data || [];
+                    
+                    if (tools.length === 0) {
+                        container.innerHTML = '<div class="no-tools">No tools available yet</div>';
+                        return;
+                    }
+                    
                     container.innerHTML = tools.map(tool => `
                         <div class="tool-card">
                             <div class="tool-header">
-                                <img src="${tool.logo || 'https://via.placeholder.com/60?text=AI'}" 
-                                     alt="${tool.name}" class="tool-logo"
-                                     onerror="this.src='https://via.placeholder.com/60?text=AI'">
-                                <div>
-                                    <h3 style="color: #e2e8f0; font-size: 1.1rem;">${tool.name}</h3>
-                                    <p style="color: #64c8ff; font-size: 0.85rem;">${tool.category || 'AI Tool'}</p>
+                                <img src="${tool.logo || 'https://via.placeholder.com/70?text=AI'}" 
+                                     alt="${tool.name}" 
+                                     class="tool-logo"
+                                     onerror="this.src='https://via.placeholder.com/70?text=AI'">
+                                <div class="tool-info">
+                                    <h3>${tool.name}</h3>
+                                    <p class="tool-category">${tool.category || 'AI Tool'}</p>
                                 </div>
                             </div>
-                            <p style="color: #94a3b8; margin-bottom: 1rem;">${tool.description.substring(0, 100)}...</p>
-                            <a href="javascript:void(0)" onclick="checkAuthAndViewTool('${tool._id}')" 
-                               class="btn btn-primary" style="width: 100%; text-align: center;">View Details</a>
+                            <p class="tool-description">${(tool.description || '').substring(0, 100)}...</p>
+                            <a href="tools_detail.html?id=${tool._id}" class="btn-primary" style="display: block; margin-top: 1rem;">View Details</a>
                         </div>
                     `).join('');
+                } else {
+                    container.innerHTML = '<div class="no-tools">Unable to load tools</div>';
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error loading popular tools:', error);
+                container.innerHTML = '<div class="no-tools">Error loading tools</div>';
             }
         }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('=== DOM LOADED ===');
+            
+            updateNavbar();
+            
+            const apisLoaded = await waitForAPIs();
+            if (apisLoaded) {
+                await loadPopularTools();
+            } else {
+                document.getElementById('popularToolsContainer').innerHTML = 
+                    '<div class="no-tools">Unable to load tools. Please refresh.</div>';
+            }
+        });
+
+        // Close menu on window resize (if going from mobile to desktop)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMenu();
+            }
+        });
     </script>
 </body>
 </html>
