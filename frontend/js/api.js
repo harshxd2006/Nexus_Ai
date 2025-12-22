@@ -180,7 +180,7 @@ const toolsAPI = {
     }
 };
 
-// REVIEWS API - ENHANCED
+// REVIEWS API - ENHANCED WITH BETTER ERROR HANDLING
 const reviewsAPI = {
     getAll: async (toolId, page = 1, limit = 10) => {
         console.log('=== REVIEWS: Get All ===');
@@ -201,6 +201,27 @@ const reviewsAPI = {
         console.log('Tool ID:', reviewData.toolId);
         console.log('Rating:', reviewData.rating);
         console.log('Comment length:', reviewData.comment?.length);
+        
+        // Validate review data before sending
+        if (!reviewData.toolId) {
+            console.error('Missing toolId');
+            return { success: false, message: 'Tool ID is required' };
+        }
+        
+        if (!reviewData.rating || reviewData.rating < 1 || reviewData.rating > 5) {
+            console.error('Invalid rating:', reviewData.rating);
+            return { success: false, message: 'Please select a rating between 1 and 5' };
+        }
+        
+        if (!reviewData.comment || reviewData.comment.trim().length === 0) {
+            console.error('Missing comment');
+            return { success: false, message: 'Please write a review' };
+        }
+        
+        if (reviewData.comment.trim().length < 10) {
+            console.error('Comment too short');
+            return { success: false, message: 'Review must be at least 10 characters long' };
+        }
         
         const result = await apiRequest('/reviews', 'POST', reviewData);
         console.log('Create review result:', result);

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Login - NexusAI</title>
     <style>
         * {
@@ -15,137 +15,34 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #e2e8f0;
-            line-height: 1.6;
             min-height: 100vh;
-        }
-
-        /* PROFESSIONAL NAVBAR */
-        .navbar {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #64c8ff;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .navbar-brand::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #64c8ff, #3b82f6);
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .navbar-menu {
-            display: flex;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        .navbar-link {
-            color: #94a3b8;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        .navbar-link:hover {
-            color: #64c8ff;
-        }
-
-        .navbar-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #64c8ff, #3b82f6);
-            transition: width 0.3s ease;
-        }
-
-        .navbar-link:hover::after {
-            width: 100%;
-        }
-
-        #nav-auth {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: #94a3b8;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
-
-        .nav-link:hover {
-            color: #64c8ff;
-        }
-
-        .nav-link.signup {
-            padding: 0.6rem 1.5rem;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border-radius: 6px;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link.signup:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-
-        .login-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 80px);
-            padding: 40px 20px;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .back-link a {
+            color: #64c8ff;
+            text-decoration: none;
+            font-size: 0.9rem;
         }
 
         .login-container {
-            width: 100%;
-            max-width: 450px;
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(100, 200, 255, 0.1);
             border-radius: 12px;
-            padding: 3rem;
+            padding: 2.5rem;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
@@ -156,12 +53,11 @@
         }
 
         .login-header h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             background: linear-gradient(135deg, #64c8ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
-            font-weight: 700;
         }
 
         .login-header p {
@@ -174,14 +70,14 @@
 
         .form-label {
             display: block;
-            margin-bottom: 0.7rem;
+            margin-bottom: 0.5rem;
             color: #b0b0b0;
             font-weight: 500;
         }
 
         .form-input {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem;
             border-radius: 8px;
             border: 2px solid rgba(100, 200, 255, 0.2);
             background: rgba(255, 255, 255, 0.08);
@@ -194,7 +90,6 @@
             outline: none;
             border-color: #64c8ff;
             background: rgba(100, 200, 255, 0.1);
-            box-shadow: 0 0 20px rgba(100, 200, 255, 0.2);
         }
 
         .btn-login {
@@ -207,10 +102,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 1rem;
+            font-size: 1rem;
         }
 
-        .btn-login:hover {
+        .btn-login:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
         }
@@ -228,23 +123,10 @@
             border-radius: 8px;
             margin-bottom: 1.5rem;
             display: none;
+            font-size: 0.9rem;
         }
 
         .error-message.show {
-            display: block;
-        }
-
-        .success-message {
-            background: rgba(76, 175, 80, 0.15);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            color: #81c784;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: none;
-        }
-
-        .success-message.show {
             display: block;
         }
 
@@ -253,15 +135,13 @@
             justify-content: space-between;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .login-links a {
             color: #64c8ff;
             text-decoration: none;
-        }
-
-        .login-links a:hover {
-            color: #3b82f6;
         }
 
         .register-link {
@@ -276,34 +156,39 @@
             text-decoration: none;
         }
 
-        .register-link a:hover {
-            color: #3b82f6;
-        }
+        /* MOBILE STYLES */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
 
-        @media (max-width: 768px) {
-            .navbar-menu { display: none; }
-            .login-container { padding: 2rem; }
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-input {
+                padding: 0.8rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .login-links {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="index.html" class="navbar-brand">NexusAI</a>
-            <div class="navbar-menu">
-                <a href="index.html" class="navbar-link">Home</a>
-                <a href="tools_listing.html" class="navbar-link">Tools</a>
-                <a href="trending.html" class="navbar-link">Trending</a>
-                <a href="compare.html" class="navbar-link">Compare</a>
-            </div>
-            <div id="nav-auth">
-                <a href="login.html" class="nav-link">Login</a>
-                <a href="signup.html" class="nav-link signup">Sign Up</a>
-            </div>
-        </div>
-    </nav>
-
     <div class="login-wrapper">
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
+        </div>
+
         <div class="login-container">
             <div class="login-header">
                 <h1>Welcome Back</h1>
@@ -311,7 +196,6 @@
             </div>
 
             <div class="error-message" id="errorMessage"></div>
-            <div class="success-message" id="successMessage"></div>
 
             <form id="loginForm">
                 <div class="form-group">
@@ -340,10 +224,10 @@
 
                 <div class="login-links">
                     <label style="color: #b0b0b0; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="rememberMe" style="cursor: pointer;">
+                        <input type="checkbox" id="rememberMe">
                         Remember me
                     </label>
-                    <a href="#" onclick="alert('Password reset feature coming soon')">Forgot password?</a>
+                    <a href="#" onclick="alert('Password reset coming soon')">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
@@ -360,26 +244,11 @@
     <script src="js/app.js"></script>
 
     <script>
-        console.log('Login Page Loaded');
-
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
             errorDiv.classList.add('show');
-            
-            setTimeout(() => {
-                errorDiv.classList.remove('show');
-            }, 5000);
-        }
-
-        function showSuccess(message) {
-            const successDiv = document.getElementById('successMessage');
-            successDiv.textContent = message;
-            successDiv.classList.add('show');
-            
-            setTimeout(() => {
-                successDiv.classList.remove('show');
-            }, 5000);
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
         }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -389,15 +258,8 @@
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
 
-            console.log('Login attempt:', email);
-
             if (!email || !password) {
                 showError('Please fill in all fields');
-                return;
-            }
-
-            if (!email.includes('@')) {
-                showError('Please enter a valid email');
                 return;
             }
 
@@ -407,27 +269,21 @@
 
             try {
                 const result = await auth.login(email, password);
-                console.log('Login result:', result);
 
                 if (result.success) {
-                    showSuccess(result.message);
-                    
                     if (rememberMe) {
                         localStorage.setItem('rememberEmail', email);
-                    } else {
-                        localStorage.removeItem('rememberEmail');
                     }
-
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
+                    if (typeof showToast === 'function') {
+                        showToast('✅ Login successful!', 'success');
+                    }
+                    setTimeout(() => window.location.href = 'index.html', 1000);
                 } else {
                     showError(result.message || 'Login failed');
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Sign In';
                 }
             } catch (error) {
-                console.error('Login error:', error);
                 showError('An error occurred. Please try again.');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Sign In';
@@ -442,17 +298,8 @@
             }
 
             if (auth && auth.isAuthenticated()) {
-                console.log('Already logged in, redirecting...');
                 window.location.href = 'index.html';
             }
-        });
-
-        document.getElementById('email').addEventListener('input', () => {
-            document.getElementById('errorMessage').classList.remove('show');
-        });
-
-        document.getElementById('password').addEventListener('input', () => {
-            document.getElementById('errorMessage').classList.remove('show');
         });
     </script>
 </body>
