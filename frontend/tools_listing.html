@@ -212,6 +212,7 @@
             object-fit: cover;
             background: rgba(100, 200, 255, 0.1);
             flex-shrink: 0;
+            border: 2px solid rgba(100, 200, 255, 0.2);
         }
         
         .tool-info h3 {
@@ -411,12 +412,6 @@
                         console.log('✅ All APIs loaded!');
                         clearInterval(checkAPIs);
                         resolve(true);
-                    } else {
-                        console.log('APIs status:', {
-                            toolsAPI: typeof toolsAPI,
-                            auth: typeof auth,
-                            updateNavbar: typeof updateNavbar
-                        });
                     }
                     
                     if (attempts >= maxAttempts) {
@@ -434,7 +429,6 @@
             const container = document.getElementById('tools-container');
             container.innerHTML = '<div class="loading">Loading tools...</div>';
 
-            // Check if toolsAPI exists
             if (typeof toolsAPI === 'undefined') {
                 console.error('❌ toolsAPI is not defined');
                 container.innerHTML = '<div class="error-box">Error: toolsAPI not loaded. Please refresh the page.</div>';
@@ -503,13 +497,20 @@
                 return;
             }
 
-            container.innerHTML = tools.map(tool => `
+            container.innerHTML = tools.map(tool => {
+                // Enhanced image fallback with UI Avatars API
+                const logoUrl = tool.logo || tool.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&size=70&background=64c8ff&color=fff&bold=true`;
+                const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&size=70&background=64c8ff&color=fff&bold=true`;
+                
+                return `
                 <div class="tool-card">
                     <div class="tool-header">
-                        <img src="${tool.logo || 'https://via.placeholder.com/70?text=AI'}" 
-                             alt="${tool.name}" 
+                        <img src="${logoUrl}" 
+                             alt="${tool.name} logo" 
                              class="tool-logo"
-                             onerror="this.src='https://via.placeholder.com/70?text=AI'">
+                             onerror="this.onerror=null; this.src='${fallbackUrl}';"
+                             loading="lazy"
+                             crossorigin="anonymous">
                         <div class="tool-info">
                             <h3>${tool.name}</h3>
                             <p class="tool-category">${tool.category || 'AI Tool'}</p>
@@ -517,7 +518,7 @@
                     </div>
                     <p class="tool-description">${(tool.description || '').substring(0, 120)}...</p>
                     <div class="tool-stats">
-                        <span class="rating">Rating: ${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'}</span>
+                        <span class="rating">★ ${tool.averageRating ? tool.averageRating.toFixed(1) : 'New'}</span>
                         <span class="reviews">${tool.totalReviews || 0} reviews</span>
                     </div>
                     <div class="tool-buttons">
@@ -525,7 +526,8 @@
                         <button onclick="addToFavorites('${tool._id}')" class="btn btn-secondary">Save</button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         async function filterByCategory(category, event) {
@@ -554,7 +556,6 @@
                 return;
             }
 
-            // Check if toolsAPI exists
             if (typeof toolsAPI === 'undefined') {
                 console.error('❌ toolsAPI is not defined');
                 if (typeof showToast === 'function') {
@@ -638,7 +639,6 @@
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('=== DOM LOADED ===');
             
-            // Wait for APIs to load
             const apisLoaded = await waitForAPIs();
             
             if (!apisLoaded) {
@@ -648,15 +648,12 @@
                 return;
             }
 
-            // Update navbar
             if (typeof updateNavbar === 'function') {
                 updateNavbar();
             }
             
-            // Load tools
             loadAllTools(1);
 
-            // Setup search on Enter key
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     handleSearch();

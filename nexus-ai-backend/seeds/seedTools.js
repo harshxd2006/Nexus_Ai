@@ -1,5 +1,5 @@
 // ============================================
-// SEED AI TOOLS DATA
+// SEED AI TOOLS DATA - UPDATED WITH IMAGES
 // Run: node seeds/seedTools.js
 // ============================================
 
@@ -40,7 +40,7 @@ const tools = [
         name: "ChatGPT",
         description: "Advanced conversational AI that can understand and respond to natural language queries, help with writing, coding, analysis, and creative tasks.",
         website: "https://chat.openai.com",
-        logo: "https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.59f2e898.png",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/512px-ChatGPT_logo.svg.png",
         category: "AI Chatbot",
         tags: ["chatbot", "conversation", "writing", "coding"],
         features: ["Natural conversations", "Code generation", "Creative writing", "Question answering", "Task assistance"],
@@ -50,7 +50,7 @@ const tools = [
         name: "Midjourney",
         description: "AI art generator that creates stunning, high-quality images from text descriptions. Perfect for artists, designers, and creative professionals.",
         website: "https://midjourney.com",
-        logo: "https://cdn.midjourney.com/b42b1f28-cf06-4c0b-b940-f44bc0bfbf44/0_0.png",
+        logo: "https://seeklogo.com/images/M/midjourney-logo-BF39B1E8C9-seeklogo.com.png",
         category: "AI Image Generation",
         tags: ["art", "images", "creative", "design"],
         features: ["Text-to-image", "High resolution", "Various styles", "Community gallery", "Custom parameters"],
@@ -70,7 +70,7 @@ const tools = [
         name: "DALL-E 3",
         description: "Create realistic images and art from text descriptions. Latest version with improved accuracy and understanding of prompts.",
         website: "https://openai.com/dall-e-3",
-        logo: "https://cdn.oaistatic.com/_next/static/media/apple-touch-icon.59f2e898.png",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/512px-ChatGPT_logo.svg.png",
         category: "AI Image Generation",
         tags: ["images", "art", "creative", "generation"],
         features: ["High quality images", "Prompt understanding", "Style variations", "Safe content", "Commercial use"],
@@ -80,7 +80,7 @@ const tools = [
         name: "Grammarly",
         description: "AI writing assistant that helps you write clear, mistake-free content. Checks grammar, spelling, punctuation, and style.",
         website: "https://grammarly.com",
-        logo: "https://static.grammarly.com/assets/files/efe57d016fc1f4cf53707cf072f5791c/app_icon_ios.png",
+        logo: "https://static.grammarly.com/assets/files/efe57d016fc1f4cf53707cf072f5791c/logo_primary.svg",
         category: "AI Writing",
         tags: ["writing", "grammar", "editing", "proofreading"],
         features: ["Grammar checking", "Style suggestions", "Plagiarism detection", "Tone analysis", "Browser extension"],
@@ -100,7 +100,7 @@ const tools = [
         name: "Runway ML",
         description: "AI-powered video editing suite with tools for motion tracking, green screen, and generating video from text prompts.",
         website: "https://runwayml.com",
-        logo: "https://app.runwayml.com/favicon.png",
+        logo: "https://seeklogo.com/images/R/runway-logo-F7DD6BA8E3-seeklogo.com.png",
         category: "AI Video",
         tags: ["video", "editing", "effects", "generation"],
         features: ["Text-to-video", "Video editing", "Green screen", "Motion tracking", "AI effects"],
@@ -110,7 +110,7 @@ const tools = [
         name: "ElevenLabs",
         description: "AI voice generator with the most realistic and versatile voices. Create natural-sounding speech in multiple languages.",
         website: "https://elevenlabs.io",
-        logo: "https://elevenlabs.io/favicon.ico",
+        logo: "https://avatars.githubusercontent.com/u/109058537?s=280&v=4",
         category: "AI Voice",
         tags: ["voice", "speech", "audio", "tts"],
         features: ["Voice cloning", "Multi-language", "Emotion control", "High quality", "API access"],
@@ -130,7 +130,7 @@ const tools = [
         name: "Stable Diffusion",
         description: "Open-source AI image generation model. Create detailed images from text descriptions with full control over the process.",
         website: "https://stability.ai",
-        logo: "https://stability.ai/favicon-32x32.png",
+        logo: "https://avatars.githubusercontent.com/u/100950301?s=200&v=4",
         category: "AI Image Generation",
         tags: ["open-source", "images", "generation", "free"],
         features: ["Open source", "Self-hostable", "High quality", "Custom models", "Full control"],
@@ -150,7 +150,7 @@ const tools = [
         name: "Claude AI",
         description: "Constitutional AI assistant by Anthropic. Helpful, harmless, and honest AI for conversations, analysis, and content creation.",
         website: "https://claude.ai",
-        logo: "https://claude.ai/images/claude_app_icon.png",
+        logo: "https://avatars.githubusercontent.com/u/109953289?s=280&v=4",
         category: "AI Chatbot",
         tags: ["chatbot", "assistant", "safe", "analysis"],
         features: ["Long conversations", "Document analysis", "Safe responses", "Coding help", "Research"],
@@ -160,7 +160,7 @@ const tools = [
         name: "Synthesia",
         description: "AI video generation platform. Create professional videos with AI avatars from text scripts without filming or editing.",
         website: "https://synthesia.io",
-        logo: "https://www.synthesia.io/favicon.png",
+        logo: "https://assets-global.website-files.com/61dc0796f359b6145bc06ea6/625af6d4a4d71ab8e5e7eb7e_synthesia-logo.svg",
         category: "AI Video",
         tags: ["video", "avatar", "presentation", "training"],
         features: ["AI avatars", "140+ languages", "Templates", "Screen recording", "Brand kit"],
@@ -180,7 +180,7 @@ const tools = [
         name: "Perplexity AI",
         description: "AI-powered search engine that provides accurate answers with citations. Combines search with conversational AI.",
         website: "https://perplexity.ai",
-        logo: "https://www.perplexity.ai/favicon.svg",
+        logo: "https://pbs.twimg.com/profile_images/1678178095289155584/5ouEQbPn_400x400.jpg",
         category: "AI Analytics",
         tags: ["search", "research", "answers", "citations"],
         features: ["Real-time search", "Citations", "Follow-up questions", "Source links", "Mobile app"],
@@ -190,7 +190,7 @@ const tools = [
         name: "Midjourney V6",
         description: "Latest version of Midjourney with enhanced realism, better prompt understanding, and improved text rendering.",
         website: "https://midjourney.com",
-        logo: "https://cdn.midjourney.com/b42b1f28-cf06-4c0b-b940-f44bc0bfbf44/0_0.png",
+        logo: "https://seeklogo.com/images/M/midjourney-logo-BF39B1E8C9-seeklogo.com.png",
         category: "AI Image Generation",
         tags: ["art", "realistic", "advanced", "creative"],
         features: ["Photorealistic", "Text rendering", "Improved prompts", "Higher resolution", "Better anatomy"],
@@ -200,7 +200,7 @@ const tools = [
         name: "Descript",
         description: "All-in-one video and podcast editing with AI transcription, voice cloning, and filler word removal.",
         website: "https://descript.com",
-        logo: "https://www.descript.com/favicon.png",
+        logo: "https://assets-global.website-files.com/60e5f2de011b86acebc30db7/60e5f2de011b865f85c30e0f_descript-logo.svg",
         category: "AI Video",
         tags: ["video", "podcast", "editing", "transcription"],
         features: ["Text-based editing", "Overdub", "Screen recording", "Transcription", "Collaboration"],
@@ -210,7 +210,7 @@ const tools = [
         name: "Otter.ai",
         description: "AI meeting assistant that records audio, writes notes, and generates summaries automatically.",
         website: "https://otter.ai",
-        logo: "https://otter.ai/favicon.png",
+        logo: "https://www.otter.ai/static/images/otter-icon-blue.svg",
         category: "AI Analytics",
         tags: ["transcription", "meetings", "notes", "productivity"],
         features: ["Real-time transcription", "Meeting summaries", "Action items", "Speaker ID", "Integration"],
@@ -220,7 +220,7 @@ const tools = [
         name: "Murf AI",
         description: "AI voice generator for creating studio-quality voiceovers. Perfect for presentations, videos, and audiobooks.",
         website: "https://murf.ai",
-        logo: "https://murf.ai/favicon.png",
+        logo: "https://assets-global.website-files.com/62d5f31fa6b4de75f1c0e7b5/62d5f31fa6b4de74f8c0e82b_murf-logo.svg",
         category: "AI Voice",
         tags: ["voice", "voiceover", "audio", "tts"],
         features: ["120+ voices", "20+ languages", "Pitch control", "Emphasis", "Commercial use"],
@@ -310,6 +310,7 @@ async function seedTools() {
         console.log(`   - ${insertedTools.length} AI tools added`);
         console.log(`   - ${Object.keys(categoryCounts).length} categories`);
         console.log(`   - Created by: ${adminUser.name} (${adminUser.email})`);
+        console.log('\n✅ All tools now have proper logo images!');
         
         process.exit(0);
 

@@ -286,6 +286,7 @@
             background: rgba(100, 200, 255, 0.1);
             flex-shrink: 0;
             object-fit: cover;
+            border: 2px solid rgba(100, 200, 255, 0.2);
         }
 
         .tool-info h3 {
@@ -715,7 +716,7 @@
             });
         }
 
-        // Load popular tools
+        // Load popular tools with ENHANCED IMAGE HANDLING
         async function loadPopularTools() {
             console.log('=== LOADING POPULAR TOOLS ===');
             
@@ -738,13 +739,20 @@
                         return;
                     }
                     
-                    container.innerHTML = tools.map(tool => `
+                    container.innerHTML = tools.map(tool => {
+                        // ✨ ENHANCED IMAGE HANDLING with UI Avatars API fallback
+                        const logoUrl = tool.logo || tool.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&size=70&background=64c8ff&color=fff&bold=true`;
+                        const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&size=70&background=64c8ff&color=fff&bold=true`;
+                        
+                        return `
                         <div class="tool-card">
                             <div class="tool-header">
-                                <img src="${tool.logo || 'https://via.placeholder.com/70?text=AI'}" 
-                                     alt="${tool.name}" 
+                                <img src="${logoUrl}" 
+                                     alt="${tool.name} logo" 
                                      class="tool-logo"
-                                     onerror="this.src='https://via.placeholder.com/70?text=AI'">
+                                     onerror="this.onerror=null; this.src='${fallbackUrl}';"
+                                     loading="lazy"
+                                     crossorigin="anonymous">
                                 <div class="tool-info">
                                     <h3>${tool.name}</h3>
                                     <p class="tool-category">${tool.category || 'AI Tool'}</p>
@@ -753,7 +761,8 @@
                             <p class="tool-description">${(tool.description || '').substring(0, 100)}...</p>
                             <button class="btn-primary" style="display: block; margin-top: 1rem; width: 100%;" onclick="checkAuthAndNavigate('tools_detail.html?id=${tool._id}', event)">View Details</button>
                         </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 } else {
                     container.innerHTML = '<div class="no-tools">Unable to load tools</div>';
                 }
