@@ -822,7 +822,7 @@
             });
         }
 
-        // Load popular tools with ENHANCED IMAGE HANDLING
+        // Load popular tools with FIXED navigation
         async function loadPopularTools() {
             console.log('=== LOADING POPULAR TOOLS ===');
             
@@ -845,10 +845,11 @@
                         return;
                     }
                     
+                    // ✅ FIXED: Correct filename is tools_detail.html (with underscore)
                     container.innerHTML = tools.map(tool => {
-                        // ✨ ENHANCED IMAGE HANDLING with UI Avatars API fallback
                         const logoUrl = tool.logo || tool.logoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&size=70&background=64c8ff&color=fff&bold=true`;
                         const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&size=70&background=64c8ff&color=fff&bold=true`;
+                        const toolId = tool._id || tool.id;
                         
                         return `
                         <div class="tool-card">
@@ -865,7 +866,7 @@
                                 </div>
                             </div>
                             <p class="tool-description">${(tool.description || '').substring(0, 100)}...</p>
-                            <button class="btn-primary" style="display: block; margin-top: 1rem; width: 100%;" onclick="checkAuthAndNavigate('tools_detail.html?id=${tool._id}', event)">View Details</button>
+                            <button class="btn-primary" style="display: block; margin-top: 1rem; width: 100%;" onclick="navigateToTool('${toolId}')">View Details</button>
                         </div>
                         `;
                     }).join('');
@@ -876,6 +877,19 @@
                 console.error('Error loading popular tools:', error);
                 container.innerHTML = '<div class="no-tools">Error loading tools</div>';
             }
+        }
+
+        // ✅ NEW: Function to handle tool navigation
+        function navigateToTool(toolId) {
+            if (!toolId) {
+                console.error('No tool ID provided');
+                showToast('Error: Invalid tool', 'error');
+                return;
+            }
+            
+            console.log('Navigating to tool:', toolId);
+            // Use tools_detail.html (with underscore)
+            window.location.href = `tools_detail.html?id=${toolId}`;
         }
 
         // Initialize
