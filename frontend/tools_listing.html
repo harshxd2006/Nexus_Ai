@@ -669,8 +669,6 @@
         <div class="navbar-container">
             <a href="index.html" class="navbar-brand">NexusAI</a>
             
-            <a href="index.html" class="navbar-brand">NexusAI</a>
-            
             <div class="navbar-menu" id="navbarMenu">
                 <a href="index.html" class="navbar-link">Home</a>
                 <a href="tools_listing.html" class="navbar-link">Tools</a>
@@ -854,26 +852,56 @@
                 updateNavbar();
             }
             
+            // Get tool ID from URL - FIXED: Handle multiple ways of passing tool ID
             const urlParams = new URLSearchParams(window.location.search);
-            const toolId = urlParams.get('id');
+            let toolId = urlParams.get('id') || urlParams.get('toolId') || getToolIdFromPath();
             
             console.log('Tool ID from URL:', toolId);
             
+            // If still no tool ID, check if we have a default or show error
             if (!toolId) {
-                showError('No tool ID provided');
-                return;
+                // Check if there's a hash parameter
+                const hash = window.location.hash.replace('#', '');
+                if (hash && hash.includes('tool=')) {
+                    toolId = hash.split('tool=')[1];
+                }
+                
+                // If still no tool ID, show error
+                if (!toolId) {
+                    showError('No tool ID provided. Please select a tool from the tools listing page.');
+                    return;
+                }
             }
             
             await loadToolDetails(toolId);
             setupRatingInput();
         });
 
+        // Helper function to get tool ID from path
+        function getToolIdFromPath() {
+            const path = window.location.pathname;
+            const segments = path.split('/');
+            const lastSegment = segments[segments.length - 1];
+            
+            // Check if it's a tool detail page with ID in path
+            if (lastSegment.endsWith('.html') && lastSegment.includes('tool_')) {
+                return lastSegment.replace('tool_', '').replace('.html', '');
+            }
+            
+            return null;
+        }
+
         function setupRatingInput() {
             const stars = document.querySelectorAll('.rating-input span');
+            if (!stars.length) return;
+            
             stars.forEach(star => {
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.getAttribute('data-rating'));
-                    document.getElementById('ratingValue').value = selectedRating;
+                    const ratingInput = document.getElementById('ratingValue');
+                    if (ratingInput) {
+                        ratingInput.value = selectedRating;
+                    }
                     updateStars(selectedRating);
                     console.log('Rating selected:', selectedRating);
                 });
@@ -884,9 +912,12 @@
                 });
             });
 
-            document.querySelector('.rating-input').addEventListener('mouseleave', function() {
-                updateStars(selectedRating);
-            });
+            const ratingInputContainer = document.querySelector('.rating-input');
+            if (ratingInputContainer) {
+                ratingInputContainer.addEventListener('mouseleave', function() {
+                    updateStars(selectedRating);
+                });
+            }
         }
 
         function updateStars(rating) {
@@ -905,20 +936,27 @@
                 console.log('=== LOADING TOOL DETAILS ===');
                 console.log('Fetching tool ID:', toolId);
                 
+                // Wait for API to load
                 if (typeof toolsAPI === 'undefined') {
-                    showError('API not loaded. Please refresh the page.');
+                    setTimeout(() => {
+                        if (typeof toolsAPI !== 'undefined') {
+                            loadToolDetails(toolId);
+                        } else {
+                            showError('API not loaded. Please refresh the page.');
+                        }
+                    }, 1000);
                     return;
                 }
 
                 const response = await toolsAPI.getById(toolId);
                 console.log('Tool API Response:', response);
                 
-                if (response.success && response.data) {
+                if (response && response.success && response.data) {
                     currentTool = response.data.tool || response.data;
                     console.log('Current tool set to:', currentTool);
                     displayToolDetails(currentTool);
                 } else {
-                    showError(response.message || 'Failed to load tool details');
+                    showError(response?.message || 'Failed to load tool details');
                 }
             } catch (error) {
                 console.error('Error loading tool:', error);
@@ -930,26 +968,33 @@
             console.log('=== DISPLAYING TOOL ===', tool);
             
             const container = document.getElementById('tool-content');
+            if (!container) return;
+            
             const website = tool.website || tool.websiteUrl || tool.url || '#';
+            const toolName = tool.name || 'Unknown Tool';
+            const category = tool.category || 'AI Tool';
+            const description = tool.description || 'No description available.';
+            const averageRating = tool.averageRating ? tool.averageRating.toFixed(1) : 'New';
+            const totalReviews = tool.totalReviews || tool.reviewCount || 0;
             
             container.innerHTML = `
                 <div class="tool-detail">
                     <div class="tool-header">
                         <img src="${tool.logo || 'https://via.placeholder.com/120?text=AI'}" 
-                             alt="${tool.name}" 
+                             alt="${toolName}" 
                              class="tool-logo"
                              onerror="this.src='https://via.placeholder.com/120?text=AI'">
                         <div class="tool-header-info">
-                            <h1>${tool.name}</h1>
-                            <span class="tool-category">${tool.category || 'AI Tool'}</span>
+                            <h1>${toolName}</h1>
+                            <span class="tool-category">${category}</span>
                             <div class="tool-stats">
                                 <div class="stat">
                                     <span class="stat-label">Rating</span>
-                                    <span class="stat-value">${tool.averageRating ? tool.averageRating.toFixed(1) + ' ★' : 'New'}</span>
+                                    <span class="stat-value">${averageRating} ${averageRating !== 'New' ? '★' : ''}</span>
                                 </div>
                                 <div class="stat">
                                     <span class="stat-label">Reviews</span>
-                                    <span class="stat-value">${tool.totalReviews || tool.reviewCount || 0}</span>
+                                    <span class="stat-value">${totalReviews}</span>
                                 </div>
                             </div>
                             <div class="action-buttons">
@@ -961,7 +1006,7 @@
 
                     <div class="tool-section">
                         <h2>About</h2>
-                        <p>${tool.description || 'No description available.'}</p>
+                        <p>${description}</p>
                     </div>
                 </div>
 
@@ -976,13 +1021,18 @@
                 </div>
             `;
 
-            loadReviews(tool._id || tool.id);
+            // Load reviews for this tool
+            const toolId = tool._id || tool.id;
+            if (toolId) {
+                loadReviews(toolId);
+            }
         }
 
         async function loadReviews(toolId) {
             console.log('=== LOADING REVIEWS FOR TOOL:', toolId, '===');
             
             const container = document.getElementById('reviews-container');
+            if (!container) return;
             
             try {
                 if (typeof reviewsAPI === 'undefined') {
@@ -993,14 +1043,14 @@
                 const response = await reviewsAPI.getAll(toolId, 1, 10);
                 console.log('Reviews API Response:', response);
                 
-                if (response.success && response.data && response.data.reviews && response.data.reviews.length > 0) {
+                if (response && response.success && response.data && response.data.reviews && response.data.reviews.length > 0) {
                     container.innerHTML = response.data.reviews.map(review => `
                         <div class="review-card">
                             <div class="review-header">
                                 <span class="reviewer-name">${review.user?.name || review.userName || 'Anonymous'}</span>
                                 <span class="review-rating">${'★'.repeat(review.rating || 5)}</span>
                             </div>
-                            <p class="review-text">${review.comment || review.review || 'No comment provided.'}</p>
+                            <p class="review-text">${review.comment || review.review || review.content || 'No comment provided.'}</p>
                             <p class="review-date">${review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ''}</p>
                         </div>
                     `).join('');
@@ -1014,6 +1064,8 @@
         }
 
         function handleShareTool() {
+            if (!currentTool) return;
+            
             const url = window.location.href;
             if (navigator.share) {
                 navigator.share({
@@ -1049,20 +1101,40 @@
                 return;
             }
             
+            if (!currentTool) {
+                if (typeof showToast === 'function') {
+                    showToast('Tool information not loaded', 'error');
+                } else {
+                    alert('Tool information not loaded');
+                }
+                return;
+            }
+            
             openReviewModal();
         }
 
         function openReviewModal() {
             console.log('=== OPENING REVIEW MODAL ===');
-            document.getElementById('reviewModal').classList.add('active');
-            document.getElementById('reviewForm').reset();
+            const modal = document.getElementById('reviewModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+            
+            const form = document.getElementById('reviewForm');
+            if (form) {
+                form.reset();
+            }
+            
             selectedRating = 0;
             updateStars(0);
         }
 
         function closeReviewModal() {
             console.log('=== CLOSING REVIEW MODAL ===');
-            document.getElementById('reviewModal').classList.remove('active');
+            const modal = document.getElementById('reviewModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         }
 
         async function submitReview(event) {
@@ -1074,6 +1146,7 @@
             
             // Get the submit button
             const submitBtn = document.getElementById('submitReviewBtn');
+            if (!submitBtn) return;
             
             // Validate rating
             if (!selectedRating || selectedRating < 1 || selectedRating > 5) {
@@ -1087,7 +1160,10 @@
             }
 
             // Validate comment
-            const comment = document.getElementById('reviewComment').value.trim();
+            const commentInput = document.getElementById('reviewComment');
+            if (!commentInput) return;
+            
+            const comment = commentInput.value.trim();
             console.log('Comment:', comment);
             console.log('Comment length:', comment.length);
             
@@ -1112,7 +1188,7 @@
             }
             
             // Validate tool ID
-            const toolId = currentTool._id || currentTool.id;
+            const toolId = currentTool?._id || currentTool?.id;
             console.log('Tool ID:', toolId);
             
             if (!toolId) {
@@ -1155,17 +1231,19 @@
                     comment: comment
                 });
                 
+                // IMPORTANT: Use the fixed reviewsAPI.create method which expects specific fields
                 const response = await reviewsAPI.create({
                     toolId: toolId,
                     rating: selectedRating,
-                    comment: comment
+                    comment: comment,
+                    title: `Review of ${currentTool.name}`  // Add title as required by backend
                 });
                 
                 console.log('=== REVIEW SUBMISSION RESPONSE ===', response);
                 
                 if (typeof hideLoading === 'function') hideLoading();
                 
-                if (response.success) {
+                if (response && response.success) {
                     console.log('✅ Review submitted successfully!');
                     
                     if (typeof showToast === 'function') {
@@ -1182,12 +1260,12 @@
                         loadReviews(toolId);
                     }, 500);
                 } else {
-                    console.error('❌ Review submission failed:', response.message);
+                    console.error('❌ Review submission failed:', response?.message);
                     
                     if (typeof showToast === 'function') {
-                        showToast('❌ ' + (response.message || 'Failed to submit review'), 'error');
+                        showToast('❌ ' + (response?.message || 'Failed to submit review'), 'error');
                     } else {
-                        alert('Failed to submit review: ' + (response.message || 'Unknown error'));
+                        alert('Failed to submit review: ' + (response?.message || 'Unknown error'));
                     }
                     
                     // Re-enable submit button
@@ -1213,22 +1291,28 @@
 
         function showError(message) {
             const container = document.getElementById('tool-content');
+            if (!container) return;
+            
             container.innerHTML = `
                 <div class="error-message">
                     <h2>Oops!</h2>
                     <p>${message}</p>
                     <br>
-                    <a href="index.html" class="btn btn-primary">Go Back Home</a>
+                    <a href="tools.html" class="btn btn-primary">Browse All Tools</a>
+                    <a href="index.html" class="btn btn-secondary" style="margin-left: 10px;">Go Back Home</a>
                 </div>
             `;
         }
 
         // Close modal on outside click
-        document.getElementById('reviewModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeReviewModal();
-            }
-        });
+        const reviewModal = document.getElementById('reviewModal');
+        if (reviewModal) {
+            reviewModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeReviewModal();
+                }
+            });
+        }
     </script>
 </body>
 </html>
