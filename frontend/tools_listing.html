@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Tool Details - NexusAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -231,6 +232,50 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px;
+        }
+
+        /* LOADING & ERROR STATES */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #94a3b8;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(100, 200, 255, 0.2);
+            border-top: 4px solid #64c8ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .error-message h2 {
+            color: #fca5a5;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-message p {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
         }
 
         /* TOOL DETAIL CARD */
@@ -526,34 +571,21 @@
             color: #fbbf24;
         }
 
-        .loading {
-            text-align: center;
-            padding: 4rem;
-            color: #94a3b8;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(100, 200, 255, 0.2);
-            border-top: 4px solid #64c8ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-message {
+        /* DEBUG INFO */
+        .debug-info {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #fca5a5;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .debug-info.show {
+            display: block;
         }
 
         /* MOBILE RESPONSIVE */
@@ -671,7 +703,7 @@
             
             <div class="navbar-menu" id="navbarMenu">
                 <a href="index.html" class="navbar-link">Home</a>
-                <a href="tools_listing.html" class="navbar-link">Tools</a>
+                <a href="tools.html" class="navbar-link">Tools</a>
                 <a href="trending.html" class="navbar-link">Trending</a>
                 <a href="compare.html" class="navbar-link">Compare</a>
             </div>
@@ -683,10 +715,7 @@
                 </div>
                 
                 <a href="profile.html" class="profile-btn" id="profileBtn" style="display: none;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                    <i class="fas fa-user"></i>
                 </a>
                 
                 <button class="logout-btn" id="logoutBtn" onclick="handleLogout(event)">Logout</button>
@@ -701,6 +730,10 @@
     </nav>
 
     <div class="container">
+        <!-- Debug information (hidden by default) -->
+        <div id="debugInfo" class="debug-info"></div>
+        
+        <!-- Main content -->
         <div id="tool-content" class="loading">
             <div class="loading-spinner"></div>
             <p>Loading tool details...</p>
@@ -735,60 +768,403 @@
         </div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/app.js"></script>
     <script>
+        // ============================================
+        // DEBUG MODE - Set to true to see debug info
+        // ============================================
+        const DEBUG_MODE = true;
+        
         let currentTool = null;
         let selectedRating = 0;
 
-        // Hamburger menu and overlay
-        const hamburger = document.getElementById('hamburger');
-        const navbarMenu = document.getElementById('navbarMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-
-        function closeMenu() {
-            if (hamburger) hamburger.classList.remove('active');
-            if (navbarMenu) navbarMenu.classList.remove('active');
-            if (menuOverlay) menuOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
+        // Debug logging function
+        function debugLog(message, data = null) {
+            if (DEBUG_MODE) {
+                console.log(`[DEBUG] ${message}`, data || '');
+                
+                // Also show in debug info div
+                const debugDiv = document.getElementById('debugInfo');
+                if (debugDiv) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    const logEntry = document.createElement('div');
+                    logEntry.textContent = `[${timestamp}] ${message}`;
+                    debugDiv.appendChild(logEntry);
+                    debugDiv.classList.add('show');
+                    
+                    // Limit to 10 entries
+                    const entries = debugDiv.children;
+                    if (entries.length > 10) {
+                        debugDiv.removeChild(entries[0]);
+                    }
+                }
+            }
         }
 
-        function openMenu() {
-            if (hamburger) hamburger.classList.add('active');
-            if (navbarMenu) navbarMenu.classList.add('active');
-            if (menuOverlay) menuOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            debugLog('=== PAGE LOADED ===');
+            debugLog('Full URL:', window.location.href);
+            debugLog('Pathname:', window.location.pathname);
+            debugLog('Search:', window.location.search);
+            debugLog('Hash:', window.location.hash);
+            
+            // Initialize UI
+            updateProfileButton();
+            setupMenu();
+            
+            // Get tool ID from URL
+            const toolId = extractToolIdFromURL();
+            debugLog('Extracted Tool ID:', toolId);
+            
+            if (!toolId) {
+                showError('No tool ID provided. Please select a tool from the tools listing page.');
+                return;
+            }
+            
+            // Load tool details
+            await loadToolDetails(toolId);
+            setupRatingInput();
+        });
+
+        // ============================================
+        // TOOL ID EXTRACTION
+        // ============================================
+        
+        function extractToolIdFromURL() {
+            debugLog('=== EXTRACTING TOOL ID FROM URL ===');
+            
+            // Method 1: URL parameters (most common)
+            const urlParams = new URLSearchParams(window.location.search);
+            let toolId = urlParams.get('id') || urlParams.get('toolId') || urlParams.get('toolid');
+            
+            debugLog('URL Params found:', Array.from(urlParams.entries()));
+            debugLog('Tool ID from URL params:', toolId);
+            
+            // Method 2: Hash parameters
+            if (!toolId && window.location.hash) {
+                const hash = window.location.hash.replace('#', '');
+                debugLog('Hash value:', hash);
+                
+                // Check for pattern like #tool=12345
+                if (hash.includes('tool=')) {
+                    toolId = hash.split('tool=')[1].split('&')[0];
+                    debugLog('Tool ID from hash:', toolId);
+                }
+                
+                // Check for pattern like #12345
+                if (!toolId && /^[a-fA-F0-9]{24}$/.test(hash)) {
+                    toolId = hash;
+                    debugLog('Tool ID from hash (MongoDB ID pattern):', toolId);
+                }
+            }
+            
+            // Method 3: Path segments (for pretty URLs)
+            if (!toolId) {
+                const path = window.location.pathname;
+                const segments = path.split('/').filter(seg => seg);
+                debugLog('Path segments:', segments);
+                
+                // Look for segment that looks like a tool ID or tool detail page
+                for (const segment of segments) {
+                    // Check for MongoDB ObjectId pattern (24 hex chars)
+                    if (/^[a-fA-F0-9]{24}$/.test(segment)) {
+                        toolId = segment;
+                        debugLog('Tool ID from path (MongoDB ID):', toolId);
+                        break;
+                    }
+                    
+                    // Check for pattern like tool-12345
+                    if (segment.includes('tool-') || segment.includes('tool_')) {
+                        const match = segment.match(/(?:tool[-_])([a-zA-Z0-9]+)/);
+                        if (match && match[1]) {
+                            toolId = match[1];
+                            debugLog('Tool ID from path (tool- prefix):', toolId);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Method 4: Check localStorage (as last resort)
+            if (!toolId) {
+                const storedToolId = localStorage.getItem('lastViewedToolId');
+                if (storedToolId) {
+                    toolId = storedToolId;
+                    debugLog('Tool ID from localStorage:', toolId);
+                }
+            }
+            
+            debugLog('Final Tool ID:', toolId);
+            return toolId;
         }
 
-        if (hamburger) {
-            hamburger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (hamburger.classList.contains('active')) {
-                    closeMenu();
+        // ============================================
+        // TOOL LOADING
+        // ============================================
+        
+        async function loadToolDetails(toolId) {
+            try {
+                debugLog('=== LOADING TOOL DETAILS ===', toolId);
+                
+                // Store the tool ID for future reference
+                localStorage.setItem('lastViewedToolId', toolId);
+                
+                // Check if API is loaded
+                if (typeof toolsAPI === 'undefined') {
+                    debugLog('API not loaded yet, waiting...');
+                    
+                    // Wait for API to load
+                    await waitForAPI();
+                }
+                
+                debugLog('Calling toolsAPI.getById...');
+                const response = await toolsAPI.getById(toolId);
+                debugLog('API Response:', response);
+                
+                if (response && response.success) {
+                    currentTool = response.data.tool || response.data;
+                    debugLog('Current tool loaded:', currentTool);
+                    
+                    if (currentTool) {
+                        displayToolDetails(currentTool);
+                    } else {
+                        showError('Tool data is empty or invalid.');
+                    }
                 } else {
-                    openMenu();
+                    const errorMsg = response?.message || 'Failed to load tool details';
+                    debugLog('API Error:', errorMsg);
+                    showError(errorMsg);
+                }
+            } catch (error) {
+                debugLog('Error loading tool:', error);
+                showError(`Error loading tool: ${error.message}`);
+            }
+        }
+
+        function waitForAPI() {
+            return new Promise((resolve) => {
+                const checkInterval = setInterval(() => {
+                    if (typeof toolsAPI !== 'undefined') {
+                        clearInterval(checkInterval);
+                        debugLog('API loaded successfully');
+                        resolve();
+                    }
+                }, 100);
+                
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    debugLog('API loading timeout');
+                    resolve();
+                }, 5000);
+            });
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        
+        function displayToolDetails(tool) {
+            debugLog('=== DISPLAYING TOOL ===', tool);
+            
+            const container = document.getElementById('tool-content');
+            if (!container) return;
+            
+            const website = tool.website || tool.websiteUrl || tool.url || '#';
+            const toolName = tool.name || 'Unknown Tool';
+            const category = tool.category || 'AI Tool';
+            const description = tool.description || 'No description available.';
+            const averageRating = tool.averageRating ? tool.averageRating.toFixed(1) : 'New';
+            const totalReviews = tool.totalReviews || tool.reviewCount || 0;
+            const logoUrl = tool.logo || 'https://via.placeholder.com/120?text=AI';
+            
+            container.innerHTML = `
+                <div class="tool-detail">
+                    <div class="tool-header">
+                        <img src="${logoUrl}" 
+                             alt="${toolName}" 
+                             class="tool-logo"
+                             onerror="this.src='https://via.placeholder.com/120?text=AI'">
+                        <div class="tool-header-info">
+                            <h1>${toolName}</h1>
+                            <span class="tool-category">${category}</span>
+                            <div class="tool-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Rating</span>
+                                    <span class="stat-value">${averageRating} ${averageRating !== 'New' ? '★' : ''}</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Reviews</span>
+                                    <span class="stat-value">${totalReviews}</span>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <a href="${website}" target="_blank" rel="noopener" class="btn btn-primary">Visit Website</a>
+                                <button type="button" onclick="handleShareTool()" class="btn btn-secondary">Share</button>
+                                <button type="button" onclick="toggleDebugInfo()" class="btn btn-secondary" style="background: rgba(239, 68, 68, 0.1); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3);">
+                                    Debug
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-section">
+                        <h2>About</h2>
+                        <p>${description}</p>
+                    </div>
+                    
+                    ${tool.features ? `
+                    <div class="tool-section">
+                        <h2>Features</h2>
+                        <p>${tool.features}</p>
+                    </div>
+                    ` : ''}
+                    
+                    ${tool.pricing ? `
+                    <div class="tool-section">
+                        <h2>Pricing</h2>
+                        <p>${tool.pricing}</p>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <div class="reviews-section">
+                    <div class="reviews-header">
+                        <h2>User Reviews</h2>
+                        <button type="button" onclick="handleWriteReview()" class="btn btn-primary">Write a Review</button>
+                    </div>
+                    <div id="reviews-container">
+                        <p class="loading">Loading reviews...</p>
+                    </div>
+                </div>
+            `;
+
+            // Load reviews for this tool
+            const toolId = tool._id || tool.id;
+            if (toolId) {
+                loadReviews(toolId);
+            }
+        }
+
+        async function loadReviews(toolId) {
+            debugLog('=== LOADING REVIEWS ===', toolId);
+            
+            const container = document.getElementById('reviews-container');
+            if (!container) return;
+            
+            try {
+                if (typeof reviewsAPI === 'undefined') {
+                    container.innerHTML = '<p style="color: #94a3b8;">Reviews not available.</p>';
+                    return;
+                }
+
+                const response = await reviewsAPI.getAll(toolId, 1, 10);
+                debugLog('Reviews API Response:', response);
+                
+                if (response && response.success && response.data && response.data.reviews && response.data.reviews.length > 0) {
+                    container.innerHTML = response.data.reviews.map(review => `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="reviewer-name">${review.user?.name || review.userName || 'Anonymous'}</span>
+                                <span class="review-rating">${'★'.repeat(review.rating || 5)}</span>
+                            </div>
+                            <p class="review-text">${review.comment || review.review || review.content || 'No comment provided.'}</p>
+                            <p class="review-date">${review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ''}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color: #94a3b8;">No reviews yet. Be the first to review this tool!</p>';
+                }
+            } catch (error) {
+                debugLog('Error loading reviews:', error);
+                container.innerHTML = '<p style="color: #94a3b8;">Unable to load reviews.</p>';
+            }
+        }
+
+        function showError(message) {
+            debugLog('=== SHOWING ERROR ===', message);
+            
+            const container = document.getElementById('tool-content');
+            if (!container) return;
+            
+            // Get current URL for debugging
+            const currentUrl = window.location.href;
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            container.innerHTML = `
+                <div class="error-message">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Oops!</h2>
+                    <p>${message}</p>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                        <p style="font-size: 0.9rem; margin-bottom: 5px;"><strong>Debug Info:</strong></p>
+                        <p style="font-size: 0.8rem; margin: 3px 0;">URL: ${currentUrl}</p>
+                        <p style="font-size: 0.8rem; margin: 3px 0;">URL Parameters: ${urlParams.toString() || 'None'}</p>
+                        <p style="font-size: 0.8rem; margin: 3px 0;">Hash: ${window.location.hash || 'None'}</p>
+                    </div>
+                    
+                    <div class="action-buttons" style="justify-content: center;">
+                        <a href="tools.html" class="btn btn-primary">Browse All Tools</a>
+                        <a href="index.html" class="btn btn-secondary" style="margin-left: 10px;">Go Back Home</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // NAVIGATION & MENU
+        // ============================================
+        
+        function setupMenu() {
+            const hamburger = document.getElementById('hamburger');
+            const navbarMenu = document.getElementById('navbarMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+
+            function closeMenu() {
+                if (hamburger) hamburger.classList.remove('active');
+                if (navbarMenu) navbarMenu.classList.remove('active');
+                if (menuOverlay) menuOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+
+            function openMenu() {
+                if (hamburger) hamburger.classList.add('active');
+                if (navbarMenu) navbarMenu.classList.add('active');
+                if (menuOverlay) menuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            if (hamburger) {
+                hamburger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (hamburger.classList.contains('active')) {
+                        closeMenu();
+                    } else {
+                        openMenu();
+                    }
+                });
+            }
+
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', closeMenu);
+            }
+
+            document.querySelectorAll('.navbar-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    closeMenu();
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    closeMenu();
                 }
             });
         }
 
-        if (menuOverlay) {
-            menuOverlay.addEventListener('click', closeMenu);
-        }
-
-        document.querySelectorAll('.navbar-link').forEach(link => {
-            link.addEventListener('click', () => {
-                closeMenu();
-            });
-        });
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                closeMenu();
-            }
-        });
-
-        // Update profile button based on auth
         function updateProfileButton() {
             const profileBtn = document.getElementById('profileBtn');
             const logoutBtn = document.getElementById('logoutBtn');
@@ -797,36 +1173,20 @@
             const user = localStorage.getItem('user');
             
             if (token && user) {
-                // User is logged in - show profile icon and logout button
-                if (profileBtn) {
-                    profileBtn.style.display = 'flex';
-                }
-                if (logoutBtn) {
-                    logoutBtn.classList.add('visible');
-                }
-                if (loginSignupBtns) {
-                    loginSignupBtns.classList.add('hidden');
-                }
+                if (profileBtn) profileBtn.style.display = 'flex';
+                if (logoutBtn) logoutBtn.classList.add('visible');
+                if (loginSignupBtns) loginSignupBtns.classList.add('hidden');
             } else {
-                // User is not logged in - show login/signup buttons
                 if (profileBtn) {
                     profileBtn.style.display = 'none';
                     profileBtn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        if (typeof showToast === 'function') {
-                            showToast('Please login to access your profile', 'warning');
-                        } else {
-                            alert('Please login to access your profile');
-                        }
+                        showToast('Please login to access your profile', 'warning');
                         setTimeout(() => window.location.href = 'login.html', 1000);
                     });
                 }
-                if (logoutBtn) {
-                    logoutBtn.classList.remove('visible');
-                }
-                if (loginSignupBtns) {
-                    loginSignupBtns.classList.remove('hidden');
-                }
+                if (logoutBtn) logoutBtn.classList.remove('visible');
+                if (loginSignupBtns) loginSignupBtns.classList.remove('hidden');
             }
         }
 
@@ -834,63 +1194,23 @@
             if (event) event.preventDefault();
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            if (typeof showToast === 'function') {
-                showToast('Logged out successfully', 'success');
-            } else {
-                alert('Logged out successfully');
+            showToast('Logged out successfully', 'success');
+            
+            // Close menu if open
+            const hamburger = document.getElementById('hamburger');
+            if (hamburger && hamburger.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                document.getElementById('navbarMenu').classList.remove('active');
+                document.getElementById('menuOverlay').classList.remove('active');
             }
-            closeMenu();
+            
             setTimeout(() => window.location.href = 'index.html', 1000);
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('=== TOOL DETAIL PAGE LOADED ===');
-            
-            updateProfileButton();
-            
-            if (typeof updateNavbar === 'function') {
-                updateNavbar();
-            }
-            
-            // Get tool ID from URL - FIXED: Handle multiple ways of passing tool ID
-            const urlParams = new URLSearchParams(window.location.search);
-            let toolId = urlParams.get('id') || urlParams.get('toolId') || getToolIdFromPath();
-            
-            console.log('Tool ID from URL:', toolId);
-            
-            // If still no tool ID, check if we have a default or show error
-            if (!toolId) {
-                // Check if there's a hash parameter
-                const hash = window.location.hash.replace('#', '');
-                if (hash && hash.includes('tool=')) {
-                    toolId = hash.split('tool=')[1];
-                }
-                
-                // If still no tool ID, show error
-                if (!toolId) {
-                    showError('No tool ID provided. Please select a tool from the tools listing page.');
-                    return;
-                }
-            }
-            
-            await loadToolDetails(toolId);
-            setupRatingInput();
-        });
-
-        // Helper function to get tool ID from path
-        function getToolIdFromPath() {
-            const path = window.location.pathname;
-            const segments = path.split('/');
-            const lastSegment = segments[segments.length - 1];
-            
-            // Check if it's a tool detail page with ID in path
-            if (lastSegment.endsWith('.html') && lastSegment.includes('tool_')) {
-                return lastSegment.replace('tool_', '').replace('.html', '');
-            }
-            
-            return null;
-        }
-
+        // ============================================
+        // REVIEW SYSTEM
+        // ============================================
+        
         function setupRatingInput() {
             const stars = document.querySelectorAll('.rating-input span');
             if (!stars.length) return;
@@ -899,11 +1219,9 @@
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.getAttribute('data-rating'));
                     const ratingInput = document.getElementById('ratingValue');
-                    if (ratingInput) {
-                        ratingInput.value = selectedRating;
-                    }
+                    if (ratingInput) ratingInput.value = selectedRating;
                     updateStars(selectedRating);
-                    console.log('Rating selected:', selectedRating);
+                    debugLog('Rating selected:', selectedRating);
                 });
 
                 star.addEventListener('mouseenter', function() {
@@ -931,138 +1249,6 @@
             });
         }
 
-        async function loadToolDetails(toolId) {
-            try {
-                console.log('=== LOADING TOOL DETAILS ===');
-                console.log('Fetching tool ID:', toolId);
-                
-                // Wait for API to load
-                if (typeof toolsAPI === 'undefined') {
-                    setTimeout(() => {
-                        if (typeof toolsAPI !== 'undefined') {
-                            loadToolDetails(toolId);
-                        } else {
-                            showError('API not loaded. Please refresh the page.');
-                        }
-                    }, 1000);
-                    return;
-                }
-
-                const response = await toolsAPI.getById(toolId);
-                console.log('Tool API Response:', response);
-                
-                if (response && response.success && response.data) {
-                    currentTool = response.data.tool || response.data;
-                    console.log('Current tool set to:', currentTool);
-                    displayToolDetails(currentTool);
-                } else {
-                    showError(response?.message || 'Failed to load tool details');
-                }
-            } catch (error) {
-                console.error('Error loading tool:', error);
-                showError('An error occurred while loading the tool. Please try again.');
-            }
-        }
-
-        function displayToolDetails(tool) {
-            console.log('=== DISPLAYING TOOL ===', tool);
-            
-            const container = document.getElementById('tool-content');
-            if (!container) return;
-            
-            const website = tool.website || tool.websiteUrl || tool.url || '#';
-            const toolName = tool.name || 'Unknown Tool';
-            const category = tool.category || 'AI Tool';
-            const description = tool.description || 'No description available.';
-            const averageRating = tool.averageRating ? tool.averageRating.toFixed(1) : 'New';
-            const totalReviews = tool.totalReviews || tool.reviewCount || 0;
-            
-            container.innerHTML = `
-                <div class="tool-detail">
-                    <div class="tool-header">
-                        <img src="${tool.logo || 'https://via.placeholder.com/120?text=AI'}" 
-                             alt="${toolName}" 
-                             class="tool-logo"
-                             onerror="this.src='https://via.placeholder.com/120?text=AI'">
-                        <div class="tool-header-info">
-                            <h1>${toolName}</h1>
-                            <span class="tool-category">${category}</span>
-                            <div class="tool-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Rating</span>
-                                    <span class="stat-value">${averageRating} ${averageRating !== 'New' ? '★' : ''}</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">Reviews</span>
-                                    <span class="stat-value">${totalReviews}</span>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <a href="${website}" target="_blank" rel="noopener" class="btn btn-primary">Visit Website</a>
-                                <button type="button" onclick="handleShareTool()" class="btn btn-secondary">Share</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tool-section">
-                        <h2>About</h2>
-                        <p>${description}</p>
-                    </div>
-                </div>
-
-                <div class="reviews-section">
-                    <div class="reviews-header">
-                        <h2>User Reviews</h2>
-                        <button type="button" onclick="handleWriteReview()" class="btn btn-primary">Write a Review</button>
-                    </div>
-                    <div id="reviews-container">
-                        <p class="loading">Loading reviews...</p>
-                    </div>
-                </div>
-            `;
-
-            // Load reviews for this tool
-            const toolId = tool._id || tool.id;
-            if (toolId) {
-                loadReviews(toolId);
-            }
-        }
-
-        async function loadReviews(toolId) {
-            console.log('=== LOADING REVIEWS FOR TOOL:', toolId, '===');
-            
-            const container = document.getElementById('reviews-container');
-            if (!container) return;
-            
-            try {
-                if (typeof reviewsAPI === 'undefined') {
-                    container.innerHTML = '<p style="color: #94a3b8;">Reviews not available.</p>';
-                    return;
-                }
-
-                const response = await reviewsAPI.getAll(toolId, 1, 10);
-                console.log('Reviews API Response:', response);
-                
-                if (response && response.success && response.data && response.data.reviews && response.data.reviews.length > 0) {
-                    container.innerHTML = response.data.reviews.map(review => `
-                        <div class="review-card">
-                            <div class="review-header">
-                                <span class="reviewer-name">${review.user?.name || review.userName || 'Anonymous'}</span>
-                                <span class="review-rating">${'★'.repeat(review.rating || 5)}</span>
-                            </div>
-                            <p class="review-text">${review.comment || review.review || review.content || 'No comment provided.'}</p>
-                            <p class="review-date">${review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ''}</p>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<p style="color: #94a3b8;">No reviews yet. Be the first to review this tool!</p>';
-                }
-            } catch (error) {
-                console.error('Error loading reviews:', error);
-                container.innerHTML = '<p style="color: #94a3b8;">Unable to load reviews.</p>';
-            }
-        }
-
         function handleShareTool() {
             if (!currentTool) return;
             
@@ -1075,38 +1261,24 @@
                 });
             } else {
                 navigator.clipboard.writeText(url);
-                if (typeof showToast === 'function') {
-                    showToast('Link copied to clipboard!', 'success');
-                } else {
-                    alert('Link copied to clipboard!');
-                }
+                showToast('Link copied to clipboard!', 'success');
             }
         }
 
         function handleWriteReview() {
-            console.log('=== HANDLE WRITE REVIEW CLICKED ===');
+            debugLog('=== WRITE REVIEW CLICKED ===');
             
             const token = localStorage.getItem('token');
-            console.log('Token exists:', !!token);
-            
             if (!token) {
-                if (typeof showToast === 'function') {
-                    showToast('Please login to write a review', 'warning');
-                } else {
-                    alert('Please login to write a review');
-                }
+                showToast('Please login to write a review', 'warning');
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
                 }, 1000);
                 return;
             }
             
             if (!currentTool) {
-                if (typeof showToast === 'function') {
-                    showToast('Tool information not loaded', 'error');
-                } else {
-                    alert('Tool information not loaded');
-                }
+                showToast('Tool information not loaded', 'error');
                 return;
             }
             
@@ -1114,48 +1286,34 @@
         }
 
         function openReviewModal() {
-            console.log('=== OPENING REVIEW MODAL ===');
+            debugLog('=== OPENING REVIEW MODAL ===');
             const modal = document.getElementById('reviewModal');
-            if (modal) {
-                modal.classList.add('active');
-            }
+            if (modal) modal.classList.add('active');
             
             const form = document.getElementById('reviewForm');
-            if (form) {
-                form.reset();
-            }
+            if (form) form.reset();
             
             selectedRating = 0;
             updateStars(0);
         }
 
         function closeReviewModal() {
-            console.log('=== CLOSING REVIEW MODAL ===');
+            debugLog('=== CLOSING REVIEW MODAL ===');
             const modal = document.getElementById('reviewModal');
-            if (modal) {
-                modal.classList.remove('active');
-            }
+            if (modal) modal.classList.remove('active');
         }
 
         async function submitReview(event) {
             event.preventDefault();
             
-            console.log('=== SUBMIT REVIEW STARTED ===');
-            console.log('Current tool:', currentTool);
-            console.log('Selected rating:', selectedRating);
+            debugLog('=== SUBMITTING REVIEW ===');
             
-            // Get the submit button
             const submitBtn = document.getElementById('submitReviewBtn');
             if (!submitBtn) return;
             
             // Validate rating
             if (!selectedRating || selectedRating < 1 || selectedRating > 5) {
-                console.error('Invalid rating:', selectedRating);
-                if (typeof showToast === 'function') {
-                    showToast('Please select a rating (1-5 stars)', 'warning');
-                } else {
-                    alert('Please select a rating');
-                }
+                showToast('Please select a rating (1-5 stars)', 'warning');
                 return;
             }
 
@@ -1164,144 +1322,134 @@
             if (!commentInput) return;
             
             const comment = commentInput.value.trim();
-            console.log('Comment:', comment);
-            console.log('Comment length:', comment.length);
-            
             if (!comment) {
-                console.error('Comment is empty');
-                if (typeof showToast === 'function') {
-                    showToast('Please write a review', 'warning');
-                } else {
-                    alert('Please write a review');
-                }
+                showToast('Please write a review', 'warning');
                 return;
             }
             
             if (comment.length < 10) {
-                console.error('Comment too short:', comment.length);
-                if (typeof showToast === 'function') {
-                    showToast('Review must be at least 10 characters long', 'warning');
-                } else {
-                    alert('Review must be at least 10 characters');
-                }
+                showToast('Review must be at least 10 characters long', 'warning');
                 return;
             }
             
             // Validate tool ID
             const toolId = currentTool?._id || currentTool?.id;
-            console.log('Tool ID:', toolId);
-            
             if (!toolId) {
-                console.error('No tool ID available');
-                if (typeof showToast === 'function') {
-                    showToast('Error: Tool ID not found', 'error');
-                } else {
-                    alert('Error: Tool ID not found');
-                }
+                showToast('Error: Tool ID not found', 'error');
                 return;
             }
 
             // Check authentication
             const token = localStorage.getItem('token');
             if (!token) {
-                console.error('No authentication token');
-                if (typeof showToast === 'function') {
-                    showToast('Please login to submit a review', 'warning');
-                } else {
-                    alert('Please login to submit a review');
-                }
+                showToast('Please login to submit a review', 'warning');
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 1000);
                 return;
             }
 
-            // Show loading
-            if (typeof showLoading === 'function') showLoading();
-            
             // Disable submit button
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
             try {
-                console.log('=== CALLING REVIEW API ===');
-                console.log('Review data:', {
+                debugLog('Submitting review data:', {
                     toolId: toolId,
                     rating: selectedRating,
-                    comment: comment
+                    comment: comment,
+                    title: `Review of ${currentTool.name}`
                 });
                 
-                // IMPORTANT: Use the fixed reviewsAPI.create method which expects specific fields
                 const response = await reviewsAPI.create({
                     toolId: toolId,
                     rating: selectedRating,
                     comment: comment,
-                    title: `Review of ${currentTool.name}`  // Add title as required by backend
+                    title: `Review of ${currentTool.name}`
                 });
                 
-                console.log('=== REVIEW SUBMISSION RESPONSE ===', response);
-                
-                if (typeof hideLoading === 'function') hideLoading();
+                debugLog('Review submission response:', response);
                 
                 if (response && response.success) {
-                    console.log('✅ Review submitted successfully!');
-                    
-                    if (typeof showToast === 'function') {
-                        showToast('✅ Review submitted successfully!', 'success');
-                    } else {
-                        alert('Review submitted successfully!');
-                    }
-                    
+                    showToast('✅ Review submitted successfully!', 'success');
                     closeReviewModal();
                     
-                    // Reload reviews after a short delay
+                    // Reload reviews
                     setTimeout(() => {
-                        console.log('Reloading reviews...');
+                        debugLog('Reloading reviews...');
                         loadReviews(toolId);
                     }, 500);
                 } else {
-                    console.error('❌ Review submission failed:', response?.message);
-                    
-                    if (typeof showToast === 'function') {
-                        showToast('❌ ' + (response?.message || 'Failed to submit review'), 'error');
-                    } else {
-                        alert('Failed to submit review: ' + (response?.message || 'Unknown error'));
-                    }
-                    
-                    // Re-enable submit button
+                    showToast('❌ ' + (response?.message || 'Failed to submit review'), 'error');
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Review';
                 }
             } catch (error) {
-                if (typeof hideLoading === 'function') hideLoading();
-                console.error('❌ Error submitting review:', error);
-                console.error('Error stack:', error.stack);
-                
-                if (typeof showToast === 'function') {
-                    showToast('❌ Network error: ' + error.message, 'error');
-                } else {
-                    alert('Error submitting review: ' + error.message);
-                }
-                
-                // Re-enable submit button
+                debugLog('Error submitting review:', error);
+                showToast('❌ Network error: ' + error.message, 'error');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Review';
             }
         }
 
-        function showError(message) {
-            const container = document.getElementById('tool-content');
-            if (!container) return;
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        
+        function showToast(message, type = 'info') {
+            // Create toast if it doesn't exist
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 9999;
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.3s, transform 0.3s;
+                    max-width: 400px;
+                    word-wrap: break-word;
+                `;
+                document.body.appendChild(toast);
+            }
             
-            container.innerHTML = `
-                <div class="error-message">
-                    <h2>Oops!</h2>
-                    <p>${message}</p>
-                    <br>
-                    <a href="tools.html" class="btn btn-primary">Browse All Tools</a>
-                    <a href="index.html" class="btn btn-secondary" style="margin-left: 10px;">Go Back Home</a>
-                </div>
-            `;
+            // Set style based on type
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            toast.style.background = colors[type] || colors.info;
+            
+            // Set message
+            toast.textContent = message;
+            
+            // Show toast
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+            }, 3000);
+        }
+
+        function toggleDebugInfo() {
+            const debugDiv = document.getElementById('debugInfo');
+            if (debugDiv) {
+                debugDiv.classList.toggle('show');
+            }
         }
 
         // Close modal on outside click
@@ -1313,6 +1461,14 @@
                 }
             });
         }
+
+        // Keyboard shortcuts for debugging
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                toggleDebugInfo();
+            }
+        });
     </script>
 </body>
 </html>

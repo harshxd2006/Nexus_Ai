@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Tool ID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .debug-info {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .code {
+            background: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Tool ID Detection</h1>
+    
+    <div class="debug-info">
+        <h2>Current URL:</h2>
+        <div class="code" id="currentUrl"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h2>URL Parameters:</h2>
+        <div class="code" id="urlParams"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h2>Tool ID Found:</h2>
+        <div class="code" id="toolIdFound"></div>
+    </div>
+    
+    <div class="debug-info">
+        <h2>Test Links:</h2>
+        <ul>
+            <li><a href="debug_tool.html?id=12345">Test with ?id=12345</a></li>
+            <li><a href="debug_tool.html?toolId=67890">Test with ?toolId=67890</a></li>
+            <li><a href="debug_tool.html#tool=abcde">Test with #tool=abcde</a></li>
+            <li><a href="debug_tool.html">Test without ID</a></li>
+        </ul>
+    </div>
+
+    <script>
+        // Display current URL
+        document.getElementById('currentUrl').textContent = window.location.href;
+        
+        // Display URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const params = [];
+        for (const [key, value] of urlParams.entries()) {
+            params.push(`${key}=${value}`);
+        }
+        document.getElementById('urlParams').textContent = params.length ? params.join(', ') : 'No URL parameters';
+        
+        // Try to get tool ID
+        let toolId = urlParams.get('id') || urlParams.get('toolId');
+        
+        // Check hash
+        const hash = window.location.hash.replace('#', '');
+        if (hash && hash.includes('tool=')) {
+            toolId = hash.split('tool=')[1];
+        }
+        
+        document.getElementById('toolIdFound').textContent = toolId || 'No tool ID found';
+        
+        console.log('Debug Info:');
+        console.log('Full URL:', window.location.href);
+        console.log('URL Search:', window.location.search);
+        console.log('URL Hash:', window.location.hash);
+        console.log('URL Params object:', Object.fromEntries(urlParams.entries()));
+        console.log('Tool ID found:', toolId);
+    </script>
+</body>
+</html>
