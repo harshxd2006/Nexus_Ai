@@ -36,8 +36,9 @@
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            position: relative;
         }
 
         .navbar-brand {
@@ -45,6 +46,8 @@
             font-weight: 700;
             color: #64c8ff;
             text-decoration: none;
+            position: absolute;
+            left: 20px;
             z-index: 1002;
         }
 
@@ -81,6 +84,7 @@
             display: flex;
             gap: 2rem;
             align-items: center;
+            justify-content: center;
         }
 
         .navbar-link {
@@ -97,41 +101,92 @@
             transform: translateY(-2px);
         }
 
-        .nav-buttons {
+        .navbar-right {
             display: flex;
-            gap: 1rem;
             align-items: center;
+            gap: 1rem;
+            position: absolute;
+            right: 20px;
+            z-index: 1002;
         }
 
-        .btn-login, .btn-signup {
+        .login-signup-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .login-signup-btns.hidden {
+            display: none;
+        }
+
+        .nav-btn {
             padding: 0.6rem 1.2rem;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
             font-size: 0.95rem;
+            transition: all 0.3s;
         }
 
-        .btn-login {
+        .nav-btn-login {
             color: #64c8ff;
             background: transparent;
             border: 1px solid rgba(100, 200, 255, 0.3);
         }
 
-        .btn-login:hover {
+        .nav-btn-login:hover {
             background: rgba(100, 200, 255, 0.1);
             border-color: #64c8ff;
         }
 
-        .btn-signup {
+        .nav-btn-signup {
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
             border: none;
         }
 
-        .btn-signup:hover {
+        .nav-btn-signup:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .profile-btn {
+            color: #64c8ff;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            text-decoration: none;
+        }
+
+        .profile-btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            border-color: #64c8ff;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            color: #94a3b8;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: none;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: none;
+        }
+
+        .logout-btn:hover {
+            color: #64c8ff;
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
         }
 
         /* HERO SECTION */
@@ -385,7 +440,6 @@
                 display: flex;
             }
             
-            /* DROPDOWN FROM TOP INSTEAD OF SIDE */
             .navbar-menu {
                 position: fixed;
                 top: -100%;
@@ -419,18 +473,17 @@
                 text-align: center;
                 border-bottom: 1px solid rgba(100, 200, 255, 0.1);
             }
-            
-            .nav-buttons {
-                flex-direction: column;
-                width: 100%;
-                gap: 1rem;
-                margin-top: 1rem;
+
+            .login-signup-btns {
+                display: none !important;
             }
-            
-            .btn-login, .btn-signup {
-                width: 100%;
-                text-align: center;
-                padding: 0.8rem 1.5rem;
+
+            .logout-btn {
+                display: none !important;
+            }
+
+            .profile-btn {
+                display: flex !important;
             }
             
             .hero {
@@ -460,7 +513,6 @@
                 display: flex;
             }
             
-            /* DROPDOWN FROM TOP INSTEAD OF SIDE */
             .navbar-menu {
                 position: fixed;
                 top: -100%;
@@ -498,18 +550,17 @@
                 text-align: center;
                 border-bottom: 1px solid rgba(100, 200, 255, 0.1);
             }
-            
-            .nav-buttons {
-                flex-direction: column;
-                width: 100%;
-                gap: 1rem;
-                margin-top: 1rem;
+
+            .login-signup-btns {
+                display: none !important;
             }
-            
-            .btn-login, .btn-signup {
-                width: 100%;
-                text-align: center;
-                padding: 0.8rem 1.5rem;
+
+            .logout-btn {
+                display: none !important;
+            }
+
+            .profile-btn {
+                display: flex !important;
             }
             
             .hero {
@@ -558,21 +609,32 @@
         <div class="navbar-container">
             <a href="index.html" class="navbar-brand">• NexusAI</a>
             
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-
             <div class="navbar-menu" id="navbarMenu">
                 <a class="navbar-link" onclick="checkAuthAndNavigate('index.html', event)">Home</a>
                 <a class="navbar-link" onclick="checkAuthAndNavigate('tools_listing.html', event)">Tools</a>
                 <a class="navbar-link" onclick="checkAuthAndNavigate('trending.html', event)">Trending</a>
                 <a class="navbar-link" onclick="checkAuthAndNavigate('compare.html', event)">Compare</a>
+            </div>
+
+            <div class="navbar-right">
+                <div class="login-signup-btns" id="loginSignupBtns">
+                    <a href="login.html" class="nav-btn nav-btn-login">Login</a>
+                    <a href="signup.html" class="nav-btn nav-btn-signup">Sign Up</a>
+                </div>
                 
-                <div class="nav-buttons" id="navAuth">
-                    <a href="login.html" class="btn-login">Login</a>
-                    <a href="signup.html" class="btn-signup">Sign Up</a>
+                <a href="profile.html" class="profile-btn" id="profileBtn" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </a>
+                
+                <button class="logout-btn" id="logoutBtn" onclick="handleLogout(event)">Logout</button>
+                
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
         </div>
@@ -703,19 +765,32 @@
 
         // Update navbar based on auth status
         function updateNavbar() {
-            const navAuth = document.getElementById('navAuth');
+            const profileBtn = document.getElementById('profileBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loginSignupBtns = document.getElementById('loginSignupBtns');
             
             if (isAuthenticated()) {
-                const user = JSON.parse(localStorage.getItem('user') || '{}');
-                navAuth.innerHTML = `
-                    <a href="profile.html" class="navbar-link">Profile</a>
-                    <a href="#" class="btn-login" onclick="handleLogout(event)">Logout</a>
-                `;
+                // User is logged in - show profile icon and logout button
+                if (profileBtn) {
+                    profileBtn.style.display = 'flex';
+                }
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'block';
+                }
+                if (loginSignupBtns) {
+                    loginSignupBtns.classList.add('hidden');
+                }
             } else {
-                navAuth.innerHTML = `
-                    <a href="login.html" class="btn-login">Login</a>
-                    <a href="signup.html" class="btn-signup">Sign Up</a>
-                `;
+                // User is not logged in - show login/signup buttons
+                if (profileBtn) {
+                    profileBtn.style.display = 'none';
+                }
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'none';
+                }
+                if (loginSignupBtns) {
+                    loginSignupBtns.classList.remove('hidden');
+                }
             }
         }
 

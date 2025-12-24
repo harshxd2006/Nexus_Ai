@@ -38,6 +38,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
 
         .navbar-brand {
@@ -45,13 +46,52 @@
             font-weight: 700;
             color: #64c8ff;
             text-decoration: none;
+            z-index: 1002;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 1002;
+            justify-content: flex-end;
+        }
+
+        .profile-btn {
+            color: #64c8ff;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            text-decoration: none;
+        }
+
+        .profile-btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            border-color: #64c8ff;
+            transform: translateY(-2px);
         }
 
         .hamburger {
             display: none;
             flex-direction: column;
             cursor: pointer;
-            z-index: 1001;
+            z-index: 1002;
+            padding: 10px;
         }
 
         .hamburger span {
@@ -63,9 +103,23 @@
             border-radius: 3px;
         }
 
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
         .navbar-menu {
             display: flex;
             gap: 2rem;
+            justify-content: center;
+            align-items: center;
         }
 
         .navbar-link {
@@ -73,11 +127,61 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .navbar-link:hover {
+            color: #64c8ff;
         }
 
         #nav-auth {
             display: flex;
             gap: 1rem;
+        }
+
+        .menu-auth {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .menu-auth-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.8rem 1.5rem;
+            text-align: center;
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .menu-auth-link:hover {
+            color: #64c8ff;
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
         }
 
         /* CONTAINER */
@@ -412,27 +516,59 @@
 
         /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
+            .navbar-menu {
+                position: fixed !important;
+                left: 0 !important;
+                transform: none !important;
+            }
+
             .hamburger {
-                display: flex;
+                display: flex !important;
             }
 
             .navbar-menu {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                height: 100vh;
-                width: 75%;
-                max-width: 300px;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                height: auto !important;
                 background: rgba(15, 23, 42, 0.98);
+                backdrop-filter: blur(10px);
                 flex-direction: column;
                 padding: 80px 30px 30px;
-                gap: 2rem;
-                transition: right 0.3s;
-                border-left: 1px solid rgba(100, 200, 255, 0.2);
+                gap: 0;
+                border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                z-index: 999 !important;
+                transform: translateY(-100%);
+                transition: transform 0.4s ease;
+                overflow-y: auto;
             }
 
             .navbar-menu.active {
-                right: 0;
+                transform: translateY(0) !important;
+            }
+            
+            .navbar-link {
+                font-size: 1.1rem !important;
+                width: 100%;
+                padding: 1rem 0 !important;
+                text-align: center;
+                border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+                display: block;
+            }
+
+            #nav-auth {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
+                margin-top: 1.5rem;
+                padding-top: 1rem;
+            }
+            
+            .menu-auth {
+                display: flex;
             }
 
             .container {
@@ -473,14 +609,25 @@
     </style>
 </head>
 <body>
+    <div class="menu-overlay" id="menuOverlay"></div>
+
     <nav class="navbar">
         <div class="navbar-container">
             <a href="index.html" class="navbar-brand">NexusAI</a>
             
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div class="navbar-right">
+                <a href="profile.html" class="profile-btn" id="profileBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </a>
+                
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
 
             <div class="navbar-menu" id="navbarMenu">
@@ -488,9 +635,12 @@
                 <a href="tools_listing.html" class="navbar-link">Tools</a>
                 <a href="trending.html" class="navbar-link">Trending</a>
                 <a href="compare.html" class="navbar-link">Compare</a>
+                
+                <div class="menu-auth" id="menuAuth">
+                    <a href="login.html" class="menu-auth-link">Login</a>
+                    <a href="signup.html" class="menu-auth-link">Sign Up</a>
+                </div>
             </div>
-            
-            <div id="nav-auth"></div>
         </div>
     </nav>
 
@@ -536,19 +686,109 @@
         let currentTool = null;
         let selectedRating = 0;
 
-        // Hamburger menu
+        // Hamburger menu and overlay
         const hamburger = document.getElementById('hamburger');
         const navbarMenu = document.getElementById('navbarMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        function closeMenu() {
+            if (hamburger) hamburger.classList.remove('active');
+            if (navbarMenu) navbarMenu.classList.remove('active');
+            if (menuOverlay) menuOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openMenu() {
+            if (hamburger) hamburger.classList.add('active');
+            if (navbarMenu) navbarMenu.classList.add('active');
+            if (menuOverlay) menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
         if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navbarMenu.classList.toggle('active');
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (hamburger.classList.contains('active')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
             });
+        }
+
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
+
+        document.querySelectorAll('.navbar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                closeMenu();
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMenu();
+            }
+        });
+
+        // Update profile button based on auth
+        function updateProfileButton() {
+            const profileBtn = document.getElementById('profileBtn');
+            const menuAuth = document.getElementById('menuAuth');
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                // User is logged in
+                if (menuAuth) {
+                    menuAuth.innerHTML = `
+                        <a href="profile.html" class="menu-auth-link">My Profile</a>
+                        <a href="#" class="menu-auth-link" onclick="handleLogout(event)">Logout</a>
+                    `;
+                }
+                if (profileBtn) {
+                    profileBtn.style.display = 'flex';
+                }
+            } else {
+                // User is not logged in
+                if (menuAuth) {
+                    menuAuth.innerHTML = `
+                        <a href="login.html" class="menu-auth-link">Login</a>
+                        <a href="signup.html" class="menu-auth-link">Sign Up</a>
+                    `;
+                }
+                if (profileBtn) {
+                    profileBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (typeof showToast === 'function') {
+                            showToast('Please login to access your profile', 'warning');
+                        } else {
+                            alert('Please login to access your profile');
+                        }
+                        setTimeout(() => window.location.href = 'login.html', 1000);
+                    });
+                }
+            }
+        }
+
+        function handleLogout(event) {
+            if (event) event.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (typeof showToast === 'function') {
+                showToast('Logged out successfully', 'success');
+            } else {
+                alert('Logged out successfully');
+            }
+            closeMenu();
+            setTimeout(() => window.location.href = 'index.html', 1000);
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('=== TOOL DETAIL PAGE LOADED ===');
+            
+            updateProfileButton();
             
             if (typeof updateNavbar === 'function') {
                 updateNavbar();
